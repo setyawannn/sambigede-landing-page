@@ -1,0 +1,27 @@
+{
+  "projectName": "sambigede_landing_page",
+  "mode": "file-router",
+  "typescript": true,
+  "packageManager": "bun",
+  "includeExamples": true,
+  "tailwind": true,
+  "addOnOptions": {},
+  "envVarValues": {
+    "CONVEX_DEPLOYMENT": "sambigede_landing_page",
+    "VITE_CONVEX_URL": "https://robust-grasshopper-700.convex.site"
+  },
+  "git": true,
+  "install": true,
+  "routerOnly": false,
+  "version": 1,
+  "framework": "react",
+  "chosenAddOns": [
+    "eslint",
+    "cloudflare",
+    "shadcn",
+    "convex",
+    "tanstack-query",
+    "store",
+    "form"
+  ]
+}
