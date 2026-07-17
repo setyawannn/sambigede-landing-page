@@ -15,6 +15,14 @@ export default [
     },
   },
   {
-    ignores: ['eslint.config.js', 'prettier.config.js'],
+    ignores: [
+      'eslint.config.js',
+      'prettier.config.js',
+      'convex/_generated/**',
+      'website-desa-sambigede-ui/**',
+      '.tanstack/**',
+      '.wrangler/**',
+      'dist/**'
+    ],
   },
 ]
