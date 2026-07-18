@@ -2,11 +2,12 @@ import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
+  useRouterState,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
-import Footer from '../components/Footer'
-import Header from '../components/Header'
+import Footer from '../components/shared/Footer'
+import Header from '../components/shared/Header'
 
 import ConvexProvider from '../integrations/convex/provider'
 
@@ -24,56 +25,80 @@ interface MyRouterContext {
 
 const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getItem('theme');var mode=(stored==='light'||stored==='dark'||stored==='auto')?stored:'auto';var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var resolved=mode==='auto'?(prefersDark?'dark':'light'):mode;var root=document.documentElement;root.classList.remove('light','dark');root.classList.add(resolved);if(mode==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',mode)}root.style.colorScheme=resolved;}catch(e){}})();`
 
+import { AuthProvider } from '../lib/auth'
+
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'TanStack Start Starter',
-      },
+      { charSet: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { title: 'Desa Sambigede' },
     ],
     links: [
-      {
-        rel: 'stylesheet',
-        href: appCss,
-      },
+      { rel: 'stylesheet', href: appCss },
     ],
   }),
   shellComponent: RootDocument,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const routerState = useRouterState();
+  const pathname = routerState.location.pathname;
+  const isAdminOrLogin = pathname.startsWith('/admin') || pathname.startsWith('/login');
+
+  if (isAdminOrLogin) {
+    return (
+      <html lang="id" suppressHydrationWarning>
+        <head>
+          <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+          <HeadContent />
+        </head>
+        <body className="font-sans antialiased text-[#333] bg-[#F8FAFC]">
+          <AuthProvider>
+            <ConvexProvider>
+              {children}
+              <TanStackDevtools
+                config={{ position: 'bottom-right' }}
+                plugins={[
+                  { name: 'Tanstack Router', render: <TanStackRouterDevtoolsPanel /> },
+                  TanStackQueryDevtools,
+                  StoreDevtools,
+                ]}
+              />
+            </ConvexProvider>
+          </AuthProvider>
+          <Scripts />
+        </body>
+      </html>
+    );
+  }
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
-        <ConvexProvider>
-          <Header />
-          {children}
-          <Footer />
-          <TanStackDevtools
-            config={{
-              position: 'bottom-right',
-            }}
-            plugins={[
-              {
-                name: 'Tanstack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-              TanStackQueryDevtools,
-              StoreDevtools,
-            ]}
-          />
-        </ConvexProvider>
+      <body className="font-sans antialiased text-[#333] bg-white selection:bg-[#6B8E23]/20">
+        <AuthProvider>
+          <ConvexProvider>
+            <div className="min-h-screen flex flex-col pt-[72px]">
+              <Header />
+              <main className="flex-1 flex flex-col">
+                {children}
+              </main>
+              <Footer />
+            </div>
+            <TanStackDevtools
+              config={{ position: 'bottom-right' }}
+              plugins={[
+                { name: 'Tanstack Router', render: <TanStackRouterDevtoolsPanel /> },
+                TanStackQueryDevtools,
+                StoreDevtools,
+              ]}
+            />
+          </ConvexProvider>
+        </AuthProvider>
         <Scripts />
       </body>
     </html>

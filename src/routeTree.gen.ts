@@ -9,17 +9,50 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AboutRouteImport } from './routes/about'
+import { Route as ProfilRouteImport } from './routes/profil'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as KontakRouteImport } from './routes/kontak'
+import { Route as InfografisRouteImport } from './routes/infografis'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
-import { Route as DemoStoreRouteImport } from './routes/demo/store'
-import { Route as DemoConvexRouteImport } from './routes/demo/convex'
-import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
-import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
+import { Route as InfografisIndexRouteImport } from './routes/infografis/index'
+import { Route as BeritaIndexRouteImport } from './routes/berita/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as InfografisStuntingRouteImport } from './routes/infografis/stunting'
+import { Route as InfografisPendudukRouteImport } from './routes/infografis/penduduk'
+import { Route as InfografisBansosRouteImport } from './routes/infografis/bansos'
+import { Route as InfografisApbdesRouteImport } from './routes/infografis/apbdes'
+import { Route as BeritaIdRouteImport } from './routes/berita/$id'
+import { Route as AdminStuntingRouteImport } from './routes/admin/stunting'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminPendudukRouteImport } from './routes/admin/penduduk'
+import { Route as AdminBeritaRouteImport } from './routes/admin/berita'
+import { Route as AdminBansosRouteImport } from './routes/admin/bansos'
+import { Route as AdminApbdesRouteImport } from './routes/admin/apbdes'
 
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const ProfilRoute = ProfilRouteImport.update({
+  id: '/profil',
+  path: '/profil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KontakRoute = KontakRouteImport.update({
+  id: '/kontak',
+  path: '/kontak',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InfografisRoute = InfografisRouteImport.update({
+  id: '/infografis',
+  path: '/infografis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -27,107 +60,255 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
-  id: '/demo/tanstack-query',
-  path: '/demo/tanstack-query',
+const InfografisIndexRoute = InfografisIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => InfografisRoute,
+} as any)
+const BeritaIndexRoute = BeritaIndexRouteImport.update({
+  id: '/berita/',
+  path: '/berita/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStoreRoute = DemoStoreRouteImport.update({
-  id: '/demo/store',
-  path: '/demo/store',
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const InfografisStuntingRoute = InfografisStuntingRouteImport.update({
+  id: '/stunting',
+  path: '/stunting',
+  getParentRoute: () => InfografisRoute,
+} as any)
+const InfografisPendudukRoute = InfografisPendudukRouteImport.update({
+  id: '/penduduk',
+  path: '/penduduk',
+  getParentRoute: () => InfografisRoute,
+} as any)
+const InfografisBansosRoute = InfografisBansosRouteImport.update({
+  id: '/bansos',
+  path: '/bansos',
+  getParentRoute: () => InfografisRoute,
+} as any)
+const InfografisApbdesRoute = InfografisApbdesRouteImport.update({
+  id: '/apbdes',
+  path: '/apbdes',
+  getParentRoute: () => InfografisRoute,
+} as any)
+const BeritaIdRoute = BeritaIdRouteImport.update({
+  id: '/berita/$id',
+  path: '/berita/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoConvexRoute = DemoConvexRouteImport.update({
-  id: '/demo/convex',
-  path: '/demo/convex',
-  getParentRoute: () => rootRouteImport,
+const AdminStuntingRoute = AdminStuntingRouteImport.update({
+  id: '/stunting',
+  path: '/stunting',
+  getParentRoute: () => AdminRoute,
 } as any)
-const DemoFormSimpleRoute = DemoFormSimpleRouteImport.update({
-  id: '/demo/form/simple',
-  path: '/demo/form/simple',
-  getParentRoute: () => rootRouteImport,
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
 } as any)
-const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
-  id: '/demo/form/address',
-  path: '/demo/form/address',
-  getParentRoute: () => rootRouteImport,
+const AdminPendudukRoute = AdminPendudukRouteImport.update({
+  id: '/penduduk',
+  path: '/penduduk',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBeritaRoute = AdminBeritaRouteImport.update({
+  id: '/berita',
+  path: '/berita',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBansosRoute = AdminBansosRouteImport.update({
+  id: '/bansos',
+  path: '/bansos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminApbdesRoute = AdminApbdesRouteImport.update({
+  id: '/apbdes',
+  path: '/apbdes',
+  getParentRoute: () => AdminRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/demo/convex': typeof DemoConvexRoute
-  '/demo/store': typeof DemoStoreRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/infografis': typeof InfografisRouteWithChildren
+  '/kontak': typeof KontakRoute
+  '/login': typeof LoginRoute
+  '/profil': typeof ProfilRoute
+  '/admin/apbdes': typeof AdminApbdesRoute
+  '/admin/bansos': typeof AdminBansosRoute
+  '/admin/berita': typeof AdminBeritaRoute
+  '/admin/penduduk': typeof AdminPendudukRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/stunting': typeof AdminStuntingRoute
+  '/berita/$id': typeof BeritaIdRoute
+  '/infografis/apbdes': typeof InfografisApbdesRoute
+  '/infografis/bansos': typeof InfografisBansosRoute
+  '/infografis/penduduk': typeof InfografisPendudukRoute
+  '/infografis/stunting': typeof InfografisStuntingRoute
+  '/admin/': typeof AdminIndexRoute
+  '/berita/': typeof BeritaIndexRoute
+  '/infografis/': typeof InfografisIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/demo/convex': typeof DemoConvexRoute
-  '/demo/store': typeof DemoStoreRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
+  '/kontak': typeof KontakRoute
+  '/login': typeof LoginRoute
+  '/profil': typeof ProfilRoute
+  '/admin/apbdes': typeof AdminApbdesRoute
+  '/admin/bansos': typeof AdminBansosRoute
+  '/admin/berita': typeof AdminBeritaRoute
+  '/admin/penduduk': typeof AdminPendudukRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/stunting': typeof AdminStuntingRoute
+  '/berita/$id': typeof BeritaIdRoute
+  '/infografis/apbdes': typeof InfografisApbdesRoute
+  '/infografis/bansos': typeof InfografisBansosRoute
+  '/infografis/penduduk': typeof InfografisPendudukRoute
+  '/infografis/stunting': typeof InfografisStuntingRoute
+  '/admin': typeof AdminIndexRoute
+  '/berita': typeof BeritaIndexRoute
+  '/infografis': typeof InfografisIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/demo/convex': typeof DemoConvexRoute
-  '/demo/store': typeof DemoStoreRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/infografis': typeof InfografisRouteWithChildren
+  '/kontak': typeof KontakRoute
+  '/login': typeof LoginRoute
+  '/profil': typeof ProfilRoute
+  '/admin/apbdes': typeof AdminApbdesRoute
+  '/admin/bansos': typeof AdminBansosRoute
+  '/admin/berita': typeof AdminBeritaRoute
+  '/admin/penduduk': typeof AdminPendudukRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/stunting': typeof AdminStuntingRoute
+  '/berita/$id': typeof BeritaIdRoute
+  '/infografis/apbdes': typeof InfografisApbdesRoute
+  '/infografis/bansos': typeof InfografisBansosRoute
+  '/infografis/penduduk': typeof InfografisPendudukRoute
+  '/infografis/stunting': typeof InfografisStuntingRoute
+  '/admin/': typeof AdminIndexRoute
+  '/berita/': typeof BeritaIndexRoute
+  '/infografis/': typeof InfografisIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
-    | '/demo/convex'
-    | '/demo/store'
-    | '/demo/tanstack-query'
-    | '/demo/form/address'
-    | '/demo/form/simple'
+    | '/admin'
+    | '/infografis'
+    | '/kontak'
+    | '/login'
+    | '/profil'
+    | '/admin/apbdes'
+    | '/admin/bansos'
+    | '/admin/berita'
+    | '/admin/penduduk'
+    | '/admin/settings'
+    | '/admin/stunting'
+    | '/berita/$id'
+    | '/infografis/apbdes'
+    | '/infografis/bansos'
+    | '/infografis/penduduk'
+    | '/infografis/stunting'
+    | '/admin/'
+    | '/berita/'
+    | '/infografis/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
-    | '/demo/convex'
-    | '/demo/store'
-    | '/demo/tanstack-query'
-    | '/demo/form/address'
-    | '/demo/form/simple'
+    | '/kontak'
+    | '/login'
+    | '/profil'
+    | '/admin/apbdes'
+    | '/admin/bansos'
+    | '/admin/berita'
+    | '/admin/penduduk'
+    | '/admin/settings'
+    | '/admin/stunting'
+    | '/berita/$id'
+    | '/infografis/apbdes'
+    | '/infografis/bansos'
+    | '/infografis/penduduk'
+    | '/infografis/stunting'
+    | '/admin'
+    | '/berita'
+    | '/infografis'
   id:
     | '__root__'
     | '/'
-    | '/about'
-    | '/demo/convex'
-    | '/demo/store'
-    | '/demo/tanstack-query'
-    | '/demo/form/address'
-    | '/demo/form/simple'
+    | '/admin'
+    | '/infografis'
+    | '/kontak'
+    | '/login'
+    | '/profil'
+    | '/admin/apbdes'
+    | '/admin/bansos'
+    | '/admin/berita'
+    | '/admin/penduduk'
+    | '/admin/settings'
+    | '/admin/stunting'
+    | '/berita/$id'
+    | '/infografis/apbdes'
+    | '/infografis/bansos'
+    | '/infografis/penduduk'
+    | '/infografis/stunting'
+    | '/admin/'
+    | '/berita/'
+    | '/infografis/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
-  DemoConvexRoute: typeof DemoConvexRoute
-  DemoStoreRoute: typeof DemoStoreRoute
-  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
-  DemoFormAddressRoute: typeof DemoFormAddressRoute
-  DemoFormSimpleRoute: typeof DemoFormSimpleRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  InfografisRoute: typeof InfografisRouteWithChildren
+  KontakRoute: typeof KontakRoute
+  LoginRoute: typeof LoginRoute
+  ProfilRoute: typeof ProfilRoute
+  BeritaIdRoute: typeof BeritaIdRoute
+  BeritaIndexRoute: typeof BeritaIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/profil': {
+      id: '/profil'
+      path: '/profil'
+      fullPath: '/profil'
+      preLoaderRoute: typeof ProfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kontak': {
+      id: '/kontak'
+      path: '/kontak'
+      fullPath: '/kontak'
+      preLoaderRoute: typeof KontakRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/infografis': {
+      id: '/infografis'
+      path: '/infografis'
+      fullPath: '/infografis'
+      preLoaderRoute: typeof InfografisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -137,52 +318,158 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/tanstack-query': {
-      id: '/demo/tanstack-query'
-      path: '/demo/tanstack-query'
-      fullPath: '/demo/tanstack-query'
-      preLoaderRoute: typeof DemoTanstackQueryRouteImport
+    '/infografis/': {
+      id: '/infografis/'
+      path: '/'
+      fullPath: '/infografis/'
+      preLoaderRoute: typeof InfografisIndexRouteImport
+      parentRoute: typeof InfografisRoute
+    }
+    '/berita/': {
+      id: '/berita/'
+      path: '/berita'
+      fullPath: '/berita/'
+      preLoaderRoute: typeof BeritaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/store': {
-      id: '/demo/store'
-      path: '/demo/store'
-      fullPath: '/demo/store'
-      preLoaderRoute: typeof DemoStoreRouteImport
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/infografis/stunting': {
+      id: '/infografis/stunting'
+      path: '/stunting'
+      fullPath: '/infografis/stunting'
+      preLoaderRoute: typeof InfografisStuntingRouteImport
+      parentRoute: typeof InfografisRoute
+    }
+    '/infografis/penduduk': {
+      id: '/infografis/penduduk'
+      path: '/penduduk'
+      fullPath: '/infografis/penduduk'
+      preLoaderRoute: typeof InfografisPendudukRouteImport
+      parentRoute: typeof InfografisRoute
+    }
+    '/infografis/bansos': {
+      id: '/infografis/bansos'
+      path: '/bansos'
+      fullPath: '/infografis/bansos'
+      preLoaderRoute: typeof InfografisBansosRouteImport
+      parentRoute: typeof InfografisRoute
+    }
+    '/infografis/apbdes': {
+      id: '/infografis/apbdes'
+      path: '/apbdes'
+      fullPath: '/infografis/apbdes'
+      preLoaderRoute: typeof InfografisApbdesRouteImport
+      parentRoute: typeof InfografisRoute
+    }
+    '/berita/$id': {
+      id: '/berita/$id'
+      path: '/berita/$id'
+      fullPath: '/berita/$id'
+      preLoaderRoute: typeof BeritaIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/convex': {
-      id: '/demo/convex'
-      path: '/demo/convex'
-      fullPath: '/demo/convex'
-      preLoaderRoute: typeof DemoConvexRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/stunting': {
+      id: '/admin/stunting'
+      path: '/stunting'
+      fullPath: '/admin/stunting'
+      preLoaderRoute: typeof AdminStuntingRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/demo/form/simple': {
-      id: '/demo/form/simple'
-      path: '/demo/form/simple'
-      fullPath: '/demo/form/simple'
-      preLoaderRoute: typeof DemoFormSimpleRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/demo/form/address': {
-      id: '/demo/form/address'
-      path: '/demo/form/address'
-      fullPath: '/demo/form/address'
-      preLoaderRoute: typeof DemoFormAddressRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/penduduk': {
+      id: '/admin/penduduk'
+      path: '/penduduk'
+      fullPath: '/admin/penduduk'
+      preLoaderRoute: typeof AdminPendudukRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/berita': {
+      id: '/admin/berita'
+      path: '/berita'
+      fullPath: '/admin/berita'
+      preLoaderRoute: typeof AdminBeritaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/bansos': {
+      id: '/admin/bansos'
+      path: '/bansos'
+      fullPath: '/admin/bansos'
+      preLoaderRoute: typeof AdminBansosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/apbdes': {
+      id: '/admin/apbdes'
+      path: '/apbdes'
+      fullPath: '/admin/apbdes'
+      preLoaderRoute: typeof AdminApbdesRouteImport
+      parentRoute: typeof AdminRoute
     }
   }
 }
 
+interface AdminRouteChildren {
+  AdminApbdesRoute: typeof AdminApbdesRoute
+  AdminBansosRoute: typeof AdminBansosRoute
+  AdminBeritaRoute: typeof AdminBeritaRoute
+  AdminPendudukRoute: typeof AdminPendudukRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminStuntingRoute: typeof AdminStuntingRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminApbdesRoute: AdminApbdesRoute,
+  AdminBansosRoute: AdminBansosRoute,
+  AdminBeritaRoute: AdminBeritaRoute,
+  AdminPendudukRoute: AdminPendudukRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminStuntingRoute: AdminStuntingRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface InfografisRouteChildren {
+  InfografisApbdesRoute: typeof InfografisApbdesRoute
+  InfografisBansosRoute: typeof InfografisBansosRoute
+  InfografisPendudukRoute: typeof InfografisPendudukRoute
+  InfografisStuntingRoute: typeof InfografisStuntingRoute
+  InfografisIndexRoute: typeof InfografisIndexRoute
+}
+
+const InfografisRouteChildren: InfografisRouteChildren = {
+  InfografisApbdesRoute: InfografisApbdesRoute,
+  InfografisBansosRoute: InfografisBansosRoute,
+  InfografisPendudukRoute: InfografisPendudukRoute,
+  InfografisStuntingRoute: InfografisStuntingRoute,
+  InfografisIndexRoute: InfografisIndexRoute,
+}
+
+const InfografisRouteWithChildren = InfografisRoute._addFileChildren(
+  InfografisRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
-  DemoConvexRoute: DemoConvexRoute,
-  DemoStoreRoute: DemoStoreRoute,
-  DemoTanstackQueryRoute: DemoTanstackQueryRoute,
-  DemoFormAddressRoute: DemoFormAddressRoute,
-  DemoFormSimpleRoute: DemoFormSimpleRoute,
+  AdminRoute: AdminRouteWithChildren,
+  InfografisRoute: InfografisRouteWithChildren,
+  KontakRoute: KontakRoute,
+  LoginRoute: LoginRoute,
+  ProfilRoute: ProfilRoute,
+  BeritaIdRoute: BeritaIdRoute,
+  BeritaIndexRoute: BeritaIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -45,15 +45,15 @@ function DevtoolPanel() {
       <div className="demo-muted whitespace-nowrap text-sm font-bold">
         First Name
       </div>
-      <div className="text-sm">{state?.firstName}</div>
+      <div className="text-sm">{state.firstName}</div>
       <div className="demo-muted whitespace-nowrap text-sm font-bold">
         Last Name
       </div>
-      <div className="text-sm">{state?.lastName}</div>
+      <div className="text-sm">{state.lastName}</div>
       <div className="demo-muted whitespace-nowrap text-sm font-bold">
         Full Name
       </div>
-      <div className="text-sm">{state?.fullName}</div>
+      <div className="text-sm">{state.fullName}</div>
     </div>
   )
 }
