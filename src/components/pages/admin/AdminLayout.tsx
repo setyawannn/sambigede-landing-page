@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { 
   LayoutDashboard, Newspaper, Settings, LogOut, Bell, Database, ChevronDown, PieChart, Landmark,
-  Building2, Handshake, Users, FolderOpen, Home, Phone, ShieldAlert
+  Building2, Handshake, Users, FolderOpen, Home, Phone, ShieldAlert, Activity
 } from "lucide-react";
 import { useEffect } from "react";
 import { useAuth } from "../../../lib/auth";
@@ -49,6 +49,11 @@ export default function AdminLayout() {
     { name: "Kategori Pengaduan", path: "/admin/kategori-pengaduan" },
   ];
 
+  const analyticItems = [
+    { name: "Turnstile Security", path: "/admin/analytic/turnstile" },
+    { name: "Cloudflare R2", path: "/admin/analytic/r2" },
+  ];
+
   const kelolaKontenItems = [
     { name: "Beranda", path: "/admin/beranda", icon: Home },
     { name: "Profil Desa & Visi Misi", path: "/admin/profil", icon: Building2 },
@@ -64,6 +69,7 @@ export default function AdminLayout() {
 
   const isInfografisActive = infografisItems.some(item => location.pathname.startsWith(item.path));
   const isMasterDataActive = masterDataItems.some(item => location.pathname.startsWith(item.path));
+  const isAnalyticActive = analyticItems.some(item => location.pathname.startsWith(item.path));
   const isKelolaKontenActive = kelolaKontenItems.some(item => location.pathname.startsWith(item.path));
 
   return (
@@ -169,6 +175,34 @@ export default function AdminLayout() {
                       <CollapsibleContent>
                         <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
                           {masterDataItems.map((item) => {
+                            const isActive = location.pathname.startsWith(item.path);
+                            return (
+                              <SidebarMenuSubItem key={item.name}>
+                                <SidebarMenuSubButton asChild isActive={isActive} className={isActive ? "bg-slate-100 font-medium text-primary" : ""}>
+                                  <Link to={item.path}>
+                                    <span>{item.name}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            );
+                          })}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+
+                  <Collapsible defaultOpen={isAnalyticActive} className="group/collapsible">
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton tooltip="Analytic" isActive={isAnalyticActive}>
+                          <Activity className="w-5 h-5" />
+                          <span className="group-data-[collapsible=icon]:hidden">Analytic</span>
+                          <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
+                          {analyticItems.map((item) => {
                             const isActive = location.pathname.startsWith(item.path);
                             return (
                               <SidebarMenuSubItem key={item.name}>

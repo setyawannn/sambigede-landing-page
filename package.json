@@ -19,6 +19,7 @@
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.26.0",
     "@convex-dev/react-query": "0.1.0",
+    "@marsidev/react-turnstile": "^1.5.3",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-form": "latest",

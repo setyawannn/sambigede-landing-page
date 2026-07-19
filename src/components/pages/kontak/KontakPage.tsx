@@ -1,14 +1,15 @@
 import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Youtube, ShieldAlert, CheckCircle2 } from "lucide-react";
 import type { FormEvent } from "react";
-import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useAction } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import type { Id } from "../../../../convex/_generated/dataModel";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 
 export default function KontakPage() {
   const kontakData = useQuery(api.kontak.getKontakConfig);
   const kategoriList = useQuery(api.pengaduan.getKategoriList);
-  const insertPengaduan = useMutation(api.pengaduan.insertPengaduan);
+  const insertPengaduan = useAction(api.pengaduan.insertPengaduan);
   
   const [formData, setFormData] = useState({ 
     name: "", 
@@ -21,6 +22,18 @@ export default function KontakPage() {
   const [submitted, setSubmitted] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [cooldown, setCooldown] = useState(0);
+  
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileRef = useRef<TurnstileInstance>(null);
+
+  const getVisitorId = () => {
+    let vid = localStorage.getItem("visitor_id");
+    if (!vid) {
+      vid = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2);
+      localStorage.setItem("visitor_id", vid);
+    }
+    return vid;
+  };
 
   // Client-side rate limit logic via localStorage
   useEffect(() => {
@@ -49,16 +62,23 @@ export default function KontakPage() {
       return;
     }
     
+    if (!turnstileToken) {
+      setErrorMsg("Mohon selesaikan verifikasi keamanan terlebih dahulu.");
+      return;
+    }
+
     setErrorMsg("");
     setIsSubmitting(true);
     
     try {
-      // Safe casting format subject to Id
+      const visitorId = getVisitorId();
       await insertPengaduan({
         namaLengkap: formData.name,
         emailOrPhone: formData.email,
         kategoriId: formData.subject as Id<"kategori_pengaduan">,
         detailPesan: formData.message,
+        turnstileToken,
+        visitorId,
       });
       
       setSubmitted(true);
@@ -68,10 +88,15 @@ export default function KontakPage() {
       localStorage.setItem("last_pengaduan_time", Date.now().toString());
       setCooldown(60);
       
+      turnstileRef.current?.reset();
+      setTurnstileToken("");
+      
       setTimeout(() => setSubmitted(false), 5000);
     } catch (error: any) {
       console.error(error);
       setErrorMsg(error.message || "Gagal mengirim pesan. Silakan coba lagi nanti.");
+      turnstileRef.current?.reset();
+      setTurnstileToken("");
     } finally {
       setIsSubmitting(false);
     }
@@ -261,7 +286,27 @@ export default function KontakPage() {
                   <p className="text-xs text-right text-gray-400">{formData.message.length}/2000</p>
                 </div>
 
-                <button 
+                <div className="flex justify-center my-4">
+                  <Turnstile
+                    ref={turnstileRef}
+                    siteKey={import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY || ""}
+                    onSuccess={(token) => {
+                      setTurnstileToken(token);
+                      setErrorMsg("");
+                    }}
+                    onError={() => setErrorMsg("Verifikasi keamanan gagal. Silakan muat ulang halaman.")}
+                    onExpire={() => {
+                      setTurnstileToken("");
+                      setErrorMsg("Verifikasi keamanan kedaluwarsa. Silakan ulangi.");
+                    }}
+                    options={{
+                      theme: "light",
+                      size: "normal"
+                    }}
+                  />
+                </div>
+
+                <button  
                   type="submit" 
                   disabled={isSubmitting || cooldown > 0}
                   className={`w-full py-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all ${

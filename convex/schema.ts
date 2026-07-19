@@ -147,6 +147,8 @@ export default defineSchema({
     emailOrPhone: v.string(),
     kategoriId: v.id("kategori_pengaduan"),
     detailPesan: v.string(),
+    status: v.optional(v.string()), // Legacy field
+    tanggapan: v.optional(v.string()), // Legacy field
   })
     .index("by_emailOrPhone", ["emailOrPhone"])
     .index("by_kategori", ["kategoriId"]),
@@ -161,4 +163,16 @@ export default defineSchema({
     newValue: v.optional(v.string()),
     timestamp: v.number(),
   }).index("by_timestamp", ["timestamp"]),
+
+  turnstile_logs: defineTable({
+    action: v.union(v.literal("login"), v.literal("pengaduan")),
+    success: v.boolean(),
+    visitorId: v.string(),
+    errorMessage: v.optional(v.string()),
+    timestamp: v.number(),
+  })
+    .index("by_timestamp", ["timestamp"])
+    .index("by_success", ["success"])
+    .index("by_action", ["action"])
+    .index("by_visitorId", ["visitorId"]),
 });

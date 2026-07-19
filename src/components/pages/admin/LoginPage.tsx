@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Lock, Eye, EyeOff, AlertTriangle } from "lucide-react";
-import { useMutation } from "convex/react";
+import { useAction } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useAuth } from "../../../lib/auth";
 import { useNavigate } from "@tanstack/react-router";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -12,8 +13,19 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [touched, setTouched] = useState({ username: false, password: false });
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
-  const loginMutation = useMutation(api.auth.login);
+  const getVisitorId = () => {
+    let vid = localStorage.getItem("visitor_id");
+    if (!vid) {
+      vid = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2);
+      localStorage.setItem("visitor_id", vid);
+    }
+    return vid;
+  };
+
+  const loginAction = useAction(api.auth.login);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -27,20 +39,30 @@ export default function LoginPage() {
     
     if (!canSubmit) return;
     
+    if (!turnstileToken) {
+      setError("Mohon selesaikan verifikasi keamanan terlebih dahulu.");
+      return;
+    }
+    
     setLoading(true);
     setError("");
     
     try {
-      const result = await loginMutation({ username, password });
+      const visitorId = getVisitorId();
+      const result = await loginAction({ username, password, turnstileToken, visitorId });
       
       if (result.success && result.user) {
         login(result.user);
         navigate({ to: "/admin" });
       } else {
         setError(result.message || "Login gagal");
+        turnstileRef.current?.reset();
+        setTurnstileToken("");
       }
     } catch (err) {
       setError("Terjadi kesalahan jaringan");
+      turnstileRef.current?.reset();
+      setTurnstileToken("");
     } finally {
       setLoading(false);
     }
@@ -118,6 +140,26 @@ export default function LoginPage() {
                 </div>
                 {pErr && <p className="text-red-500 text-xs mt-1.5 font-medium">{pErr}</p>}
               </div>
+            </div>
+
+            <div className="flex justify-center my-4">
+              <Turnstile
+                ref={turnstileRef}
+                siteKey={import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY || ""}
+                onSuccess={(token) => {
+                  setTurnstileToken(token);
+                  setError("");
+                }}
+                onError={() => setError("Verifikasi keamanan gagal. Silakan muat ulang halaman.")}
+                onExpire={() => {
+                  setTurnstileToken("");
+                  setError("Verifikasi keamanan kedaluwarsa. Silakan ulangi.");
+                }}
+                options={{
+                  theme: "light",
+                  size: "normal"
+                }}
+              />
             </div>
 
             <button

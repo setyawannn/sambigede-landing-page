@@ -1,5 +1,7 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { action, internalMutation, mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
+import { verifyTurnstile } from "./turnstile";
 
 export const getKategoriList = query({
   handler: async (ctx) => {
@@ -33,7 +35,7 @@ export const getAuditLogs = query({
   },
 });
 
-export const insertPengaduan = mutation({
+export const insertPengaduanInternal = internalMutation({
   args: {
     namaLengkap: v.string(),
     emailOrPhone: v.string(),
@@ -54,6 +56,38 @@ export const insertPengaduan = mutation({
     }
 
     await ctx.db.insert("pengaduan", {
+      namaLengkap: args.namaLengkap,
+      emailOrPhone: args.emailOrPhone,
+      kategoriId: args.kategoriId,
+      detailPesan: args.detailPesan,
+    });
+  },
+});
+
+export const insertPengaduan = action({
+  args: {
+    namaLengkap: v.string(),
+    emailOrPhone: v.string(),
+    kategoriId: v.id("kategori_pengaduan"),
+    detailPesan: v.string(),
+    turnstileToken: v.string(),
+    visitorId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const result = await verifyTurnstile(args.turnstileToken);
+    
+    await ctx.runMutation(internal.analytics.logTurnstileAttempt, {
+      action: "pengaduan",
+      success: result.success,
+      visitorId: args.visitorId,
+      errorMessage: result.errorMessage,
+    });
+
+    if (!result.success) {
+      throw new Error("Verifikasi keamanan gagal (Robot terdeteksi).");
+    }
+
+    await ctx.runMutation(internal.pengaduan.insertPengaduanInternal, {
       namaLengkap: args.namaLengkap,
       emailOrPhone: args.emailOrPhone,
       kategoriId: args.kategoriId,
