@@ -20,10 +20,11 @@ const getAwsClient = () => {
 };
 
 /**
- * Server Function: getPresignedUploadUrl
+ * Server Function: uploadFileToServer
+ * Menerima file dalam bentuk base64 dan mengunggahnya langsung ke R2 dari server (menghindari isu CORS di browser)
  */
-export const getPresignedUploadUrl = createServerFn({ method: "POST" })
-  .validator((d: { filename: string; contentType: string }) => d)
+export const uploadFileToServer = createServerFn({ method: "POST" })
+  .validator((d: { filename: string; contentType: string; base64Data: string }) => d)
   .handler(async ({ data }) => {
     const bucketName = process.env.R2_BUCKET_NAME;
     const publicUrl = process.env.VITE_R2_PUBLIC_URL;
@@ -37,23 +38,36 @@ export const getPresignedUploadUrl = createServerFn({ method: "POST" })
       const aws = getAwsClient();
       const uniqueFilename = `${Date.now()}-${data.filename.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
       
-      // Cloudflare R2 endpoint URL (Path Style)
       const url = new URL(`https://${accountId}.r2.cloudflarestorage.com/${bucketName}/${uniqueFilename}`);
       
-      // Menandatangani (sign) request untuk menghasilkan Presigned URL
-      const signedRequest = await aws.sign(url, {
+      // Convert base64 back to buffer
+      // In Edge/Cloudflare, we might need atob and Uint8Array if Buffer is not available,
+      // but Tanstack Start uses Node server initially. Let's use standard atob for edge compatibility.
+      const binaryString = atob(data.base64Data);
+      const len = binaryString.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+
+      const response = await aws.fetch(url.toString(), {
         method: "PUT",
         headers: {
           "Content-Type": data.contentType,
+          "Content-Length": bytes.length.toString(),
         },
-        aws: { signQuery: true } // Mengharuskan signature di URL parameters, bukan header
+        body: bytes,
       });
+
+      if (!response.ok) {
+         throw new Error(`Upload gagal dengan status ${response.status}: ${await response.text()}`);
+      }
 
       const fileUrl = `${publicUrl.replace(/\/$/, "")}/${uniqueFilename}`;
 
-      return { success: true, uploadUrl: signedRequest.url, fileUrl, fileKey: uniqueFilename };
+      return { success: true, fileUrl, fileKey: uniqueFilename };
     } catch (error: any) {
-      console.error("Gagal membuat Presigned URL:", error);
+      console.error("Gagal mengunggah file via Server:", error);
       return { success: false, error: error.message };
     }
   });

@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Building2, Info, Package, Search, Phone, Facebook, Star, ChevronDown, ChevronUp, Grid, Newspaper } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { perangkatList } from "../profil/ProfilData";
-import { useQuery } from "convex/react";
+import { useQuery } from "@tanstack/react-query";
+import { convexQuery } from "@convex-dev/react-query";
 import { api } from "../../../../convex/_generated/api";
 
 const kadesImg = "/images/ROIHAN AL MADZAR.jpg";
@@ -16,30 +17,53 @@ export default function HomePage() {
   const [showAllPerangkat, setShowAllPerangkat] = useState(false);
   const visiblePerangkatList = showAllPerangkat ? perangkatList : perangkatList.slice(0, 4);
 
-  // Fetch real data from Convex for recent news (latest 3)
-  const beritaData = useQuery(api.berita.getBerita);
+  // Fetch data
+  const { data: berandaData } = useQuery(convexQuery(api.beranda.getBerandaConfig, {}));
+  const { data: perangkatData } = useQuery(convexQuery(api.perangkat.getPerangkatList, { status: "Aktif" }));
+  const { data: beritaData } = useQuery(convexQuery(api.berita.getBerita, {}));
+
   const recentBerita = beritaData?.slice(0, 3) || [];
+  
+  const kades = perangkatData?.find(p => p.jabatan.toLowerCase() === "kepala desa");
+  const kadesNama = kades?.nama || "Roihan Al Madzhar";
+  const kadesImage = kades?.imageUrl || "/images/ROIHAN AL MADZAR.jpg";
 
   return (
     <div className="flex flex-col w-full">
       {/* Hero Section */}
       <section className="relative w-full h-[400px] md:h-[500px] overflow-hidden flex items-center">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1662083555510-1187b2aba1e2?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center scale-105"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+        <div 
+          className="absolute inset-0 bg-cover bg-center scale-105 transition-all duration-700" 
+          style={{ backgroundImage: `url('${berandaData?.heroImageUrl || "https://images.unsplash.com/photo-1662083555510-1187b2aba1e2?auto=format&fit=crop&w=1920&q=80"}')` }}
+        ></div>
+        {/* Backdrop hitam agar teks kontras dan mudah dibaca */}
+        <div className="absolute inset-0 bg-black/60"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
         
         <div className="relative z-10 max-w-[1200px] mx-auto px-6 w-full flex flex-col gap-6">
-          <div className="inline-flex items-center gap-2 bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full w-fit border border-white/10">
-            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-            <span className="text-white text-xs md:text-sm font-medium">Transformasi Menuju Desa Digital</span>
-          </div>
+          {berandaData?.heroBadge && (
+            <div className="inline-flex items-center gap-2 bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full w-fit border border-white/20">
+              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+              <span className="text-white text-xs md:text-sm font-medium">{berandaData.heroBadge}</span>
+            </div>
+          )}
           
           <div className="flex flex-col gap-2">
-            <h1 className="text-white text-4xl md:text-5xl font-bold drop-shadow-md">
-              Selamat Datang di<br/>Desa Sambigede
+            <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold drop-shadow-xl leading-tight">
+              {berandaData?.heroTitle ? (
+                berandaData.heroTitle.split('\n').map((line, i, arr) => (
+                  <span key={i}>
+                    {line}
+                    {i !== arr.length - 1 && <br />}
+                  </span>
+                ))
+              ) : (
+                <>Selamat Datang di<br/>Desa Sambigede</>
+              )}
             </h1>
-            <p className="text-white/90 text-sm md:text-base max-w-[500px] leading-relaxed drop-shadow-sm mt-2">
-              Website Resmi Desa Sambigede. Sumber informasi terbaru tentang pemerintahan yang berorientasi pada keterbukaan informasi publik.
+            <p className="text-white/90 text-sm md:text-base max-w-[600px] leading-relaxed drop-shadow-md mt-4">
+              {berandaData?.heroSubtitle || "Website Resmi Desa Sambigede. Sumber informasi terbaru tentang pemerintahan yang berorientasi pada keterbukaan informasi publik."}
             </p>
           </div>
           
@@ -106,8 +130,8 @@ export default function HomePage() {
             <div className="relative w-full max-w-[400px] mx-auto lg:mx-0">
               <div className="aspect-square rounded-2xl overflow-hidden shadow-xl bg-white">
                 <img 
-                  src={kadesImg} 
-                  alt="Kepala Desa Sambigede" 
+                  src={kadesImage} 
+                  alt={`Kepala Desa Sambigede - ${kadesNama}`} 
                   className="w-full h-full object-cover"
                   style={{ objectPosition: "center 30%" }}
                   onError={(e) => {
@@ -122,12 +146,12 @@ export default function HomePage() {
               <h2 className="text-[20px] font-bold text-[#6B8E23]">Sambutan Kepala Desa Sambigede</h2>
               <div className="w-10 h-[3px] bg-[#6B8E23] mx-auto lg:mx-0 mt-1 mb-2"></div>
               <div>
-                <h3 className="text-lg font-bold text-[#333]">Roihan Al Madzhar</h3>
-                <p className="text-sm text-[#666]">Periode 2024 - 2029</p>
+                <h3 className="text-lg font-bold text-[#333]">{kadesNama}</h3>
+                <p className="text-sm text-[#666]">{berandaData?.kadesPeriode || "Periode 2024 - 2029"}</p>
               </div>
-              <p className="text-[#666] text-sm leading-relaxed max-w-[600px] mx-auto lg:mx-0 italic">
-                "Assalamu'alaikum Warahmatullahi Wabarakatuh. Selamat datang di website resmi Desa Sambigede, Kecamatan Binangun, Kabupaten Blitar. Melalui portal website ini, kami berharap dapat memberikan transparansi informasi pemerintahan, mempermudah pelayanan administrasi, dan memperkenalkan seluruh potensi unggulan Desa Sambigede kepada masyarakat luas."
-              </p>
+              <div className="text-[#666] text-sm leading-relaxed max-w-[600px] mx-auto lg:mx-0 italic whitespace-pre-line">
+                "{berandaData?.kadesSambutan || "Assalamu'alaikum Warahmatullahi Wabarakatuh. Selamat datang di website resmi Desa Sambigede, Kecamatan Binangun, Kabupaten Blitar. Melalui portal website ini, kami berharap dapat memberikan transparansi informasi pemerintahan, mempermudah pelayanan administrasi, dan memperkenalkan seluruh potensi unggulan Desa Sambigede kepada masyarakat luas."}"
+              </div>
             </div>
           </div>
         </div>
@@ -182,7 +206,7 @@ export default function HomePage() {
           
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {visiblePerangkatList.map((person, i) => (
-              <div key={person.no ?? i} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+              <div key={person.no || i} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
                 <div className="aspect-square overflow-hidden bg-gray-100">
                   <img 
                     src={findImageFor(person.nama)} 

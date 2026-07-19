@@ -1,6 +1,6 @@
 import { compressImage } from "./image-compressor";
 import type { CompressOptions } from "./image-compressor";
-import { getPresignedUploadUrl } from "./r2";
+import { uploadFileToServer } from "./r2";
 
 export interface UploadResult {
   success: boolean;
@@ -10,11 +10,23 @@ export interface UploadResult {
 }
 
 /**
- * Helper komprehensif untuk mengunggah file ke Cloudflare R2
- * Proses yang terjadi:
- * 1. Jika file adalah gambar, lakukan kompresi sisi klien menggunakan Canvas.
- * 2. Meminta presigned URL unggah dari fungsi server.
- * 3. Melakukan upload (PUT HTTP) secara langsung dari browser ke R2.
+ * Konversi File menjadi base64 string (tanpa prefix data:image/...)
+ */
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const base64 = result.split(',')[1]; // hilangkan "data:image/png;base64,"
+      resolve(base64);
+    };
+    reader.onerror = error => reject(error);
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Helper komprehensif untuk mengunggah file ke Cloudflare R2 via Server Function
  */
 export async function uploadFileHelper(
   file: File, 
@@ -28,36 +40,26 @@ export async function uploadFileHelper(
       fileToUpload = await compressImage(file, options);
     }
 
-    // 2. Meminta Presigned URL dari server (melewati TanStack Start Server Function)
-    const presignedData = await getPresignedUploadUrl({
+    // 2. Konversi ke base64 agar aman ditransfer ke server function
+    const base64Data = await fileToBase64(fileToUpload);
+
+    // 3. Panggil fungsi server yang akan meneruskan ke Cloudflare R2
+    const uploadResult = await uploadFileToServer({
       data: {
         filename: fileToUpload.name,
         contentType: fileToUpload.type,
+        base64Data,
       },
     });
 
-    if (!presignedData.success || !presignedData.uploadUrl) {
-      throw new Error(presignedData.error || "Gagal mendapatkan izin unggah dari server.");
+    if (!uploadResult.success) {
+      throw new Error(uploadResult.error || "Gagal mengunggah file ke R2 melalui server.");
     }
 
-    // 3. Eksekusi unggahan langsung ke bucket R2
-    const uploadResponse = await fetch(presignedData.uploadUrl, {
-      method: "PUT",
-      body: fileToUpload,
-      headers: {
-        "Content-Type": fileToUpload.type,
-      },
-    });
-
-    if (!uploadResponse.ok) {
-      throw new Error(`Gagal mengunggah file. Status: ${uploadResponse.status}`);
-    }
-
-    // Selesai, kembalikan URL publik dan Key (untuk identifikasi jika mau dihapus)
     return {
       success: true,
-      fileUrl: presignedData.fileUrl,
-      fileKey: presignedData.fileKey,
+      fileUrl: uploadResult.fileUrl,
+      fileKey: uploadResult.fileKey,
     };
     
   } catch (error: any) {

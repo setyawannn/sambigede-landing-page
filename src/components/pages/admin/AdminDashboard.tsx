@@ -1,6 +1,8 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Users, Newspaper, Package, Activity, Landmark, TrendingUp } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../ui/card";
+import { Button } from "../../ui/button";
 
 export default function AdminDashboard() {
   const penduduk = useQuery(api.penduduk.getPenduduk);
@@ -10,10 +12,10 @@ export default function AdminDashboard() {
   const apbdes = useQuery(api.apbdes.getApbdes);
 
   const stats = [
-    { title: "Total Penduduk", value: penduduk?.length ?? "...", icon: <Users className="text-blue-500" />, bg: "bg-blue-50" },
-    { title: "Artikel Berita", value: berita?.length ?? "...", icon: <Newspaper className="text-orange-500" />, bg: "bg-orange-50" },
-    { title: "Penerima Bansos", value: bansos?.length ?? "...", icon: <Package className="text-green-500" />, bg: "bg-green-50" },
-    { title: "Data Stunting", value: stunting?.length ?? "...", icon: <Activity className="text-red-500" />, bg: "bg-red-50" },
+    { title: "Total Penduduk", value: penduduk?.length ?? "...", icon: Users, color: "text-blue-600", bg: "bg-blue-100" },
+    { title: "Artikel Berita", value: berita?.length ?? "...", icon: Newspaper, color: "text-orange-600", bg: "bg-orange-100" },
+    { title: "Penerima Bansos", value: bansos?.length ?? "...", icon: Package, color: "text-emerald-600", bg: "bg-emerald-100" },
+    { title: "Data Stunting", value: stunting?.length ?? "...", icon: Activity, color: "text-rose-600", bg: "bg-rose-100" },
   ];
 
   const totalPendapatan = apbdes?.filter(a => a.kategori === "Pendapatan").reduce((acc, curr) => acc + curr.realisasi, 0) ?? 0;
@@ -24,75 +26,87 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">Dashboard Statistik</h2>
-          <p className="text-gray-500 text-sm mt-1">Ringkasan data sistem informasi Desa Sambigede</p>
+          <h2 className="text-3xl font-bold tracking-tight text-slate-800">Dashboard Statistik</h2>
+          <p className="text-slate-500 mt-1">Ringkasan data sistem informasi Desa Sambigede</p>
         </div>
-        <div className="hidden md:flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm text-gray-600 shadow-sm">
-          <TrendingUp className="w-4 h-4 text-[#6B8E23]" />
-          <span>Update Terakhir: Hari ini</span>
+        <div className="flex items-center gap-2 bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm text-slate-600 shadow-sm">
+          <TrendingUp className="w-4 h-4 text-primary" />
+          <span className="font-medium">Update Terakhir: Hari ini</span>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4 hover:border-[#6B8E23]/30 transition-colors">
-            <div className={`w-14 h-14 ${stat.bg} rounded-xl flex items-center justify-center shrink-0`}>
-              {stat.icon}
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-500 mb-1">{stat.title}</p>
-              <h3 className="text-3xl font-bold text-gray-800 leading-none">{stat.value}</h3>
-            </div>
-          </div>
+          <Card key={i} className="hover:border-primary/50 transition-colors shadow-sm">
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className={`w-14 h-14 ${stat.bg} rounded-xl flex items-center justify-center shrink-0`}>
+                <stat.icon className={`w-6 h-6 ${stat.color}`} />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-slate-500 mb-1">{stat.title}</p>
+                <h3 className="text-3xl font-bold text-slate-800 leading-none">{stat.value}</h3>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       {/* Additional Dashboards Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
         {/* Realisasi APBDes Summary */}
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold text-gray-800 flex items-center gap-2">
-              <Landmark className="w-5 h-5 text-indigo-500" />
-              Realisasi Pendapatan Desa
-            </h3>
-          </div>
-          <div className="flex flex-col items-center justify-center py-6 text-center">
-            <p className="text-sm text-gray-500 mb-2">Total Pendapatan Terrealisasi</p>
-            <h2 className="text-4xl font-black text-indigo-600 mb-2">
-              {formatRupiah(totalPendapatan)}
-            </h2>
-            <div className="inline-flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
-              +12.5% dari tahun lalu
+        <Card className="lg:col-span-4 shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <div className="space-y-1">
+              <CardTitle className="text-xl">Realisasi Pendapatan Desa</CardTitle>
+              <CardDescription>Akumulasi penerimaan APBDes tahun berjalan</CardDescription>
             </div>
-          </div>
-        </div>
+            <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center">
+              <Landmark className="w-5 h-5 text-indigo-500" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
+              <h2 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tight">
+                {formatRupiah(totalPendapatan)}
+              </h2>
+              <div className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold">
+                <TrendingUp className="w-3 h-3" />
+                +12.5% dari tahun lalu
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Quick Actions */}
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-          <h3 className="font-bold text-gray-800 mb-6">Aksi Cepat</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <button className="p-4 border border-gray-200 rounded-xl flex flex-col items-center text-center hover:bg-[#6B8E23]/5 hover:border-[#6B8E23] transition-colors group">
-              <Newspaper className="w-8 h-8 text-gray-400 group-hover:text-[#6B8E23] mb-3 transition-colors" />
-              <span className="font-medium text-gray-700 text-sm">Tulis Berita</span>
-            </button>
-            <button className="p-4 border border-gray-200 rounded-xl flex flex-col items-center text-center hover:bg-[#6B8E23]/5 hover:border-[#6B8E23] transition-colors group">
-              <Users className="w-8 h-8 text-gray-400 group-hover:text-[#6B8E23] mb-3 transition-colors" />
-              <span className="font-medium text-gray-700 text-sm">Tambah Warga</span>
-            </button>
-            <button className="p-4 border border-gray-200 rounded-xl flex flex-col items-center text-center hover:bg-[#6B8E23]/5 hover:border-[#6B8E23] transition-colors group">
-              <Package className="w-8 h-8 text-gray-400 group-hover:text-[#6B8E23] mb-3 transition-colors" />
-              <span className="font-medium text-gray-700 text-sm">Update Bansos</span>
-            </button>
-            <button className="p-4 border border-gray-200 rounded-xl flex flex-col items-center text-center hover:bg-[#6B8E23]/5 hover:border-[#6B8E23] transition-colors group">
-              <Activity className="w-8 h-8 text-gray-400 group-hover:text-[#6B8E23] mb-3 transition-colors" />
-              <span className="font-medium text-gray-700 text-sm">Laporan Stunting</span>
-            </button>
-          </div>
-        </div>
+        <Card className="lg:col-span-3 shadow-sm">
+          <CardHeader>
+            <CardTitle>Aksi Cepat</CardTitle>
+            <CardDescription>Pintasan untuk manajemen data utama</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <Button variant="outline" className="h-auto py-6 flex flex-col items-center gap-3 text-slate-600 hover:text-primary hover:border-primary/50 group">
+                <Newspaper className="w-8 h-8 group-hover:scale-110 transition-transform text-slate-400 group-hover:text-primary" />
+                <span className="font-semibold text-sm">Tulis Berita</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-6 flex flex-col items-center gap-3 text-slate-600 hover:text-primary hover:border-primary/50 group">
+                <Users className="w-8 h-8 group-hover:scale-110 transition-transform text-slate-400 group-hover:text-primary" />
+                <span className="font-semibold text-sm">Tambah Warga</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-6 flex flex-col items-center gap-3 text-slate-600 hover:text-primary hover:border-primary/50 group">
+                <Package className="w-8 h-8 group-hover:scale-110 transition-transform text-slate-400 group-hover:text-primary" />
+                <span className="font-semibold text-sm">Update Bansos</span>
+              </Button>
+              <Button variant="outline" className="h-auto py-6 flex flex-col items-center gap-3 text-slate-600 hover:text-primary hover:border-primary/50 group">
+                <Activity className="w-8 h-8 group-hover:scale-110 transition-transform text-slate-400 group-hover:text-primary" />
+                <span className="font-semibold text-sm">Data Stunting</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

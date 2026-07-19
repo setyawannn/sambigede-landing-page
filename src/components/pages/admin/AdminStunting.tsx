@@ -1,8 +1,28 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Search, X } from "lucide-react";
-import type { Id } from "../../../../convex/_generated/dataModel";
+import { Plus, Pencil, Trash2, Search, Loader2 } from "lucide-react";
+import type { Id, Doc } from "../../../../convex/_generated/dataModel";
+import { toast } from "sonner";
+
+import { Card, CardContent, CardHeader } from "../../ui/card";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
+import { Badge } from "../../ui/badge";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter,
+  DialogHeader, DialogTitle,
+} from "../../ui/dialog";
+import { Label } from "../../ui/label";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "../../ui/select";
+import { Skeleton } from "../../ui/skeleton";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "../../ui/alert-dialog";
 
 export default function AdminStunting() {
   const stunting = useQuery(api.stunting.getStunting, {});
@@ -13,6 +33,9 @@ export default function AdminStunting() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editId, setEditId] = useState<Id<"stunting"> | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deleteItem, setDeleteItem] = useState<Doc<"stunting"> | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [formData, setFormData] = useState({
     nama: "",
@@ -20,7 +43,7 @@ export default function AdminStunting() {
     usia: "",
     bb: "",
     tb: "",
-    status: "Normal" as any,
+    status: "Normal" as "Normal" | "Risiko" | "Stunting",
   });
 
   const filteredStunting = stunting?.filter(s => 
@@ -28,7 +51,7 @@ export default function AdminStunting() {
     s.dusun.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleOpenModal = (item?: any) => {
+  const handleOpenModal = (item?: Doc<"stunting">) => {
     if (item) {
       setEditId(item._id);
       setFormData({
@@ -55,147 +78,213 @@ export default function AdminStunting() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editId) {
-      await updateStunting({ id: editId, ...formData });
-    } else {
-      await createStunting(formData);
+    setIsSubmitting(true);
+    try {
+      if (editId) {
+        await updateStunting({ id: editId, ...formData });
+      } else {
+        await createStunting(formData);
+      }
+      setIsModalOpen(false);
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsModalOpen(false);
   };
 
-  const handleDelete = async (id: Id<"stunting">) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus data balita ini?")) {
-      await deleteStunting({ id });
-    }
+  const handleDelete = (item: Doc<"stunting">) => {
+    setDeleteItem(item);
   };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">Data Stunting</h2>
-          <p className="text-gray-500 text-sm mt-1">Kelola data posyandu dan perkembangan balita.</p>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-800">Data Stunting</h2>
+          <p className="text-slate-500 mt-1">Kelola data posyandu dan perkembangan balita.</p>
         </div>
-        <button 
-          onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 bg-[#6B8E23] hover:bg-[#5A7A1E] text-white px-4 py-2 rounded-lg font-medium transition-colors"
-        >
-          <Plus className="w-5 h-5" /> Tambah Data
-        </button>
+        <Button onClick={() => handleOpenModal()} className="gap-2">
+          <Plus className="w-4 h-4" /> Tambah Data
+        </Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 flex items-center gap-4">
-          <div className="relative flex-1 max-w-md">
-            <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input 
+      <Card className="shadow-sm">
+        <CardHeader className="p-4 border-b">
+          <div className="relative w-full sm:w-96">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Input 
               type="text" 
               placeholder="Cari nama balita atau dusun..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#6B8E23]"
+              className="pl-9 bg-slate-50"
             />
           </div>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-200">
-                <th className="py-3 px-4 font-semibold">Nama Balita</th>
-                <th className="py-3 px-4 font-semibold">Dusun</th>
-                <th className="py-3 px-4 font-semibold">Usia (Bulan)</th>
-                <th className="py-3 px-4 font-semibold">BB / TB</th>
-                <th className="py-3 px-4 font-semibold">Status</th>
-                <th className="py-3 px-4 font-semibold text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 text-sm">
-              {filteredStunting?.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-8 text-center text-gray-500">Tidak ada data stunting.</td>
-                </tr>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader className="bg-slate-50">
+              <TableRow>
+                <TableHead className="font-semibold text-slate-700">Nama Balita</TableHead>
+                <TableHead className="font-semibold text-slate-700">Dusun</TableHead>
+                <TableHead className="font-semibold text-slate-700">Usia</TableHead>
+                <TableHead className="font-semibold text-slate-700">Gizi (BB/TB)</TableHead>
+                <TableHead className="font-semibold text-slate-700">Status</TableHead>
+                <TableHead className="text-right font-semibold text-slate-700">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {stunting === undefined ? (
+                Array.from({ length: 4 }).map((_, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Skeleton className="w-8 h-8 rounded" />
+                        <Skeleton className="w-8 h-8 rounded" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : filteredStunting?.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center text-slate-500">
+                    Tidak ada data stunting.
+                  </TableCell>
+                </TableRow>
               ) : (
                 filteredStunting?.map((item) => (
-                  <tr key={item._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="py-3 px-4 font-semibold text-gray-800">{item.nama}</td>
-                    <td className="py-3 px-4">{item.dusun}</td>
-                    <td className="py-3 px-4">{item.usia} bln</td>
-                    <td className="py-3 px-4">{item.bb} kg / {item.tb} cm</td>
-                    <td className="py-3 px-4">
-                      <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${
-                        item.status === 'Normal' ? 'bg-green-100 text-green-700' :
-                        item.status === 'Risiko' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-red-100 text-red-700'
-                      }`}>
+                  <TableRow key={item._id} className="hover:bg-slate-50/50">
+                    <TableCell className="py-3 font-semibold text-slate-800">{item.nama}</TableCell>
+                    <TableCell className="py-3 text-slate-600">{item.dusun}</TableCell>
+                    <TableCell className="py-3 text-slate-600">{item.usia} bln</TableCell>
+                    <TableCell className="py-3 text-slate-600">
+                      {item.bb} kg <span className="text-slate-300">/</span> {item.tb} cm
+                    </TableCell>
+                    <TableCell className="py-3">
+                      <Badge variant="secondary" className={
+                        item.status === 'Normal' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' :
+                        item.status === 'Risiko' ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' :
+                        'bg-rose-100 text-rose-800 hover:bg-rose-200'
+                      }>
                         {item.status}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <button onClick={() => handleOpenModal(item)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="py-3 text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="icon" onClick={() => handleOpenModal(item)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">
                           <Pencil className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => handleDelete(item._id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors">
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(item)} className="text-red-600 hover:text-red-700 hover:bg-red-50">
                           <Trash2 className="w-4 h-4" />
-                        </button>
+                        </Button>
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h3 className="font-bold text-lg">{editId ? "Edit Data Balita" : "Tambah Data Balita"}</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-gray-800"><X className="w-5 h-5"/></button>
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editId ? "Edit Data Balita" : "Tambah Data Balita"}</DialogTitle>
+            <DialogDescription>
+              Catat perkembangan balita untuk pemantauan stunting.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="nama">Nama Balita</Label>
+                <Input id="nama" required value={formData.nama} onChange={e => setFormData({...formData, nama: e.target.value})} placeholder="Nama lengkap balita" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dusun">Dusun</Label>
+                <Input id="dusun" required value={formData.dusun} onChange={e => setFormData({...formData, dusun: e.target.value})} placeholder="Nama dusun/alamat" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="usia">Usia (Bulan)</Label>
+                <Input id="usia" required value={formData.usia} onChange={e => setFormData({...formData, usia: e.target.value})} placeholder="Contoh: 12" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="status">Status Gizi</Label>
+                <Select value={formData.status} onValueChange={(val: "Normal" | "Risiko" | "Stunting") => setFormData({...formData, status: val})}>
+                  <SelectTrigger id="status"><SelectValue placeholder="Pilih Status" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Normal">Normal</SelectItem>
+                    <SelectItem value="Risiko">Risiko</SelectItem>
+                    <SelectItem value="Stunting">Stunting</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="bb">Berat Badan (kg)</Label>
+                <Input id="bb" required value={formData.bb} onChange={e => setFormData({...formData, bb: e.target.value})} placeholder="Contoh: 10.5" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tb">Tinggi Badan (cm)</Label>
+                <Input id="tb" required value={formData.tb} onChange={e => setFormData({...formData, tb: e.target.value})} placeholder="Contoh: 80" />
+              </div>
             </div>
-            <form onSubmit={handleSubmit} className="p-4 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Nama Balita</label>
-                  <input required type="text" value={formData.nama} onChange={e => setFormData({...formData, nama: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Dusun</label>
-                  <input required type="text" value={formData.dusun} onChange={e => setFormData({...formData, dusun: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Usia (Bulan)</label>
-                  <input required type="text" value={formData.usia} onChange={e => setFormData({...formData, usia: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Status Gizi</label>
-                  <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value as any})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none">
-                    <option value="Normal">Normal</option>
-                    <option value="Risiko">Risiko</option>
-                    <option value="Stunting">Stunting</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Berat Badan (kg)</label>
-                  <input required type="text" value={formData.bb} onChange={e => setFormData({...formData, bb: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" placeholder="Contoh: 10.5" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Tinggi Badan (cm)</label>
-                  <input required type="text" value={formData.tb} onChange={e => setFormData({...formData, tb: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" placeholder="Contoh: 80" />
-                </div>
-              </div>
-              
-              <div className="pt-4 flex justify-end gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border rounded font-medium text-gray-600 hover:bg-gray-50">Batal</button>
-                <button type="submit" className="px-4 py-2 bg-[#6B8E23] text-white rounded font-medium hover:bg-[#5A7A1E]">Simpan</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            
+            <DialogFooter className="pt-4 border-t mt-4">
+              <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)} disabled={isSubmitting}>Batal</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Menyimpan...
+                  </>
+                ) : (
+                  "Simpan Data"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={deleteItem !== null} onOpenChange={(open) => !open && setDeleteItem(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Data Stunting</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tindakan ini tidak dapat dibatalkan. Data stunting balita "{deleteItem?.nama}" akan dihapus secara permanen.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700 text-white"
+              onClick={async (e) => {
+                e.preventDefault();
+                if (!deleteItem) return;
+                setIsDeleting(true);
+                try {
+                  await deleteStunting({ id: deleteItem._id });
+                  toast.success("Data stunting berhasil dihapus");
+                  setDeleteItem(null);
+                } catch (error) {
+                  console.error("Gagal menghapus data", error);
+                  toast.error("Gagal menghapus data stunting");
+                } finally {
+                  setIsDeleting(false);
+                }
+              }}
+            >
+              {isDeleting ? "Menghapus..." : "Hapus"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

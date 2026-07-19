@@ -8,6 +8,69 @@ export const getPenduduk = query({
   },
 });
 
+export const getPendudukFiltered = query({
+  args: {
+    nama: v.optional(v.string()),
+    rt: v.optional(v.string()),
+    rw: v.optional(v.string()),
+    jk: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    let q: any = ctx.db.query("penduduk");
+
+    // Use search index if nama is provided
+    if (args.nama && args.nama.trim() !== "") {
+      const namaSearch = args.nama.trim();
+      return await ctx.db
+        .query("penduduk")
+        .withSearchIndex("search_nama", (q) => {
+          let search = q.search("nama", namaSearch);
+          if (args.rt && args.rt !== "Semua") {
+            search = search.eq("rt", args.rt);
+          }
+          if (args.rw && args.rw !== "Semua") {
+            search = search.eq("rw", args.rw);
+          }
+          if (args.jk && args.jk !== "Semua") {
+            search = search.eq("jk", args.jk as "Laki-laki" | "Perempuan");
+          }
+          return search;
+        })
+        .collect();
+    }
+
+    // Otherwise use regular indexes if only one filter is provided, or just filter
+    if (args.rt && args.rt !== "Semua") {
+      q = q.withIndex("by_rt", (dbQ: any) => dbQ.eq("rt", args.rt!));
+    } else if (args.rw && args.rw !== "Semua") {
+      q = q.withIndex("by_rw", (dbQ: any) => dbQ.eq("rw", args.rw!));
+    } else if (args.jk && args.jk !== "Semua") {
+      q = q.withIndex("by_jk", (dbQ: any) => dbQ.eq("jk", args.jk as "Laki-laki" | "Perempuan"));
+    }
+
+    // Filter remaining conditions
+    q = q.filter((dbQ: any) => {
+      const conds = [];
+      if (args.rt && args.rt !== "Semua" && q.indexName !== "by_rt") {
+        conds.push(dbQ.eq(dbQ.field("rt"), args.rt));
+      }
+      if (args.rw && args.rw !== "Semua" && q.indexName !== "by_rw") {
+        conds.push(dbQ.eq(dbQ.field("rw"), args.rw));
+      }
+      if (args.jk && args.jk !== "Semua" && q.indexName !== "by_jk") {
+        conds.push(dbQ.eq(dbQ.field("jk"), args.jk as "Laki-laki" | "Perempuan"));
+      }
+
+      if (conds.length === 0) return true;
+      if (conds.length === 1) return conds[0];
+      return dbQ.and(...conds);
+    });
+
+    return await q.collect();
+  },
+});
+
+
 export const getPendudukByNik = query({
   args: { nik: v.string() },
   handler: async (ctx, args) => {

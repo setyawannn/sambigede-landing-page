@@ -1,16 +1,25 @@
-import { Link, Outlet, useLocation, useNavigate, useRouter } from "@tanstack/react-router";
+import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { 
-  LayoutDashboard, Newspaper, Users, Package, Activity, 
-  Landmark, Settings, LogOut, Menu, X, Bell 
+  LayoutDashboard, Newspaper, Settings, LogOut, Bell, Database, ChevronDown, PieChart, Landmark,
+  Building2, Handshake, Users, FolderOpen, Home
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useAuth } from "../../../lib/auth";
+import { 
+  Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, 
+  SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
+  SidebarProvider, SidebarTrigger, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton
+} from "../../ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../ui/collapsible";
+import { Avatar, AvatarFallback } from "../../ui/avatar";
+import { Button } from "../../ui/button";
+import { Skeleton } from "../../ui/skeleton";
+
+import { Toaster } from "../../ui/sonner";
 
 export default function AdminLayout() {
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
-  const router = useRouter();
   const { user, logout, isLoading } = useAuth();
 
   useEffect(() => {
@@ -19,22 +28,30 @@ export default function AdminLayout() {
     }
   }, [user, isLoading, navigate]);
 
-  if (isLoading) {
-    return <div className="flex h-screen w-screen items-center justify-center bg-gray-50 text-[#6B8E23]">Memuat panel admin...</div>;
-  }
-
-  if (!user) {
-    return null; // Will redirect shortly
-  }
+  // Early returns removed to allow layout CSR rendering
 
   const menuItems = [
-    { name: "Dashboard", path: "/admin", icon: <LayoutDashboard className="w-5 h-5" /> },
-    { name: "Kelola Berita", path: "/admin/berita", icon: <Newspaper className="w-5 h-5" /> },
-    { name: "Data Penduduk", path: "/admin/penduduk", icon: <Users className="w-5 h-5" /> },
-    { name: "Penerima Bansos", path: "/admin/bansos", icon: <Package className="w-5 h-5" /> },
-    { name: "Stunting", path: "/admin/stunting", icon: <Activity className="w-5 h-5" /> },
-    { name: "Keuangan APBDes", path: "/admin/apbdes", icon: <Landmark className="w-5 h-5" /> },
-    { name: "Pengaturan", path: "/admin/settings", icon: <Settings className="w-5 h-5" /> },
+    { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
+    { name: "Kelola Berita", path: "/admin/berita", icon: Newspaper },
+    { name: "Pengaturan", path: "/admin/settings", icon: Settings },
+  ];
+
+  const infografisItems = [
+    { name: "Data Penduduk", path: "/admin/penduduk" },
+    { name: "Penerima Bansos", path: "/admin/bansos" },
+    { name: "Stunting", path: "/admin/stunting" },
+    { name: "Keuangan APBDes", path: "/admin/apbdes" },
+  ];
+
+  const masterDataItems = [
+    { name: "Kategori Berita", path: "/admin/kategori" },
+  ];
+
+  const kelolaKontenItems = [
+    { name: "Beranda", path: "/admin/beranda", icon: Home },
+    { name: "Profil Desa & Visi Misi", path: "/admin/profil", icon: Building2 },
+    { name: "Kelembagaan", path: "/admin/kelembagaan", icon: Handshake },
+    { name: "Perangkat Desa", path: "/admin/perangkat", icon: Users },
   ];
 
   const handleLogout = () => {
@@ -42,104 +59,208 @@ export default function AdminLayout() {
     navigate({ to: "/" });
   };
 
+  const isInfografisActive = infografisItems.some(item => location.pathname.startsWith(item.path));
+  const isMasterDataActive = masterDataItems.some(item => location.pathname.startsWith(item.path));
+  const isKelolaKontenActive = kelolaKontenItems.some(item => location.pathname.startsWith(item.path));
+
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
-      {/* Sidebar */}
-      <aside 
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#1E293B] text-slate-300 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="h-16 flex items-center justify-between px-6 bg-[#0F172A]">
-          <h1 className="text-white font-bold text-lg tracking-wider">Admin Panel</h1>
-          <button className="lg:hidden text-slate-400 hover:text-white" onClick={() => setSidebarOpen(false)}>
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        
-        <div className="p-4">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 px-2">Menu Utama</p>
-          <nav className="space-y-1">
-            {menuItems.map((item) => {
-              const isActive = location.pathname === item.path || (item.path !== '/admin' && location.pathname.startsWith(item.path));
-              return (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    isActive 
-                      ? "bg-[#6B8E23] text-white" 
-                      : "hover:bg-slate-800 hover:text-white"
-                  }`}
-                  onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
-                >
-                  {item.icon}
-                  <span className="text-sm font-medium">{item.name}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-        
-        <div className="absolute bottom-0 w-full p-4 border-t border-slate-800 bg-[#0F172A]">
-          <button 
-            onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors"
-          >
-            <LogOut className="w-5 h-5" />
-            <span className="text-sm font-medium">Logout</span>
-          </button>
-        </div>
-      </aside>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-slate-50/50">
+        <Sidebar collapsible="icon" variant="sidebar" className="border-r bg-white">
+          <SidebarHeader className="h-16 flex flex-row items-center gap-2 px-4 border-b">
+            <Landmark className="w-6 h-6 text-primary shrink-0" />
+            <h1 className="text-primary font-bold text-lg tracking-wider truncate group-data-[collapsible=icon]:hidden">Sambigede Admin</h1>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                Menu Utama
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {menuItems.map((item) => {
+                    const isActive = location.pathname === item.path || (item.path !== '/admin' && location.pathname.startsWith(item.path));
+                    return (
+                      <SidebarMenuItem key={item.name}>
+                        <SidebarMenuButton 
+                          asChild 
+                          isActive={isActive} 
+                          tooltip={item.name}
+                          className={isActive ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground" : ""}
+                        >
+                          <Link to={item.path} className="flex items-center gap-3">
+                            <item.icon className="w-5 h-5" />
+                            <span className="group-data-[collapsible=icon]:hidden">{item.name}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
-        {/* Top Header */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 z-10 shrink-0 shadow-sm">
-          <button 
-            className="lg:hidden text-gray-500 hover:text-gray-700" 
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-          
-          <div className="hidden lg:block">
-            <h2 className="text-lg font-semibold text-gray-800">Sistem Informasi Desa Sambigede</h2>
-          </div>
+                  <Collapsible defaultOpen={isKelolaKontenActive} className="group/collapsible">
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton tooltip="Kelola Konten" isActive={isKelolaKontenActive}>
+                          <FolderOpen className="w-5 h-5" />
+                          <span className="group-data-[collapsible=icon]:hidden">Kelola Konten</span>
+                          <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
+                          {kelolaKontenItems.map((item) => {
+                            const isActive = location.pathname.startsWith(item.path);
+                            return (
+                              <SidebarMenuSubItem key={item.name}>
+                                <SidebarMenuSubButton asChild isActive={isActive} className={isActive ? "bg-slate-100 font-medium text-primary" : ""}>
+                                  <Link to={item.path} className="flex items-center gap-2">
+                                    <item.icon className="w-4 h-4" />
+                                    <span>{item.name}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            );
+                          })}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
 
-          <div className="flex items-center gap-4">
-            <button className="relative p-2 text-gray-400 hover:text-gray-600 transition-colors">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-            </button>
-            <div className="h-8 w-px bg-gray-200"></div>
-            <div className="flex items-center gap-3 cursor-pointer group">
-              <div className="w-9 h-9 rounded-full bg-[#6B8E23] flex items-center justify-center text-white font-bold shadow-sm group-hover:bg-[#5A7A1E] transition-colors">
-                {user.nama.charAt(0).toUpperCase()}
-              </div>
-              <div className="hidden md:block text-right">
-                <p className="text-sm font-semibold text-gray-800 leading-none">{user.nama}</p>
-                <p className="text-xs text-gray-500 mt-1">{user.role}</p>
+                  <Collapsible defaultOpen={isInfografisActive} className="group/collapsible">
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton tooltip="Infografis" isActive={isInfografisActive}>
+                          <PieChart className="w-5 h-5" />
+                          <span className="group-data-[collapsible=icon]:hidden">Infografis</span>
+                          <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
+                          {infografisItems.map((item) => {
+                            const isActive = location.pathname.startsWith(item.path);
+                            return (
+                              <SidebarMenuSubItem key={item.name}>
+                                <SidebarMenuSubButton asChild isActive={isActive} className={isActive ? "bg-slate-100 font-medium text-primary" : ""}>
+                                  <Link to={item.path}>
+                                    <span>{item.name}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            );
+                          })}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+
+                  <Collapsible defaultOpen={isMasterDataActive} className="group/collapsible">
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton tooltip="Master Data" isActive={isMasterDataActive}>
+                          <Database className="w-5 h-5" />
+                          <span className="group-data-[collapsible=icon]:hidden">Master Data</span>
+                          <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
+                          {masterDataItems.map((item) => {
+                            const isActive = location.pathname.startsWith(item.path);
+                            return (
+                              <SidebarMenuSubItem key={item.name}>
+                                <SidebarMenuSubButton asChild isActive={isActive} className={isActive ? "bg-slate-100 font-medium text-primary" : ""}>
+                                  <Link to={item.path}>
+                                    <span>{item.name}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            );
+                          })}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+          <SidebarFooter className="p-4 border-t border-slate-100">
+             <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={handleLogout} className="text-red-500 hover:text-red-600 hover:bg-red-50">
+                    <LogOut className="w-5 h-5" />
+                    <span className="group-data-[collapsible=icon]:hidden">Logout</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+             </SidebarMenu>
+          </SidebarFooter>
+        </Sidebar>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
+          {/* Top Header */}
+          <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 shrink-0 z-10 sticky top-0">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="text-slate-500" />
+              <h2 className="hidden lg:block text-lg font-semibold text-slate-800">
+                Sistem Informasi Desa Sambigede
+              </h2>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" className="relative text-slate-500">
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+              </Button>
+              <div className="h-8 w-px bg-slate-200"></div>
+              <div className="flex items-center gap-3">
+                <div className="hidden md:block text-right">
+                  <div className="text-sm font-semibold text-slate-800 leading-none">
+                    {isLoading || !user ? <Skeleton className="h-4 w-20 ml-auto" /> : user.nama}
+                  </div>
+                  <div className="text-xs text-slate-500 mt-1">
+                    {isLoading || !user ? <Skeleton className="h-3 w-12 ml-auto" /> : user.role}
+                  </div>
+                </div>
+                <Avatar className="h-9 w-9 bg-primary">
+                  <AvatarFallback className="bg-primary text-primary-foreground">
+                    {user?.nama.charAt(0).toUpperCase() || "?"}
+                  </AvatarFallback>
+                </Avatar>
               </div>
             </div>
-          </div>
-        </header>
+          </header>
 
-        {/* Dashboard Content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-4 lg:p-8">
-          <div className="max-w-7xl mx-auto">
-            <Outlet />
-          </div>
-        </main>
+          {/* Dashboard Content */}
+          <main className="flex-1 overflow-y-auto p-4 lg:p-8">
+            <div className="max-w-7xl mx-auto space-y-6">
+              {isLoading || !user ? (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <div className="space-y-2">
+                      <Skeleton className="h-8 w-48" />
+                      <Skeleton className="h-4 w-64" />
+                    </div>
+                    <Skeleton className="h-10 w-32" />
+                  </div>
+                  <Skeleton className="h-12 w-full max-w-sm" />
+                  <div className="space-y-3">
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                  </div>
+                </div>
+              ) : (
+                <Outlet />
+              )}
+            </div>
+          </main>
+        </div>
       </div>
-
-      {/* Mobile Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-    </div>
+      <Toaster />
+    </SidebarProvider>
   );
 }

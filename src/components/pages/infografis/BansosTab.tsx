@@ -41,12 +41,12 @@ export default function BansosTab() {
       "PKH": 0,
       "BPNT": 0,
       "BLT Dana Desa": 0,
-      "Bantuan Pangan": 0,
+      "Bantuan Dana Pangan": 0,
       "Lainnya": 0
     };
 
     bansosList.forEach(b => {
-      if (count[b.jenisBansos] !== undefined) {
+      if (b.jenisBansos in count) {
         count[b.jenisBansos]++;
       } else {
         count["Lainnya"]++;

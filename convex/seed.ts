@@ -19,10 +19,26 @@ export const seedDatabase = mutation({
       }
     }
 
+    // Seed Kategori Berita
+    const SEED_KATEGORI: any[] = [
+      { nama: "Pembangunan", slug: "pembangunan" },
+      { nama: "Pemerintahan", slug: "pemerintahan" },
+      { nama: "Kesehatan", slug: "kesehatan" },
+      { nama: "Pendidikan", slug: "pendidikan" },
+    ];
+
+    const existingKategori = await ctx.db.query("kategori_berita").collect();
+    for (const kat of SEED_KATEGORI) {
+      const match = existingKategori.find(x => x.slug === kat.slug);
+      if (!match) {
+        await ctx.db.insert("kategori_berita", kat);
+      }
+    }
+
     // Cek apakah data penduduk sudah ada untuk seed data lainnya
     const existingPenduduk = await ctx.db.query("penduduk").first();
     if (existingPenduduk) {
-      return { success: true, message: "Admin users updated/seeded, other tables already seeded" };
+      return { success: true, message: "Admin users & Kategori seeded, other tables already seeded" };
     }
 
     // Seed Data Penduduk
@@ -66,6 +82,83 @@ export const seedDatabase = mutation({
       await ctx.db.insert("apbdes", a);
     }
 
-    return { success: true, message: "Database seeded successfully!" };
+    // Seed Profil Desa
+    const existingProfil = await ctx.db.query("profil_desa").first();
+    if (!existingProfil) {
+      await ctx.db.insert("profil_desa", {
+        visi: "Terwujudnya Desa Sambigede Yang Mandiri, Sejahtera, Agamis, dan Berbudaya Melalui Tata Kelola Pemerintahan Yang Bersih dan Inovatif.",
+        misi: [
+          "Meningkatkan kualitas pelayanan publik melalui digitalisasi dan transparansi.",
+          "Membangun dan memelihara infrastruktur desa yang berkualitas secara merata.",
+          "Pemberdayaan ekonomi kerakyatan melalui BUMDes dan kelompok usaha tani.",
+          "Meningkatkan kualitas kesehatan, pendidikan, dan kerukunan antar warga."
+        ],
+        sejarah: "Desa Sambigede adalah desa yang kaya akan potensi alam dan budaya.",
+      });
+    }
+
+    // Seed Beranda Config
+    const existingBeranda = await ctx.db.query("beranda_config").first();
+    if (!existingBeranda) {
+      await ctx.db.insert("beranda_config", {
+        heroBadge: "Transformasi Menuju Desa Digital",
+        heroTitle: "Selamat Datang di \n Desa Sambigede",
+        heroSubtitle: "Website Resmi Desa Sambigede. Sumber informasi terbaru tentang pemerintahan yang berorientasi pada keterbukaan informasi publik.",
+        heroImageUrl: "https://images.unsplash.com/photo-1662083555510-1187b2aba1e2?auto=format&fit=crop&w=1920&q=80",
+        kadesPeriode: "Periode 2024 - 2029",
+        kadesSambutan: "Assalamu'alaikum Warahmatullahi Wabarakatuh. Selamat datang di website resmi Desa Sambigede, Kecamatan Binangun, Kabupaten Blitar. Melalui portal website ini, kami berharap dapat memberikan transparansi informasi pemerintahan, mempermudah pelayanan administrasi, dan memperkenalkan seluruh potensi unggulan Desa Sambigede kepada masyarakat luas.",
+      });
+    }
+
+    // Seed Kelembagaan (Sample)
+    const existingKelembagaan = await ctx.db.query("kelembagaan").first();
+    if (!existingKelembagaan) {
+      const bpdId = await ctx.db.insert("kelembagaan", {
+        nama: "Badan Permusyawaratan Desa",
+        singkatan: "BPD",
+        logoUrl: "", // Akan diupdate via admin
+        deskripsi: "Lembaga perwujudan demokrasi dalam penyelenggaraan pemerintahan desa.",
+        urutan: 1,
+      });
+
+      await ctx.db.insert("pengurus_kelembagaan", {
+        kelembagaanId: bpdId,
+        nama: "CH.A.ALI WAHYUDI, S.E",
+        jabatan: "Ketua (merangkap anggota)",
+        urutan: 1,
+      });
+    }
+
+    // Seed Perangkat Desa
+    const existingPerangkat = await ctx.db.query("perangkat_desa").first();
+    if (!existingPerangkat) {
+      const perangkatList = [
+        { nama: "Roihan Al Madzhar", jabatan: "Kepala Desa" },
+        { nama: "Agus Anang Styobudi, S.Kom", jabatan: "Sekretaris Desa" },
+        { nama: "Budi Kurniawan, S.Pd.SD", jabatan: "Kasi Pemerintahan" },
+        { nama: "Suhadi", jabatan: "Kasi Kesejahteraan" },
+        { nama: "Siti Nur Kolifah, S.Ak", jabatan: "Kasi Pelayanan" },
+        { nama: "Agus Wiyono", jabatan: "Kaur Tata Usaha & Umum" },
+        { nama: "Sunarmi", jabatan: "Kaur Keuangan" },
+        { nama: "Bibit Hasanuddin", jabatan: "Kaur Perencanaan" },
+        { nama: "Sundari", jabatan: "Kamituwo Dusun Sambigede" },
+        { nama: "Pitantoro", jabatan: "Kamituwo Dusun Paldoyong" },
+        { nama: "Imam Mahfud", jabatan: "Karyawan Desa (Staf Kewilayahan)" },
+        { nama: "Muhyiddin", jabatan: "Karyawan Desa (Modin Islam)" },
+        { nama: "Riadi", jabatan: "Karyawan Desa (Kebersihan Kantor)" }
+      ];
+
+      for (let i = 0; i < perangkatList.length; i++) {
+        await ctx.db.insert("perangkat_desa", {
+          nama: perangkatList[i].nama,
+          jabatan: perangkatList[i].jabatan,
+          imageUrl: "",
+          urutan: i + 1,
+          status: "Aktif",
+        });
+      }
+    }
+    
+    return { success: true, message: "Database seeded successfully with Profil & Kelembagaan!" };
   },
 });

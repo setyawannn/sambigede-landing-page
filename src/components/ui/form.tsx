@@ -1,17 +1,18 @@
 "use client";
 
 import * as React from "react";
-import * as LabelPrimitive from "@radix-ui/react-label";
+import type * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
 import {
   Controller,
   FormProvider,
   useFormContext,
-  useFormState,
-  type ControllerProps,
-  type FieldPath,
-  type FieldValues,
+  useFormState
+  
+  
+  
 } from "react-hook-form";
+import type {ControllerProps, FieldPath, FieldValues} from "react-hook-form";
 
 import { cn } from "#/lib/utils.ts";
 import { Label } from "./label";
@@ -49,9 +50,6 @@ const useFormField = () => {
   const formState = useFormState({ name: fieldContext.name });
   const fieldState = getFieldState(fieldContext.name, formState);
 
-  if (!fieldContext) {
-    throw new Error("useFormField should be used within <FormField>");
-  }
 
   const { id } = itemContext;
 

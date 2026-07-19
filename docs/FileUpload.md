@@ -189,3 +189,34 @@ const hapusDataBerita = async (idBerita: string, fileKeyGambar: string) => {
 2. **UX (User Experience)**: Tampilkan *loading state* (contoh: persentase angka unggahan atau spinner) karena proses pengunggahan PUT HTTP dapat memakan waktu selama 1-2 detik tergantung kecepatan koneksi klien.
 3. **Pembersihan Rutin (Garbage Collection)**: Jika Anda khawatir ada "URL yatim piatu" (berkas terunggah tetapi data Convex gagal disimpan), sangat disarankan menyimpan riwayat `fileKey` sementara atau melakukan script pencocokan bucket & convex setiap bulan.
 4. **Lebar Responsif (Frontend)**: Meskipun file sudah dikompresi menjadi WebP dengan kualitas tinggi, usahakan tetap memuat gambar tersebut dalam HTML menggunakan properti `loading="lazy"` agar performa *Lighthouse* Google tetap optimal.
+
+---
+
+## Masalah Umum: Pemblokiran DNS & Gambar Tidak Tampil (Jaringan Telkom/Indihome)
+
+Ketika menggunakan subdomain publik default dari Cloudflare R2 (`https://pub-*.r2.dev`), Anda mungkin menemukan masalah di mana berkas berhasil diunggah ke R2, namun gambar preview di halaman web tidak muncul (error koneksi / *Connection Refused*).
+
+### Penyebab
+Penyedia layanan internet (ISP) di Indonesia, khususnya **Telkom Group (Indihome & Telkomsel)**, memblokir domain bawaan `*.r2.dev` menggunakan sistem DNS hijacking mereka (Internet Positif). Hal ini mengakibatkan browser tidak dapat melakukan `GET` request untuk mengambil gambar tersebut dari jaringan lokal Indonesia.
+
+### Cara Mengatasi
+
+#### 1. Ujicoba di Lingkungan Lokal (Development)
+Untuk keperluan pengembangan atau ujicoba lokal, aktifkan VPN atau **Cloudflare WARP (1.1.1.1)** pada komputer Anda. Dengan melompati DNS resolver milik ISP, gambar R2 akan langsung termuat secara normal.
+
+#### 2. Kebutuhan Rilis Resmi (Production)
+Agar warga desa (sebagai pengunjung umum) dapat melihat gambar berita tanpa harus menyalakan VPN/WARP, Anda wajib menggunakan **Custom Domain** untuk bucket R2 Anda:
+
+1. Buka **Cloudflare Dashboard** -> **R2** -> pilih bucket `sambigede-landing-page`.
+2. Klik tab **Settings**.
+3. Cari bagian **Public Access** -> **Custom Domains**.
+4. Klik **Connect Domain**, lalu masukkan subdomain Anda (misalnya: `media.sambigede.desa.id` atau `assets.sambigede.desa.id`).
+5. DNS record akan dikonfigurasi secara otomatis oleh Cloudflare.
+6. Perbarui nilai `VITE_R2_PUBLIC_URL` di file `.env.local` Anda menggunakan alamat domain baru tersebut:
+   ```env
+   VITE_R2_PUBLIC_URL="https://media.sambigede.desa.id"
+   ```
+
+> [!NOTE]
+> Custom Domain tidak diblokir oleh ISP Indonesia karena tidak mengandung domain bawaan `r2.dev`, sehingga gambar dapat diakses oleh siapa saja dengan lancar.
+

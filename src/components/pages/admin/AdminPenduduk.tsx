@@ -1,18 +1,51 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Search, X } from "lucide-react";
-import type { Id } from "../../../../convex/_generated/dataModel";
+import { Plus, Pencil, Trash2, Search, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import type { Id, Doc } from "../../../../convex/_generated/dataModel";
+import { toast } from "sonner";
+
+import { Card, CardContent, CardHeader } from "../../ui/card";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter,
+  DialogHeader, DialogTitle,
+} from "../../ui/dialog";
+import { Label } from "../../ui/label";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "../../ui/select";
+import { Skeleton } from "../../ui/skeleton";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "../../ui/alert-dialog";
 
 export default function AdminPenduduk() {
-  const penduduk = useQuery(api.penduduk.getPenduduk, {});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterRt, setFilterRt] = useState("Semua");
+  const [filterRw, setFilterRw] = useState("Semua");
+  const [filterJk, setFilterJk] = useState("Semua");
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const penduduk = useQuery(api.penduduk.getPendudukFiltered, {
+    nama: searchTerm,
+    rt: filterRt,
+    rw: filterRw,
+    jk: filterJk,
+  });
   const deletePenduduk = useMutation(api.penduduk.deletePenduduk);
   const createPenduduk = useMutation(api.penduduk.createPenduduk);
   const updatePenduduk = useMutation(api.penduduk.updatePenduduk);
-
-  const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editId, setEditId] = useState<Id<"penduduk"> | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deleteItem, setDeleteItem] = useState<Doc<"penduduk"> | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [formData, setFormData] = useState({
     nik: "",
@@ -25,12 +58,43 @@ export default function AdminPenduduk() {
     pekerjaan: "",
   });
 
-  const filteredPenduduk = penduduk?.filter(p => 
-    p.nama.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    p.nik.includes(searchTerm)
+  const totalItems = penduduk?.length || 0;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  
+  const currentData = penduduk?.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
-  const handleOpenModal = (item?: any) => {
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('...');
+        pages.push(currentPage - 1);
+        pages.push(currentPage);
+        pages.push(currentPage + 1);
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+    return pages;
+  };
+
+  const handleOpenModal = (item?: Doc<"penduduk">) => {
     if (item) {
       setEditId(item._id);
       setFormData({
@@ -61,156 +125,339 @@ export default function AdminPenduduk() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editId) {
-      await updatePenduduk({ id: editId, ...formData });
-    } else {
-      await createPenduduk(formData);
+    setIsSubmitting(true);
+    try {
+      if (editId) {
+        await updatePenduduk({ id: editId, ...formData });
+      } else {
+        await createPenduduk(formData);
+      }
+      setIsModalOpen(false);
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsModalOpen(false);
   };
 
-  const handleDelete = async (id: Id<"penduduk">) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus data penduduk ini?")) {
-      await deletePenduduk({ id });
-    }
+  const handleDelete = (item: Doc<"penduduk">) => {
+    setDeleteItem(item);
   };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">Data Penduduk</h2>
-          <p className="text-gray-500 text-sm mt-1">Kelola data demografi dan kependudukan desa.</p>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-800">Data Penduduk</h2>
+          <p className="text-slate-500 mt-1">Kelola data demografi dan kependudukan desa.</p>
         </div>
-        <button 
-          onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 bg-[#6B8E23] hover:bg-[#5A7A1E] text-white px-4 py-2 rounded-lg font-medium transition-colors"
-        >
-          <Plus className="w-5 h-5" /> Tambah Warga
-        </button>
+        <Button onClick={() => handleOpenModal()} className="gap-2">
+          <Plus className="w-4 h-4" /> Tambah Warga
+        </Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 flex items-center gap-4">
-          <div className="relative flex-1 max-w-md">
-            <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input 
-              type="text" 
-              placeholder="Cari nama atau NIK..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#6B8E23]"
-            />
-          </div>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-200">
-                <th className="py-3 px-4 font-semibold">NIK</th>
-                <th className="py-3 px-4 font-semibold">Nama Lengkap</th>
-                <th className="py-3 px-4 font-semibold">L/P</th>
-                <th className="py-3 px-4 font-semibold">Alamat (RT/RW)</th>
-                <th className="py-3 px-4 font-semibold">Status/Pekerjaan</th>
-                <th className="py-3 px-4 font-semibold text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 text-sm">
-              {filteredPenduduk?.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-8 text-center text-gray-500">Tidak ada data penduduk.</td>
-                </tr>
+      <Card className="shadow-sm">
+        <CardHeader className="p-4 border-b">
+            <div className="flex flex-col sm:flex-row gap-4 w-full">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Input 
+                  type="text" 
+                  placeholder="Cari nama..." 
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="pl-9 bg-slate-50"
+                />
+              </div>
+              <div className="flex flex-wrap sm:flex-nowrap gap-2">
+                <Select value={filterRt} onValueChange={(val) => { setFilterRt(val); setCurrentPage(1); }}>
+                  <SelectTrigger className="w-full sm:w-[120px] bg-slate-50">
+                    <SelectValue placeholder="Semua RT" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Semua">Semua RT</SelectItem>
+                    {Array.from({length: 10}).map((_, i) => (
+                      <SelectItem key={i} value={`00${i+1}`.slice(-3)}>{`00${i+1}`.slice(-3)}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={filterRw} onValueChange={(val) => { setFilterRw(val); setCurrentPage(1); }}>
+                  <SelectTrigger className="w-full sm:w-[120px] bg-slate-50">
+                    <SelectValue placeholder="Semua RW" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Semua">Semua RW</SelectItem>
+                    {Array.from({length: 5}).map((_, i) => (
+                      <SelectItem key={i} value={`00${i+1}`.slice(-3)}>{`00${i+1}`.slice(-3)}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={filterJk} onValueChange={(val) => { setFilterJk(val); setCurrentPage(1); }}>
+                  <SelectTrigger className="w-full sm:w-[150px] bg-slate-50">
+                    <SelectValue placeholder="Semua Gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Semua">Semua Gender</SelectItem>
+                    <SelectItem value="Laki-laki">Laki-laki</SelectItem>
+                    <SelectItem value="Perempuan">Perempuan</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader className="bg-slate-50">
+              <TableRow>
+                <TableHead className="font-semibold text-slate-700">NIK</TableHead>
+                <TableHead className="font-semibold text-slate-700">Nama Lengkap</TableHead>
+                <TableHead className="font-semibold text-slate-700">L/P</TableHead>
+                <TableHead className="font-semibold text-slate-700">Alamat</TableHead>
+                <TableHead className="font-semibold text-slate-700">Status/Pekerjaan</TableHead>
+                <TableHead className="text-right font-semibold text-slate-700">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {penduduk === undefined ? (
+                Array.from({ length: 4 }).map((_, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-6" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-3 w-16" />
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Skeleton className="w-8 h-8 rounded" />
+                        <Skeleton className="w-8 h-8 rounded" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : currentData?.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center text-slate-500">
+                    Tidak ada data penduduk yang ditemukan.
+                  </TableCell>
+                </TableRow>
               ) : (
-                filteredPenduduk?.map((item) => (
-                  <tr key={item._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="py-3 px-4 font-mono text-gray-600">{item.nik}</td>
-                    <td className="py-3 px-4 font-medium text-gray-800">{item.nama}</td>
-                    <td className="py-3 px-4">{item.jk === "Laki-laki" ? "L" : "P"}</td>
-                    <td className="py-3 px-4">RT {item.rt}/RW {item.rw}</td>
-                    <td className="py-3 px-4">
+                currentData?.map((item: Doc<"penduduk">) => (
+                  <TableRow key={item._id} className="hover:bg-slate-50/50">
+                    <TableCell className="py-3 font-mono text-slate-600">{item.nik}</TableCell>
+                    <TableCell className="py-3 font-medium text-slate-800">{item.nama}</TableCell>
+                    <TableCell className="py-3">{item.jk === "Laki-laki" ? "L" : "P"}</TableCell>
+                    <TableCell className="py-3">RT {item.rt}/RW {item.rw}</TableCell>
+                    <TableCell className="py-3">
                       <div className="flex flex-col">
-                        <span>{item.status}</span>
-                        <span className="text-gray-500 text-xs">{item.pekerjaan}</span>
+                        <span className="text-sm">{item.status}</span>
+                        <span className="text-slate-500 text-xs">{item.pekerjaan}</span>
                       </div>
-                    </td>
-                    <td className="py-3 px-4 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <button onClick={() => handleOpenModal(item)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                    </TableCell>
+                    <TableCell className="py-3 text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="icon" onClick={() => handleOpenModal(item)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">
                           <Pencil className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => handleDelete(item._id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors">
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(item)} className="text-red-600 hover:text-red-700 hover:bg-red-50">
                           <Trash2 className="w-4 h-4" />
-                        </button>
+                        </Button>
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h3 className="font-bold text-lg">{editId ? "Edit Warga" : "Tambah Warga"}</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-gray-800"><X className="w-5 h-5"/></button>
+            </TableBody>
+          </Table>
+        </CardContent>
+        {/* Pagination Section */}
+        {totalItems > 0 && (
+          <div className="p-4 border-t border-slate-100 bg-slate-50/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-sm text-slate-500">
+              Menampilkan <span className="font-medium text-slate-700">{(currentPage - 1) * itemsPerPage + 1}</span> sampai <span className="font-medium text-slate-700">{Math.min(currentPage * itemsPerPage, totalItems)}</span> dari <span className="font-medium text-slate-700">{totalItems}</span> data
             </div>
-            <form onSubmit={handleSubmit} className="p-4 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">NIK</label>
-                  <input required type="text" value={formData.nik} onChange={e => setFormData({...formData, nik: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap</label>
-                  <input required type="text" value={formData.nama} onChange={e => setFormData({...formData, nama: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Tempat, Tanggal Lahir</label>
-                  <input required type="text" value={formData.ttl} onChange={e => setFormData({...formData, ttl: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" placeholder="Contoh: Blitar, 01-01-1990" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Jenis Kelamin</label>
-                  <select value={formData.jk} onChange={e => setFormData({...formData, jk: e.target.value as any})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none">
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">RT</label>
-                  <input required type="text" value={formData.rt} onChange={e => setFormData({...formData, rt: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" placeholder="001" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">RW</label>
-                  <input required type="text" value={formData.rw} onChange={e => setFormData({...formData, rw: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" placeholder="001" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Status Perkawinan</label>
-                  <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none">
-                    <option value="Belum Kawin">Belum Kawin</option>
-                    <option value="Kawin">Kawin</option>
-                    <option value="Cerai Hidup">Cerai Hidup</option>
-                    <option value="Cerai Mati">Cerai Mati</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Pekerjaan</label>
-                  <input required type="text" value={formData.pekerjaan} onChange={e => setFormData({...formData, pekerjaan: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" />
-                </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+              <div className="flex items-center gap-2 text-sm text-slate-500">
+                <span>Baris per halaman:</span>
+                <Select
+                  value={itemsPerPage.toString()}
+                  onValueChange={(val) => {
+                    setItemsPerPage(Number(val));
+                    setCurrentPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-16 h-8 bg-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              
-              <div className="pt-4 flex justify-end gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border rounded font-medium text-gray-600 hover:bg-gray-50">Batal</button>
-                <button type="submit" className="px-4 py-2 bg-[#6B8E23] text-white rounded font-medium hover:bg-[#5A7A1E]">Simpan</button>
+
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-8 h-8"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  title="Sebelumnya"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                
+                {getPageNumbers().map((pageNum, idx) => (
+                  pageNum === '...' ? (
+                    <span key={`ellipsis-${idx}`} className="px-1 text-slate-400">...</span>
+                  ) : (
+                    <Button
+                      key={pageNum}
+                      variant={currentPage === pageNum ? "default" : "outline"}
+                      className={`w-8 h-8 p-0 ${currentPage === pageNum ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}`}
+                      onClick={() => setCurrentPage(pageNum as number)}
+                    >
+                      {pageNum}
+                    </Button>
+                  )
+                ))}
+
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-8 h-8"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  title="Selanjutnya"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
               </div>
-            </form>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </Card>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editId ? "Edit Warga" : "Tambah Warga"}</DialogTitle>
+            <DialogDescription>
+              Isi data penduduk secara lengkap pada formulir di bawah ini.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="nik">NIK</Label>
+                <Input id="nik" required value={formData.nik} onChange={e => setFormData({...formData, nik: e.target.value})} placeholder="350xxxx" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="nama">Nama Lengkap</Label>
+                <Input id="nama" required value={formData.nama} onChange={e => setFormData({...formData, nama: e.target.value})} placeholder="Sesuai KTP" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ttl">Tempat, Tanggal Lahir</Label>
+                <Input id="ttl" required value={formData.ttl} onChange={e => setFormData({...formData, ttl: e.target.value})} placeholder="Blitar, 01-01-1990" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="jk">Jenis Kelamin</Label>
+                <Select value={formData.jk} onValueChange={(val: "Laki-laki" | "Perempuan") => setFormData({...formData, jk: val})}>
+                  <SelectTrigger id="jk"><SelectValue placeholder="Pilih Jenis Kelamin" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Laki-laki">Laki-laki</SelectItem>
+                    <SelectItem value="Perempuan">Perempuan</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-2">
+                  <Label htmlFor="rt">RT</Label>
+                  <Input id="rt" required value={formData.rt} onChange={e => setFormData({...formData, rt: e.target.value})} placeholder="001" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="rw">RW</Label>
+                  <Input id="rw" required value={formData.rw} onChange={e => setFormData({...formData, rw: e.target.value})} placeholder="001" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="status">Status Perkawinan</Label>
+                <Select value={formData.status} onValueChange={val => setFormData({...formData, status: val})}>
+                  <SelectTrigger id="status"><SelectValue placeholder="Pilih Status" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Belum Kawin">Belum Kawin</SelectItem>
+                    <SelectItem value="Kawin">Kawin</SelectItem>
+                    <SelectItem value="Cerai Hidup">Cerai Hidup</SelectItem>
+                    <SelectItem value="Cerai Mati">Cerai Mati</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pekerjaan">Pekerjaan</Label>
+                <Input id="pekerjaan" required value={formData.pekerjaan} onChange={e => setFormData({...formData, pekerjaan: e.target.value})} placeholder="Pekerjaan" />
+              </div>
+            </div>
+            
+            <DialogFooter className="pt-4 border-t mt-4">
+              <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)} disabled={isSubmitting}>Batal</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Menyimpan...
+                  </>
+                ) : (
+                  "Simpan Data"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={deleteItem !== null} onOpenChange={(open) => !open && setDeleteItem(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Data Warga</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tindakan ini tidak dapat dibatalkan. Data warga "{deleteItem?.nama}" akan dihapus secara permanen.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700 text-white"
+              onClick={async (e) => {
+                e.preventDefault();
+                if (!deleteItem) return;
+                setIsDeleting(true);
+                try {
+                  await deletePenduduk({ id: deleteItem._id });
+                  toast.success("Data penduduk berhasil dihapus");
+                  setDeleteItem(null);
+                } catch (error) {
+                  console.error("Gagal menghapus data", error);
+                  toast.error("Gagal menghapus data penduduk");
+                } finally {
+                  setIsDeleting(false);
+                }
+              }}
+            >
+              {isDeleting ? "Menghapus..." : "Hapus"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

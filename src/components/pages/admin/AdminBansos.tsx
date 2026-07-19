@@ -1,8 +1,28 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Search, X } from "lucide-react";
-import type { Id } from "../../../../convex/_generated/dataModel";
+import { Plus, Pencil, Trash2, Search, Loader2 } from "lucide-react";
+import type { Id, Doc } from "../../../../convex/_generated/dataModel";
+import { toast } from "sonner";
+
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../ui/card";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
+import { Badge } from "../../ui/badge";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter,
+  DialogHeader, DialogTitle,
+} from "../../ui/dialog";
+import { Label } from "../../ui/label";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "../../ui/select";
+import { Skeleton } from "../../ui/skeleton";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "../../ui/alert-dialog";
 
 export default function AdminBansos() {
   const bansos = useQuery(api.bansos.getBansos, {});
@@ -13,17 +33,20 @@ export default function AdminBansos() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editId, setEditId] = useState<Id<"bansos"> | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deleteItem, setDeleteItem] = useState<Doc<"bansos"> | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [formData, setFormData] = useState({
     nik: "",
     nama: "",
-    jk: "Laki-laki" as any,
+    jk: "Laki-laki" as "Laki-laki" | "Perempuan" | "-",
     rt: "",
     rw: "",
-    jenisBansos: "PKH" as any,
+    jenisBansos: "PKH" as "PKH" | "BPNT" | "BLT Dana Desa" | "Bantuan Dana Pangan" | "Lainnya",
     nominal: "",
     periode: "",
-    status: "Aktif" as any,
+    status: "Aktif" as "Aktif" | "Selesai",
   });
 
   const filteredBansos = bansos?.filter(b => 
@@ -31,7 +54,7 @@ export default function AdminBansos() {
     b.nik.includes(searchTerm)
   );
 
-  const handleOpenModal = (item?: any) => {
+  const handleOpenModal = (item?: Doc<"bansos">) => {
     if (item) {
       setEditId(item._id);
       setFormData({
@@ -64,173 +87,242 @@ export default function AdminBansos() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editId) {
-      await updateBansos({ id: editId, ...formData });
-    } else {
-      await createBansos(formData);
+    setIsSubmitting(true);
+    try {
+      if (editId) {
+        await updateBansos({ id: editId, ...formData });
+      } else {
+        await createBansos(formData);
+      }
+      setIsModalOpen(false);
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsModalOpen(false);
   };
 
-  const handleDelete = async (id: Id<"bansos">) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus data bansos ini?")) {
-      await deleteBansos({ id });
-    }
+  const handleDelete = (item: Doc<"bansos">) => {
+    setDeleteItem(item);
   };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">Penerima Bansos</h2>
-          <p className="text-gray-500 text-sm mt-1">Kelola data penerima bantuan sosial masyarakat.</p>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-800">Penerima Bansos</h2>
+          <p className="text-slate-500 mt-1">Kelola data penerima bantuan sosial masyarakat.</p>
         </div>
-        <button 
-          onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 bg-[#6B8E23] hover:bg-[#5A7A1E] text-white px-4 py-2 rounded-lg font-medium transition-colors"
-        >
-          <Plus className="w-5 h-5" /> Tambah Penerima
-        </button>
+        <Button onClick={() => handleOpenModal()} className="gap-2">
+          <Plus className="w-4 h-4" /> Tambah Penerima
+        </Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 flex items-center gap-4">
-          <div className="relative flex-1 max-w-md">
-            <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input 
+      <Card className="shadow-sm">
+        <CardHeader className="p-4 border-b">
+          <div className="relative w-full sm:w-96">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Input 
               type="text" 
               placeholder="Cari nama atau NIK..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-[#6B8E23]"
+              className="pl-9 bg-slate-50"
             />
           </div>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-200">
-                <th className="py-3 px-4 font-semibold">Nama / NIK</th>
-                <th className="py-3 px-4 font-semibold">Alamat (RT/RW)</th>
-                <th className="py-3 px-4 font-semibold">Jenis & Nominal</th>
-                <th className="py-3 px-4 font-semibold">Periode & Status</th>
-                <th className="py-3 px-4 font-semibold text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 text-sm">
-              {filteredBansos?.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="py-8 text-center text-gray-500">Tidak ada data penerima bansos.</td>
-                </tr>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader className="bg-slate-50">
+              <TableRow>
+                <TableHead className="font-semibold text-slate-700">Nama / NIK</TableHead>
+                <TableHead className="font-semibold text-slate-700">Alamat</TableHead>
+                <TableHead className="font-semibold text-slate-700">Jenis</TableHead>
+                <TableHead className="font-semibold text-slate-700">Nominal</TableHead>
+                <TableHead className="font-semibold text-slate-700">Periode & Status</TableHead>
+                <TableHead className="text-right font-semibold text-slate-700">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {bansos === undefined ? (
+                Array.from({ length: 4 }).map((_, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-6" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-16 rounded-full" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-16 rounded-full" /></TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Skeleton className="w-8 h-8 rounded" />
+                        <Skeleton className="w-8 h-8 rounded" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : filteredBansos?.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-24 text-center text-slate-500">
+                    Tidak ada data bansos.
+                  </TableCell>
+                </TableRow>
               ) : (
                 filteredBansos?.map((item) => (
-                  <tr key={item._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="py-3 px-4">
-                      <p className="font-semibold text-gray-800">{item.nama}</p>
-                      <p className="font-mono text-gray-500 text-xs">{item.nik}</p>
-                    </td>
-                    <td className="py-3 px-4">RT {item.rt}/RW {item.rw}</td>
-                    <td className="py-3 px-4">
-                      <p className="font-medium">{item.jenisBansos}</p>
-                      <p className="text-gray-500 text-xs">{item.nominal}</p>
-                    </td>
-                    <td className="py-3 px-4">
-                      <p>{item.periode}</p>
-                      <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
-                        item.status === 'Aktif' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-                      }`}>
+                  <TableRow key={item._id} className="hover:bg-slate-50/50">
+                    <TableCell className="py-3 font-mono text-slate-600">{item.nik}</TableCell>
+                    <TableCell className="py-3 font-medium text-slate-800">{item.nama}</TableCell>
+                    <TableCell className="py-3">{item.jk === "Laki-laki" ? "L" : item.jk === "Perempuan" ? "P" : "-"}</TableCell>
+                    <TableCell className="py-3">RT {item.rt}/RW {item.rw}</TableCell>
+                    <TableCell className="py-3">
+                      <Badge variant="outline" className="bg-slate-50 text-slate-700">{item.jenisBansos}</Badge>
+                    </TableCell>
+                    <TableCell className="py-3">Rp {parseInt(item.nominal).toLocaleString('id-ID')}</TableCell>
+                    <TableCell className="py-3">
+                      <Badge variant={item.status === "Aktif" ? "default" : "secondary"} className={item.status === "Aktif" ? "bg-green-100 text-green-700 hover:bg-green-200 border-green-200" : ""}>
                         {item.status}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <button onClick={() => handleOpenModal(item)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="py-3 text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="icon" onClick={() => handleOpenModal(item)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">
                           <Pencil className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => handleDelete(item._id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors">
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(item)} className="text-red-600 hover:text-red-700 hover:bg-red-50">
                           <Trash2 className="w-4 h-4" />
-                        </button>
+                        </Button>
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h3 className="font-bold text-lg">{editId ? "Edit Data Bansos" : "Tambah Penerima Bansos"}</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-gray-800"><X className="w-5 h-5"/></button>
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editId ? "Edit Penerima Bansos" : "Tambah Penerima Bansos"}</DialogTitle>
+            <DialogDescription>
+              Isi data penerima bantuan sosial secara lengkap pada formulir di bawah ini.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="nik">NIK</Label>
+                <Input id="nik" required value={formData.nik} onChange={e => setFormData({...formData, nik: e.target.value})} placeholder="350xxxx" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="nama">Nama Lengkap</Label>
+                <Input id="nama" required value={formData.nama} onChange={e => setFormData({...formData, nama: e.target.value})} placeholder="Sesuai KTP" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="jk">Jenis Kelamin</Label>
+                <Select value={formData.jk} onValueChange={(val: any) => setFormData({...formData, jk: val})}>
+                  <SelectTrigger id="jk"><SelectValue placeholder="Pilih Jenis Kelamin" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Laki-laki">Laki-laki</SelectItem>
+                    <SelectItem value="Perempuan">Perempuan</SelectItem>
+                    <SelectItem value="-">-</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-2">
+                  <Label htmlFor="rt">RT</Label>
+                  <Input id="rt" required value={formData.rt} onChange={e => setFormData({...formData, rt: e.target.value})} placeholder="001" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="rw">RW</Label>
+                  <Input id="rw" required value={formData.rw} onChange={e => setFormData({...formData, rw: e.target.value})} placeholder="001" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="jenisBansos">Jenis Bantuan</Label>
+                <Select value={formData.jenisBansos} onValueChange={(val: any) => setFormData({...formData, jenisBansos: val})}>
+                  <SelectTrigger id="jenisBansos"><SelectValue placeholder="Pilih Jenis Bantuan" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PKH">PKH</SelectItem>
+                    <SelectItem value="BPNT">BPNT</SelectItem>
+                    <SelectItem value="BLT Dana Desa">BLT Dana Desa</SelectItem>
+                    <SelectItem value="Bantuan Dana Pangan">Bantuan Dana Pangan</SelectItem>
+                    <SelectItem value="Lainnya">Lainnya</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="nominal">Nominal (Rp)</Label>
+                <Input id="nominal" required type="number" value={formData.nominal} onChange={e => setFormData({...formData, nominal: e.target.value})} placeholder="600000" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="periode">Periode Pencairan</Label>
+                <Input id="periode" required value={formData.periode} onChange={e => setFormData({...formData, periode: e.target.value})} placeholder="Januari-Maret 2024" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select value={formData.status} onValueChange={(val: any) => setFormData({...formData, status: val})}>
+                  <SelectTrigger id="status"><SelectValue placeholder="Pilih Status" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Aktif">Aktif</SelectItem>
+                    <SelectItem value="Selesai">Selesai</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <form onSubmit={handleSubmit} className="p-4 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">NIK</label>
-                  <input required type="text" value={formData.nik} onChange={e => setFormData({...formData, nik: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Nama Penerima</label>
-                  <input required type="text" value={formData.nama} onChange={e => setFormData({...formData, nama: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Jenis Kelamin</label>
-                  <select value={formData.jk} onChange={e => setFormData({...formData, jk: e.target.value as any})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none">
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
-                    <option value="-">-</option>
-                  </select>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">RT</label>
-                    <input required type="text" value={formData.rt} onChange={e => setFormData({...formData, rt: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" placeholder="001" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">RW</label>
-                    <input required type="text" value={formData.rw} onChange={e => setFormData({...formData, rw: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" placeholder="001" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Jenis Bansos</label>
-                  <select value={formData.jenisBansos} onChange={e => setFormData({...formData, jenisBansos: e.target.value as any})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none">
-                    <option value="PKH">PKH</option>
-                    <option value="BPNT">BPNT</option>
-                    <option value="BLT Dana Desa">BLT Dana Desa</option>
-                    <option value="Bantuan Dana Pangan">Bantuan Dana Pangan</option>
-                    <option value="Lainnya">Lainnya</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Nominal (Rp)</label>
-                  <input required type="text" value={formData.nominal} onChange={e => setFormData({...formData, nominal: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" placeholder="Contoh: Rp 3.000.000" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Periode</label>
-                  <input required type="text" value={formData.periode} onChange={e => setFormData({...formData, periode: e.target.value})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none" placeholder="Jan - Des 2026" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Status</label>
-                  <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value as any})} className="w-full border px-3 py-2 rounded focus:border-[#6B8E23] outline-none">
-                    <option value="Aktif">Aktif</option>
-                    <option value="Selesai">Selesai</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className="pt-4 flex justify-end gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border rounded font-medium text-gray-600 hover:bg-gray-50">Batal</button>
-                <button type="submit" className="px-4 py-2 bg-[#6B8E23] text-white rounded font-medium hover:bg-[#5A7A1E]">Simpan</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            
+            <DialogFooter className="pt-4 border-t mt-4">
+              <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)} disabled={isSubmitting}>Batal</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Menyimpan...
+                  </>
+                ) : (
+                  "Simpan Data"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={deleteItem !== null} onOpenChange={(open) => !open && setDeleteItem(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Data Bansos</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tindakan ini tidak dapat dibatalkan. Data bansos "{deleteItem?.nama}" akan dihapus secara permanen.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700 text-white"
+              onClick={async (e) => {
+                e.preventDefault();
+                if (!deleteItem) return;
+                setIsDeleting(true);
+                try {
+                  await deleteBansos({ id: deleteItem._id });
+                  toast.success("Data bansos berhasil dihapus");
+                  setDeleteItem(null);
+                } catch (error) {
+                  console.error("Gagal menghapus data", error);
+                  toast.error("Gagal menghapus data bansos");
+                } finally {
+                  setIsDeleting(false);
+                }
+              }}
+            >
+              {isDeleting ? "Menghapus..." : "Hapus"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

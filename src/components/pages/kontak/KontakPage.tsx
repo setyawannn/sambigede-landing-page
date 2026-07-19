@@ -1,5 +1,6 @@
 import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Twitter } from "lucide-react";
-import { FormEvent, useState } from "react";
+import type { FormEvent} from "react";
+import { useState } from "react";
 
 export default function KontakPage() {
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
