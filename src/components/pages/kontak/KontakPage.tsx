@@ -1,23 +1,86 @@
-import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Twitter } from "lucide-react";
-import type { FormEvent} from "react";
-import { useState } from "react";
+import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Youtube, ShieldAlert, CheckCircle2 } from "lucide-react";
+import type { FormEvent } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
 
 export default function KontakPage() {
-  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const kontakData = useQuery(api.kontak.getKontakConfig);
+  const kategoriList = useQuery(api.pengaduan.getKategoriList);
+  const insertPengaduan = useMutation(api.pengaduan.insertPengaduan);
+  
+  const [formData, setFormData] = useState({ 
+    name: "", 
+    email: "", 
+    subject: "", 
+    message: "" 
+  });
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [cooldown, setCooldown] = useState(0);
 
-  const handleSubmit = (e: FormEvent) => {
+  // Client-side rate limit logic via localStorage
+  useEffect(() => {
+    const lastSubmitTime = localStorage.getItem("last_pengaduan_time");
+    if (lastSubmitTime) {
+      const elapsed = Date.now() - parseInt(lastSubmitTime);
+      const cooldownTime = 60 * 1000; // 60 seconds cooldown
+      if (elapsed < cooldownTime) {
+        setCooldown(Math.ceil((cooldownTime - elapsed) / 1000));
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    let timer: any;
+    if (cooldown > 0) {
+      timer = setInterval(() => setCooldown((prev) => prev - 1), 1000);
+    }
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (cooldown > 0) {
+      setErrorMsg(`Harap tunggu ${cooldown} detik sebelum mengirim pesan lagi.`);
+      return;
+    }
+    
+    setErrorMsg("");
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    
+    try {
+      // Safe casting format subject to Id
+      await insertPengaduan({
+        namaLengkap: formData.name,
+        emailOrPhone: formData.email,
+        kategoriId: formData.subject as Id<"kategori_pengaduan">,
+        detailPesan: formData.message,
+      });
+      
       setSubmitted(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
-      setTimeout(() => setSubmitted(false), 3000);
-    }, 1500);
+      
+      // Set cooldown
+      localStorage.setItem("last_pengaduan_time", Date.now().toString());
+      setCooldown(60);
+      
+      setTimeout(() => setSubmitted(false), 5000);
+    } catch (error: any) {
+      console.error(error);
+      setErrorMsg(error.message || "Gagal mengirim pesan. Silakan coba lagi nanti.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const jamPelayananLines = kontakData?.jamPelayanan?.split("\n") || [
+    "Senin - Jumat: 08.00 - 15.00 WIB",
+    "Sabtu - Minggu: Tutup"
+  ];
 
   return (
     <div className="flex flex-col w-full bg-[#F5F5F5] min-h-screen pb-20">
@@ -53,7 +116,7 @@ export default function KontakPage() {
                   <div>
                     <h3 className="font-semibold text-[#333] mb-1">Alamat Kantor Desa</h3>
                     <p className="text-sm text-[#666] leading-relaxed">
-                      Jalan Raya Sambigede No. 01, Kec. Binangun, Kab. Blitar, Jawa Timur 66183
+                      {kontakData?.alamat || "Jalan Raya Sambigede No. 01, Kec. Binangun, Kab. Blitar, Jawa Timur 66183"}
                     </p>
                   </div>
                 </div>
@@ -64,7 +127,10 @@ export default function KontakPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#333] mb-1">Telepon & WhatsApp</h3>
-                    <p className="text-sm text-[#666]">+62 812-3456-7890</p>
+                    <p className="text-sm text-[#666]">{kontakData?.teleponKantor || "+62 822-5034-5977"}</p>
+                    {kontakData?.teleponDarurat && (
+                      <p className="text-sm text-[#666] mt-1">{kontakData.teleponDarurat} (WA)</p>
+                    )}
                   </div>
                 </div>
 
@@ -74,7 +140,7 @@ export default function KontakPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#333] mb-1">Email Resmi</h3>
-                    <p className="text-sm text-[#666]">pemdes@sambigede.desa.id</p>
+                    <p className="text-sm text-[#666]">{kontakData?.email || "pemdes@sambigede.desa.id"}</p>
                   </div>
                 </div>
                 
@@ -84,8 +150,9 @@ export default function KontakPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#333] mb-1">Jam Pelayanan</h3>
-                    <p className="text-sm text-[#666]">Senin - Jumat: 08.00 - 15.00 WIB</p>
-                    <p className="text-sm text-[#666]">Sabtu - Minggu: Tutup</p>
+                    {jamPelayananLines.map((line, idx) => (
+                      <p key={idx} className="text-sm text-[#666]">{line}</p>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -93,15 +160,24 @@ export default function KontakPage() {
               <div className="mt-8 pt-6 border-t border-[#E5E5E5]">
                 <h3 className="font-semibold text-[#333] mb-4 text-center">Ikuti Sosial Media Kami</h3>
                 <div className="flex justify-center gap-4">
-                  <a href="#" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#666] hover:bg-blue-600 hover:text-white transition-colors">
-                    <Facebook className="w-5 h-5" />
-                  </a>
-                  <a href="#" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#666] hover:bg-pink-600 hover:text-white transition-colors">
-                    <Instagram className="w-5 h-5" />
-                  </a>
-                  <a href="#" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#666] hover:bg-sky-500 hover:text-white transition-colors">
-                    <Twitter className="w-5 h-5" />
-                  </a>
+                  {kontakData?.facebook && (
+                    <a href={kontakData.facebook} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#666] hover:bg-blue-600 hover:text-white transition-colors">
+                      <Facebook className="w-5 h-5" />
+                    </a>
+                  )}
+                  {kontakData?.instagram && (
+                    <a href={kontakData.instagram} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#666] hover:bg-pink-600 hover:text-white transition-colors">
+                      <Instagram className="w-5 h-5" />
+                    </a>
+                  )}
+                  {kontakData?.youtube && (
+                    <a href={kontakData.youtube} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#666] hover:bg-red-600 hover:text-white transition-colors">
+                      <Youtube className="w-5 h-5" />
+                    </a>
+                  )}
+                  {(!kontakData?.facebook && !kontakData?.instagram && !kontakData?.youtube) && (
+                    <p className="text-sm text-[#666]">Belum ada tautan sosial media.</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -109,9 +185,23 @@ export default function KontakPage() {
 
           {/* Formulir Pengaduan */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl p-8 border border-[#E5E5E5] shadow-sm">
+            <div className="bg-white rounded-2xl p-8 border border-[#E5E5E5] shadow-sm relative overflow-hidden">
               <h2 className="text-2xl font-bold text-[#333] mb-2">Kirim Pesan / Pengaduan</h2>
               <p className="text-[#666] text-sm mb-8">Silakan isi formulir di bawah ini dengan data yang valid. Laporan pengaduan akan dirahasiakan identitas pelapornya.</p>
+              
+              {errorMsg && (
+                <div className="mb-6 p-4 bg-red-50 text-red-700 border border-red-200 rounded-xl flex items-start gap-3">
+                  <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5" />
+                  <p className="text-sm font-medium">{errorMsg}</p>
+                </div>
+              )}
+
+              {submitted && (
+                <div className="mb-6 p-4 bg-green-50 text-green-700 border border-green-200 rounded-xl flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 shrink-0" />
+                  <p className="text-sm font-medium">Laporan Anda berhasil dikirim! Pemerintah Desa akan segera meninjaunya.</p>
+                </div>
+              )}
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -124,6 +214,7 @@ export default function KontakPage() {
                       onChange={e => setFormData({...formData, name: e.target.value})}
                       className="w-full bg-[#F9F9F9] border border-[#E5E5E5] focus:border-[#6B8E23] rounded-lg px-4 py-3 outline-none text-[#333] transition-colors"
                       placeholder="Masukkan nama Anda..."
+                      maxLength={100}
                     />
                   </div>
                   <div className="space-y-2">
@@ -135,6 +226,7 @@ export default function KontakPage() {
                       onChange={e => setFormData({...formData, email: e.target.value})}
                       className="w-full bg-[#F9F9F9] border border-[#E5E5E5] focus:border-[#6B8E23] rounded-lg px-4 py-3 outline-none text-[#333] transition-colors"
                       placeholder="Email atau No. Handphone..."
+                      maxLength={100}
                     />
                   </div>
                 </div>
@@ -147,11 +239,11 @@ export default function KontakPage() {
                     onChange={e => setFormData({...formData, subject: e.target.value})}
                     className="w-full bg-[#F9F9F9] border border-[#E5E5E5] focus:border-[#6B8E23] rounded-lg px-4 py-3 outline-none text-[#333] transition-colors"
                   >
-                    <option value="" disabled>Pilih Kategori...</option>
-                    <option value="pengaduan">Pengaduan Masyarakat</option>
-                    <option value="layanan">Layanan Administrasi</option>
-                    <option value="pertanyaan">Pertanyaan Umum</option>
-                    <option value="saran">Kritik & Saran</option>
+                    <option value="" disabled>Pilih Kategori Laporan...</option>
+                    {kategoriList?.map((kategori) => (
+                      <option key={kategori._id} value={kategori._id}>{kategori.nama}</option>
+                    ))}
+                    {!kategoriList && <option disabled>Memuat kategori...</option>}
                   </select>
                 </div>
 
@@ -164,20 +256,22 @@ export default function KontakPage() {
                     onChange={e => setFormData({...formData, message: e.target.value})}
                     className="w-full bg-[#F9F9F9] border border-[#E5E5E5] focus:border-[#6B8E23] rounded-lg px-4 py-3 outline-none text-[#333] transition-colors resize-none"
                     placeholder="Jelaskan secara detail pesan atau laporan Anda di sini..."
+                    maxLength={2000}
                   ></textarea>
+                  <p className="text-xs text-right text-gray-400">{formData.message.length}/2000</p>
                 </div>
 
                 <button 
                   type="submit" 
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || cooldown > 0}
                   className={`w-full py-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all ${
-                    submitted ? 'bg-green-600' : 'bg-[#6B8E23] hover:bg-[#5A7A1E]'
+                    (isSubmitting || cooldown > 0) ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#6B8E23] hover:bg-[#5A7A1E]'
                   }`}
                 >
                   {isSubmitting ? (
-                    <span>Mengirim...</span>
-                  ) : submitted ? (
-                    <span>Pesan Terkirim!</span>
+                    <span>Memproses...</span>
+                  ) : cooldown > 0 ? (
+                    <span>Tunggu {cooldown} detik</span>
                   ) : (
                     <>
                       <Send className="w-5 h-5" /> Kirim Pesan Sekarang

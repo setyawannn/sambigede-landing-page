@@ -10,7 +10,9 @@ import Footer from '../components/shared/Footer'
 import Header from '../components/shared/Header'
 import { Toaster } from '../components/ui/sonner'
 
-import ConvexProvider from '../integrations/convex/provider'
+import ConvexProvider, { convexHttpClient } from '../integrations/convex/provider'
+import { convexQuery } from '@convex-dev/react-query'
+import { api } from '../../convex/_generated/api'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
@@ -39,6 +41,14 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       { rel: 'stylesheet', href: appCss },
     ],
   }),
+  loader: async ({ context: { queryClient } }) => {
+    if (typeof document === 'undefined') {
+      const kontakData = await convexHttpClient.query(api.kontak.getKontakConfig, {});
+      queryClient.setQueryData(convexQuery(api.kontak.getKontakConfig, {}).queryKey, kontakData ?? null);
+    } else {
+      await queryClient.ensureQueryData(convexQuery(api.kontak.getKontakConfig, {}));
+    }
+  },
   shellComponent: RootDocument,
 })
 

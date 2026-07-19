@@ -27,7 +27,10 @@ import { Route as AdminStuntingRouteImport } from './routes/admin/stunting'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminProfilRouteImport } from './routes/admin/profil'
 import { Route as AdminPerangkatRouteImport } from './routes/admin/perangkat'
+import { Route as AdminPengaduanRouteImport } from './routes/admin/pengaduan'
 import { Route as AdminPendudukRouteImport } from './routes/admin/penduduk'
+import { Route as AdminKontakRouteImport } from './routes/admin/kontak'
+import { Route as AdminKategoriPengaduanRouteImport } from './routes/admin/kategori-pengaduan'
 import { Route as AdminKategoriRouteImport } from './routes/admin/kategori'
 import { Route as AdminBerandaRouteImport } from './routes/admin/beranda'
 import { Route as AdminBansosRouteImport } from './routes/admin/bansos'
@@ -129,9 +132,24 @@ const AdminPerangkatRoute = AdminPerangkatRouteImport.update({
   path: '/perangkat',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPengaduanRoute = AdminPengaduanRouteImport.update({
+  id: '/pengaduan',
+  path: '/pengaduan',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPendudukRoute = AdminPendudukRouteImport.update({
   id: '/penduduk',
   path: '/penduduk',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKontakRoute = AdminKontakRouteImport.update({
+  id: '/kontak',
+  path: '/kontak',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKategoriPengaduanRoute = AdminKategoriPengaduanRouteImport.update({
+  id: '/kategori-pengaduan',
+  path: '/kategori-pengaduan',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminKategoriRoute = AdminKategoriRouteImport.update({
@@ -197,7 +215,10 @@ export interface FileRoutesByFullPath {
   '/admin/bansos': typeof AdminBansosRoute
   '/admin/beranda': typeof AdminBerandaRoute
   '/admin/kategori': typeof AdminKategoriRoute
+  '/admin/kategori-pengaduan': typeof AdminKategoriPengaduanRoute
+  '/admin/kontak': typeof AdminKontakRoute
   '/admin/penduduk': typeof AdminPendudukRoute
+  '/admin/pengaduan': typeof AdminPengaduanRoute
   '/admin/perangkat': typeof AdminPerangkatRoute
   '/admin/profil': typeof AdminProfilRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -226,7 +247,10 @@ export interface FileRoutesByTo {
   '/admin/bansos': typeof AdminBansosRoute
   '/admin/beranda': typeof AdminBerandaRoute
   '/admin/kategori': typeof AdminKategoriRoute
+  '/admin/kategori-pengaduan': typeof AdminKategoriPengaduanRoute
+  '/admin/kontak': typeof AdminKontakRoute
   '/admin/penduduk': typeof AdminPendudukRoute
+  '/admin/pengaduan': typeof AdminPengaduanRoute
   '/admin/perangkat': typeof AdminPerangkatRoute
   '/admin/profil': typeof AdminProfilRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -258,7 +282,10 @@ export interface FileRoutesById {
   '/admin/bansos': typeof AdminBansosRoute
   '/admin/beranda': typeof AdminBerandaRoute
   '/admin/kategori': typeof AdminKategoriRoute
+  '/admin/kategori-pengaduan': typeof AdminKategoriPengaduanRoute
+  '/admin/kontak': typeof AdminKontakRoute
   '/admin/penduduk': typeof AdminPendudukRoute
+  '/admin/pengaduan': typeof AdminPengaduanRoute
   '/admin/perangkat': typeof AdminPerangkatRoute
   '/admin/profil': typeof AdminProfilRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -291,7 +318,10 @@ export interface FileRouteTypes {
     | '/admin/bansos'
     | '/admin/beranda'
     | '/admin/kategori'
+    | '/admin/kategori-pengaduan'
+    | '/admin/kontak'
     | '/admin/penduduk'
+    | '/admin/pengaduan'
     | '/admin/perangkat'
     | '/admin/profil'
     | '/admin/settings'
@@ -320,7 +350,10 @@ export interface FileRouteTypes {
     | '/admin/bansos'
     | '/admin/beranda'
     | '/admin/kategori'
+    | '/admin/kategori-pengaduan'
+    | '/admin/kontak'
     | '/admin/penduduk'
+    | '/admin/pengaduan'
     | '/admin/perangkat'
     | '/admin/profil'
     | '/admin/settings'
@@ -351,7 +384,10 @@ export interface FileRouteTypes {
     | '/admin/bansos'
     | '/admin/beranda'
     | '/admin/kategori'
+    | '/admin/kategori-pengaduan'
+    | '/admin/kontak'
     | '/admin/penduduk'
+    | '/admin/pengaduan'
     | '/admin/perangkat'
     | '/admin/profil'
     | '/admin/settings'
@@ -511,11 +547,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPerangkatRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/pengaduan': {
+      id: '/admin/pengaduan'
+      path: '/pengaduan'
+      fullPath: '/admin/pengaduan'
+      preLoaderRoute: typeof AdminPengaduanRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/penduduk': {
       id: '/admin/penduduk'
       path: '/penduduk'
       fullPath: '/admin/penduduk'
       preLoaderRoute: typeof AdminPendudukRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/kontak': {
+      id: '/admin/kontak'
+      path: '/kontak'
+      fullPath: '/admin/kontak'
+      preLoaderRoute: typeof AdminKontakRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/kategori-pengaduan': {
+      id: '/admin/kategori-pengaduan'
+      path: '/kategori-pengaduan'
+      fullPath: '/admin/kategori-pengaduan'
+      preLoaderRoute: typeof AdminKategoriPengaduanRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/kategori': {
@@ -596,7 +653,10 @@ interface AdminRouteChildren {
   AdminBansosRoute: typeof AdminBansosRoute
   AdminBerandaRoute: typeof AdminBerandaRoute
   AdminKategoriRoute: typeof AdminKategoriRoute
+  AdminKategoriPengaduanRoute: typeof AdminKategoriPengaduanRoute
+  AdminKontakRoute: typeof AdminKontakRoute
   AdminPendudukRoute: typeof AdminPendudukRoute
+  AdminPengaduanRoute: typeof AdminPengaduanRoute
   AdminPerangkatRoute: typeof AdminPerangkatRoute
   AdminProfilRoute: typeof AdminProfilRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -615,7 +675,10 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBansosRoute: AdminBansosRoute,
   AdminBerandaRoute: AdminBerandaRoute,
   AdminKategoriRoute: AdminKategoriRoute,
+  AdminKategoriPengaduanRoute: AdminKategoriPengaduanRoute,
+  AdminKontakRoute: AdminKontakRoute,
   AdminPendudukRoute: AdminPendudukRoute,
+  AdminPengaduanRoute: AdminPengaduanRoute,
   AdminPerangkatRoute: AdminPerangkatRoute,
   AdminProfilRoute: AdminProfilRoute,
   AdminSettingsRoute: AdminSettingsRoute,

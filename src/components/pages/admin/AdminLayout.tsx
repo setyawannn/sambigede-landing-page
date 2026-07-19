@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { 
   LayoutDashboard, Newspaper, Settings, LogOut, Bell, Database, ChevronDown, PieChart, Landmark,
-  Building2, Handshake, Users, FolderOpen, Home
+  Building2, Handshake, Users, FolderOpen, Home, Phone, ShieldAlert
 } from "lucide-react";
 import { useEffect } from "react";
 import { useAuth } from "../../../lib/auth";
@@ -33,6 +33,7 @@ export default function AdminLayout() {
   const menuItems = [
     { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
     { name: "Kelola Berita", path: "/admin/berita", icon: Newspaper },
+    { name: "Pengaduan & Log", path: "/admin/pengaduan", icon: ShieldAlert },
     { name: "Pengaturan", path: "/admin/settings", icon: Settings },
   ];
 
@@ -45,6 +46,7 @@ export default function AdminLayout() {
 
   const masterDataItems = [
     { name: "Kategori Berita", path: "/admin/kategori" },
+    { name: "Kategori Pengaduan", path: "/admin/kategori-pengaduan" },
   ];
 
   const kelolaKontenItems = [
@@ -52,6 +54,7 @@ export default function AdminLayout() {
     { name: "Profil Desa & Visi Misi", path: "/admin/profil", icon: Building2 },
     { name: "Kelembagaan", path: "/admin/kelembagaan", icon: Handshake },
     { name: "Perangkat Desa", path: "/admin/perangkat", icon: Users },
+    { name: "Informasi Kontak", path: "/admin/kontak", icon: Phone },
   ];
 
   const handleLogout = () => {

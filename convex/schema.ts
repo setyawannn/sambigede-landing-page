@@ -126,4 +126,39 @@ export default defineSchema({
     kadesPeriode: v.string(),
     kadesSambutan: v.string(),
   }),
+
+  kontak_config: defineTable({
+    alamat: v.string(),
+    teleponKantor: v.string(), // e.g., +62 822 5034 5977 (Kantor Desa)
+    teleponDarurat: v.string(), // e.g., +62 811 2233 4455 (Darurat/WA)
+    email: v.string(),
+    jamPelayanan: v.string(),
+    facebook: v.optional(v.string()),
+    instagram: v.optional(v.string()),
+    youtube: v.optional(v.string()),
+  }),
+
+  kategori_pengaduan: defineTable({
+    nama: v.string(),
+  }),
+
+  pengaduan: defineTable({
+    namaLengkap: v.string(),
+    emailOrPhone: v.string(),
+    kategoriId: v.id("kategori_pengaduan"),
+    detailPesan: v.string(),
+  })
+    .index("by_emailOrPhone", ["emailOrPhone"])
+    .index("by_kategori", ["kategoriId"]),
+
+  audit_logs: defineTable({
+    adminUsername: v.string(),
+    adminNama: v.string(),
+    action: v.union(v.literal("INSERT"), v.literal("UPDATE"), v.literal("DELETE")),
+    tableName: v.string(),
+    recordId: v.string(),
+    oldValue: v.optional(v.string()),
+    newValue: v.optional(v.string()),
+    timestamp: v.number(),
+  }).index("by_timestamp", ["timestamp"]),
 });

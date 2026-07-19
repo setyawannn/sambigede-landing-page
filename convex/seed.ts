@@ -110,6 +110,21 @@ export const seedDatabase = mutation({
       });
     }
 
+    // Seed Kontak Config
+    const existingKontak = await ctx.db.query("kontak_config").first();
+    if (!existingKontak) {
+      await ctx.db.insert("kontak_config", {
+        alamat: "Jalan Raya Sambigede No. 01, Kec. Binangun, Kab. Blitar, Jawa Timur 66183",
+        teleponKantor: "+62 822-5034-5977",
+        teleponDarurat: "+62 811-2233-4455",
+        email: "pemdes@sambigede-blitar.desa.id",
+        jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB\nSabtu - Minggu: Tutup",
+        facebook: "https://facebook.com",
+        instagram: "https://instagram.com",
+        youtube: "https://youtube.com",
+      });
+    }
+
     // Seed Kelembagaan (Sample)
     const existingKelembagaan = await ctx.db.query("kelembagaan").first();
     if (!existingKelembagaan) {
@@ -156,6 +171,21 @@ export const seedDatabase = mutation({
           urutan: i + 1,
           status: "Aktif",
         });
+      }
+    }
+    
+    // Seed Kategori Pengaduan
+    const existingKategoriPengaduan = await ctx.db.query("kategori_pengaduan").first();
+    if (!existingKategoriPengaduan) {
+      const SEED_KATEGORI_PENGADUAN = [
+        { nama: "Infrastruktur & Fasilitas Umum" },
+        { nama: "Layanan Kependudukan & Administrasi" },
+        { nama: "Keamanan & Ketertiban" },
+        { nama: "Sosial & Bantuan Kemasyarakatan" },
+        { nama: "Lainnya" },
+      ];
+      for (const kp of SEED_KATEGORI_PENGADUAN) {
+        await ctx.db.insert("kategori_pengaduan", kp);
       }
     }
     
