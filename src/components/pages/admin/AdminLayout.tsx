@@ -18,8 +18,16 @@ import {
   ShieldAlert,
   Activity,
 } from 'lucide-react'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useAuth } from '../../../lib/auth'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '../../ui/breadcrumb'
 import {
   Sidebar,
   SidebarContent,
@@ -68,15 +76,15 @@ export default function AdminLayout() {
   ]
 
   const infografisItems = [
-    { name: 'Data Penduduk', path: '/admin/penduduk' },
-    { name: 'Penerima Bansos', path: '/admin/bansos' },
-    { name: 'Stunting', path: '/admin/stunting' },
-    { name: 'Keuangan APBDes', path: '/admin/apbdes' },
+    { name: 'Data Penduduk', path: '/admin/infografis/penduduk' },
+    { name: 'Penerima Bansos', path: '/admin/infografis/bansos' },
+    { name: 'Stunting', path: '/admin/infografis/stunting' },
+    { name: 'Keuangan APBDes', path: '/admin/infografis/apbdes' },
   ]
 
   const masterDataItems = [
-    { name: 'Kategori Berita', path: '/admin/kategori' },
-    { name: 'Kategori Pengaduan', path: '/admin/kategori-pengaduan' },
+    { name: 'Kategori Berita', path: '/admin/master/kategori' },
+    { name: 'Kategori Pengaduan', path: '/admin/master/kategori-pengaduan' },
   ]
 
   const analyticItems = [
@@ -85,11 +93,11 @@ export default function AdminLayout() {
   ]
 
   const kelolaKontenItems = [
-    { name: 'Beranda', path: '/admin/beranda' },
-    { name: 'Profil Desa & Visi Misi', path: '/admin/profil' },
-    { name: 'Kelembagaan', path: '/admin/kelembagaan' },
-    { name: 'Perangkat Desa', path: '/admin/perangkat' },
-    { name: 'Informasi Kontak', path: '/admin/kontak' },
+    { name: 'Beranda', path: '/admin/konten/beranda' },
+    { name: 'Profil Desa & Visi Misi', path: '/admin/konten/profil' },
+    { name: 'Kelembagaan', path: '/admin/konten/kelembagaan' },
+    { name: 'Perangkat Desa', path: '/admin/konten/perangkat' },
+    { name: 'Informasi Kontak', path: '/admin/konten/kontak' },
   ]
 
   const handleLogout = () => {
@@ -97,18 +105,113 @@ export default function AdminLayout() {
     navigate({ to: '/' })
   }
 
-  const isInfografisActive = infografisItems.some((item) =>
-    location.pathname.startsWith(item.path),
-  )
-  const isMasterDataActive = masterDataItems.some((item) =>
-    location.pathname.startsWith(item.path),
-  )
-  const isAnalyticActive = analyticItems.some((item) =>
-    location.pathname.startsWith(item.path),
-  )
-  const isKelolaKontenActive = kelolaKontenItems.some((item) =>
-    location.pathname.startsWith(item.path),
-  )
+  const isInfografisActive = location.pathname.startsWith('/admin/infografis')
+  const isMasterDataActive = location.pathname.startsWith('/admin/master')
+  const isAnalyticActive = location.pathname.startsWith('/admin/analytic')
+  const isKelolaKontenActive = location.pathname.startsWith('/admin/konten')
+
+  const getBreadcrumbItems = (pathname: string) => {
+    const items = []
+
+    // Base Admin Path
+    items.push({
+      label: 'Admin',
+      url: '/admin',
+    })
+
+    const segments = pathname.split('/').filter(Boolean)
+
+    if (segments.length > 1 && segments[0] === 'admin') {
+      const parent = segments[1]
+      const child = segments[2]
+      const subChild = segments[3]
+
+      if (parent === 'infografis') {
+        items.push({ label: 'Infografis', url: null })
+        if (child === 'penduduk')
+          items.push({
+            label: 'Data Penduduk',
+            url: '/admin/infografis/penduduk',
+          })
+        if (child === 'bansos')
+          items.push({
+            label: 'Penerima Bansos',
+            url: '/admin/infografis/bansos',
+          })
+        if (child === 'stunting')
+          items.push({ label: 'Stunting', url: '/admin/infografis/stunting' })
+        if (child === 'apbdes')
+          items.push({
+            label: 'Keuangan APBDes',
+            url: '/admin/infografis/apbdes',
+          })
+      } else if (parent === 'konten') {
+        items.push({ label: 'Konten Desa', url: null })
+        if (child === 'beranda')
+          items.push({ label: 'Beranda', url: '/admin/konten/beranda' })
+        if (child === 'profil')
+          items.push({ label: 'Profil Desa', url: '/admin/konten/profil' })
+        if (child === 'kelembagaan') {
+          items.push({ label: 'Kelembagaan', url: '/admin/konten/kelembagaan' })
+          if (subChild === 'tambah')
+            items.push({
+              label: 'Tambah Lembaga',
+              url: '/admin/konten/kelembagaan/tambah',
+            })
+          if (subChild === 'kelola')
+            items.push({
+              label: 'Kelola Anggota',
+              url: `/admin/konten/kelembagaan/kelola/${segments[4]}`,
+            })
+        }
+        if (child === 'perangkat')
+          items.push({
+            label: 'Perangkat Desa',
+            url: '/admin/konten/perangkat',
+          })
+        if (child === 'kontak')
+          items.push({ label: 'Informasi Kontak', url: '/admin/konten/kontak' })
+      } else if (parent === 'master') {
+        items.push({ label: 'Master Data', url: null })
+        if (child === 'kategori')
+          items.push({
+            label: 'Kategori Berita',
+            url: '/admin/master/kategori',
+          })
+        if (child === 'kategori-pengaduan')
+          items.push({
+            label: 'Kategori Pengaduan',
+            url: '/admin/master/kategori-pengaduan',
+          })
+      } else if (parent === 'analytic') {
+        items.push({ label: 'Analitik Sistem', url: null })
+        if (child === 'turnstile')
+          items.push({
+            label: 'Turnstile Security',
+            url: '/admin/analytic/turnstile',
+          })
+        if (child === 'r2')
+          items.push({ label: 'Cloudflare R2', url: '/admin/analytic/r2' })
+      } else if (parent === 'berita') {
+        items.push({ label: 'Kelola Berita', url: '/admin/berita' })
+        if (child === 'tambah')
+          items.push({ label: 'Tambah Berita', url: '/admin/berita/tambah' })
+        if (child === 'edit')
+          items.push({
+            label: 'Edit Berita',
+            url: `/admin/berita/edit/${segments[3]}`,
+          })
+      } else if (parent === 'pengaduan') {
+        items.push({ label: 'Laporan Pengaduan', url: '/admin/pengaduan' })
+      } else if (parent === 'settings') {
+        items.push({ label: 'Pengaturan', url: '/admin/settings' })
+      }
+    }
+
+    return items
+  }
+
+  const breadcrumbs = getBreadcrumbItems(location.pathname)
 
   return (
     <SidebarProvider>
@@ -136,7 +239,7 @@ export default function AdminLayout() {
                     const isActive =
                       location.pathname === item.path ||
                       (item.path !== '/admin' &&
-                        location.pathname.startsWith(item.path))
+                        location.pathname.startsWith(item.path + '/'))
                     return (
                       <SidebarMenuItem key={item.name}>
                         <SidebarMenuButton
@@ -198,9 +301,9 @@ export default function AdminLayout() {
                       <CollapsibleContent>
                         <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
                           {kelolaKontenItems.map((item) => {
-                            const isActive = location.pathname.startsWith(
-                              item.path,
-                            )
+                            const isActive =
+                              location.pathname === item.path ||
+                              location.pathname.startsWith(item.path + '/')
                             return (
                               <SidebarMenuSubItem key={item.name}>
                                 <SidebarMenuSubButton
@@ -262,9 +365,9 @@ export default function AdminLayout() {
                       <CollapsibleContent>
                         <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
                           {infografisItems.map((item) => {
-                            const isActive = location.pathname.startsWith(
-                              item.path,
-                            )
+                            const isActive =
+                              location.pathname === item.path ||
+                              location.pathname.startsWith(item.path + '/')
                             return (
                               <SidebarMenuSubItem key={item.name}>
                                 <SidebarMenuSubButton
@@ -323,9 +426,9 @@ export default function AdminLayout() {
                       <CollapsibleContent>
                         <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
                           {masterDataItems.map((item) => {
-                            const isActive = location.pathname.startsWith(
-                              item.path,
-                            )
+                            const isActive =
+                              location.pathname === item.path ||
+                              location.pathname.startsWith(item.path + '/')
                             return (
                               <SidebarMenuSubItem key={item.name}>
                                 <SidebarMenuSubButton
@@ -374,9 +477,9 @@ export default function AdminLayout() {
                       <CollapsibleContent>
                         <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
                           {analyticItems.map((item) => {
-                            const isActive = location.pathname.startsWith(
-                              item.path,
-                            )
+                            const isActive =
+                              location.pathname === item.path ||
+                              location.pathname.startsWith(item.path + '/')
                             return (
                               <SidebarMenuSubItem key={item.name}>
                                 <SidebarMenuSubButton
@@ -449,9 +552,35 @@ export default function AdminLayout() {
           <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 shrink-0 z-10 sticky top-0">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="text-slate-500" />
-              <h2 className="hidden lg:block text-lg font-semibold text-slate-800">
-                Sistem Informasi Desa Sambigede
-              </h2>
+              <div className="hidden md:flex items-center">
+                <Breadcrumb>
+                  <BreadcrumbList>
+                    {breadcrumbs.map((item, index) => {
+                      const isLast = index === breadcrumbs.length - 1
+                      return (
+                        <React.Fragment key={index}>
+                          <BreadcrumbItem>
+                            {isLast ? (
+                              <BreadcrumbPage className="font-semibold text-slate-800 max-w-[150px] sm:max-w-[300px] truncate">
+                                {item.label}
+                              </BreadcrumbPage>
+                            ) : item.url ? (
+                              <BreadcrumbLink asChild>
+                                <Link to={item.url}>{item.label}</Link>
+                              </BreadcrumbLink>
+                            ) : (
+                              <span className="text-slate-500 font-normal">
+                                {item.label}
+                              </span>
+                            )}
+                          </BreadcrumbItem>
+                          {!isLast && <BreadcrumbSeparator />}
+                        </React.Fragment>
+                      )
+                    })}
+                  </BreadcrumbList>
+                </Breadcrumb>
+              </div>
             </div>
 
             <div className="flex items-center gap-4">
@@ -492,7 +621,7 @@ export default function AdminLayout() {
 
           {/* Dashboard Content */}
           <main className="flex-1 overflow-y-auto p-4 lg:p-8">
-            <div className="max-w-7xl mx-auto space-y-6">
+            <div className="w-full space-y-6">
               {isLoading || !user ? (
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">

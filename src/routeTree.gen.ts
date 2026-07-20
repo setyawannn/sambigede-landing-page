@@ -23,26 +23,26 @@ import { Route as InfografisPendudukRouteImport } from './routes/infografis/pend
 import { Route as InfografisBansosRouteImport } from './routes/infografis/bansos'
 import { Route as InfografisApbdesRouteImport } from './routes/infografis/apbdes'
 import { Route as BeritaIdRouteImport } from './routes/berita/$id'
-import { Route as AdminStuntingRouteImport } from './routes/admin/stunting'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
-import { Route as AdminProfilRouteImport } from './routes/admin/profil'
-import { Route as AdminPerangkatRouteImport } from './routes/admin/perangkat'
 import { Route as AdminPengaduanRouteImport } from './routes/admin/pengaduan'
-import { Route as AdminPendudukRouteImport } from './routes/admin/penduduk'
-import { Route as AdminKontakRouteImport } from './routes/admin/kontak'
-import { Route as AdminKategoriPengaduanRouteImport } from './routes/admin/kategori-pengaduan'
-import { Route as AdminKategoriRouteImport } from './routes/admin/kategori'
-import { Route as AdminBerandaRouteImport } from './routes/admin/beranda'
-import { Route as AdminBansosRouteImport } from './routes/admin/bansos'
-import { Route as AdminApbdesRouteImport } from './routes/admin/apbdes'
-import { Route as AdminKelembagaanIndexRouteImport } from './routes/admin/kelembagaan.index'
 import { Route as AdminBeritaIndexRouteImport } from './routes/admin/berita.index'
-import { Route as AdminKelembagaanTambahRouteImport } from './routes/admin/kelembagaan.tambah'
+import { Route as AdminMasterKategoriPengaduanRouteImport } from './routes/admin/master/kategori-pengaduan'
+import { Route as AdminMasterKategoriRouteImport } from './routes/admin/master/kategori'
+import { Route as AdminKontenProfilRouteImport } from './routes/admin/konten/profil'
+import { Route as AdminKontenPerangkatRouteImport } from './routes/admin/konten/perangkat'
+import { Route as AdminKontenKontakRouteImport } from './routes/admin/konten/kontak'
+import { Route as AdminKontenBerandaRouteImport } from './routes/admin/konten/beranda'
+import { Route as AdminInfografisStuntingRouteImport } from './routes/admin/infografis/stunting'
+import { Route as AdminInfografisPendudukRouteImport } from './routes/admin/infografis/penduduk'
+import { Route as AdminInfografisBansosRouteImport } from './routes/admin/infografis/bansos'
+import { Route as AdminInfografisApbdesRouteImport } from './routes/admin/infografis/apbdes'
 import { Route as AdminBeritaTambahRouteImport } from './routes/admin/berita.tambah'
 import { Route as AdminAnalyticTurnstileRouteImport } from './routes/admin/analytic/turnstile'
 import { Route as AdminAnalyticR2RouteImport } from './routes/admin/analytic/r2'
-import { Route as AdminKelembagaanKelolaIdRouteImport } from './routes/admin/kelembagaan.kelola.$id'
+import { Route as AdminKontenKelembagaanIndexRouteImport } from './routes/admin/konten/kelembagaan.index'
+import { Route as AdminKontenKelembagaanTambahRouteImport } from './routes/admin/konten/kelembagaan.tambah'
 import { Route as AdminBeritaEditIdRouteImport } from './routes/admin/berita.edit.$id'
+import { Route as AdminKontenKelembagaanKelolaIdRouteImport } from './routes/admin/konten/kelembagaan.kelola.$id'
 
 const ProfilRoute = ProfilRouteImport.update({
   id: '/profil',
@@ -114,24 +114,9 @@ const BeritaIdRoute = BeritaIdRouteImport.update({
   path: '/berita/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminStuntingRoute = AdminStuntingRouteImport.update({
-  id: '/stunting',
-  path: '/stunting',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminProfilRoute = AdminProfilRouteImport.update({
-  id: '/profil',
-  path: '/profil',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPerangkatRoute = AdminPerangkatRouteImport.update({
-  id: '/perangkat',
-  path: '/perangkat',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminPengaduanRoute = AdminPengaduanRouteImport.update({
@@ -139,54 +124,60 @@ const AdminPengaduanRoute = AdminPengaduanRouteImport.update({
   path: '/pengaduan',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminPendudukRoute = AdminPendudukRouteImport.update({
-  id: '/penduduk',
-  path: '/penduduk',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminKontakRoute = AdminKontakRouteImport.update({
-  id: '/kontak',
-  path: '/kontak',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminKategoriPengaduanRoute = AdminKategoriPengaduanRouteImport.update({
-  id: '/kategori-pengaduan',
-  path: '/kategori-pengaduan',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminKategoriRoute = AdminKategoriRouteImport.update({
-  id: '/kategori',
-  path: '/kategori',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminBerandaRoute = AdminBerandaRouteImport.update({
-  id: '/beranda',
-  path: '/beranda',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminBansosRoute = AdminBansosRouteImport.update({
-  id: '/bansos',
-  path: '/bansos',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminApbdesRoute = AdminApbdesRouteImport.update({
-  id: '/apbdes',
-  path: '/apbdes',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminKelembagaanIndexRoute = AdminKelembagaanIndexRouteImport.update({
-  id: '/kelembagaan/',
-  path: '/kelembagaan/',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminBeritaIndexRoute = AdminBeritaIndexRouteImport.update({
   id: '/berita/',
   path: '/berita/',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminKelembagaanTambahRoute = AdminKelembagaanTambahRouteImport.update({
-  id: '/kelembagaan/tambah',
-  path: '/kelembagaan/tambah',
+const AdminMasterKategoriPengaduanRoute =
+  AdminMasterKategoriPengaduanRouteImport.update({
+    id: '/master/kategori-pengaduan',
+    path: '/master/kategori-pengaduan',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminMasterKategoriRoute = AdminMasterKategoriRouteImport.update({
+  id: '/master/kategori',
+  path: '/master/kategori',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKontenProfilRoute = AdminKontenProfilRouteImport.update({
+  id: '/konten/profil',
+  path: '/konten/profil',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKontenPerangkatRoute = AdminKontenPerangkatRouteImport.update({
+  id: '/konten/perangkat',
+  path: '/konten/perangkat',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKontenKontakRoute = AdminKontenKontakRouteImport.update({
+  id: '/konten/kontak',
+  path: '/konten/kontak',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKontenBerandaRoute = AdminKontenBerandaRouteImport.update({
+  id: '/konten/beranda',
+  path: '/konten/beranda',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInfografisStuntingRoute = AdminInfografisStuntingRouteImport.update({
+  id: '/infografis/stunting',
+  path: '/infografis/stunting',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInfografisPendudukRoute = AdminInfografisPendudukRouteImport.update({
+  id: '/infografis/penduduk',
+  path: '/infografis/penduduk',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInfografisBansosRoute = AdminInfografisBansosRouteImport.update({
+  id: '/infografis/bansos',
+  path: '/infografis/bansos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInfografisApbdesRoute = AdminInfografisApbdesRouteImport.update({
+  id: '/infografis/apbdes',
+  path: '/infografis/apbdes',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminBeritaTambahRoute = AdminBeritaTambahRouteImport.update({
@@ -204,10 +195,16 @@ const AdminAnalyticR2Route = AdminAnalyticR2RouteImport.update({
   path: '/analytic/r2',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminKelembagaanKelolaIdRoute =
-  AdminKelembagaanKelolaIdRouteImport.update({
-    id: '/kelembagaan/kelola/$id',
-    path: '/kelembagaan/kelola/$id',
+const AdminKontenKelembagaanIndexRoute =
+  AdminKontenKelembagaanIndexRouteImport.update({
+    id: '/konten/kelembagaan/',
+    path: '/konten/kelembagaan/',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminKontenKelembagaanTambahRoute =
+  AdminKontenKelembagaanTambahRouteImport.update({
+    id: '/konten/kelembagaan/tambah',
+    path: '/konten/kelembagaan/tambah',
     getParentRoute: () => AdminRoute,
   } as any)
 const AdminBeritaEditIdRoute = AdminBeritaEditIdRouteImport.update({
@@ -215,6 +212,12 @@ const AdminBeritaEditIdRoute = AdminBeritaEditIdRouteImport.update({
   path: '/berita/edit/$id',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminKontenKelembagaanKelolaIdRoute =
+  AdminKontenKelembagaanKelolaIdRouteImport.update({
+    id: '/konten/kelembagaan/kelola/$id',
+    path: '/konten/kelembagaan/kelola/$id',
+    getParentRoute: () => AdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -223,18 +226,8 @@ export interface FileRoutesByFullPath {
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/profil': typeof ProfilRoute
-  '/admin/apbdes': typeof AdminApbdesRoute
-  '/admin/bansos': typeof AdminBansosRoute
-  '/admin/beranda': typeof AdminBerandaRoute
-  '/admin/kategori': typeof AdminKategoriRoute
-  '/admin/kategori-pengaduan': typeof AdminKategoriPengaduanRoute
-  '/admin/kontak': typeof AdminKontakRoute
-  '/admin/penduduk': typeof AdminPendudukRoute
   '/admin/pengaduan': typeof AdminPengaduanRoute
-  '/admin/perangkat': typeof AdminPerangkatRoute
-  '/admin/profil': typeof AdminProfilRoute
   '/admin/settings': typeof AdminSettingsRoute
-  '/admin/stunting': typeof AdminStuntingRoute
   '/berita/$id': typeof BeritaIdRoute
   '/infografis/apbdes': typeof InfografisApbdesRoute
   '/infografis/bansos': typeof InfografisBansosRoute
@@ -246,29 +239,29 @@ export interface FileRoutesByFullPath {
   '/admin/analytic/r2': typeof AdminAnalyticR2Route
   '/admin/analytic/turnstile': typeof AdminAnalyticTurnstileRoute
   '/admin/berita/tambah': typeof AdminBeritaTambahRoute
-  '/admin/kelembagaan/tambah': typeof AdminKelembagaanTambahRoute
+  '/admin/infografis/apbdes': typeof AdminInfografisApbdesRoute
+  '/admin/infografis/bansos': typeof AdminInfografisBansosRoute
+  '/admin/infografis/penduduk': typeof AdminInfografisPendudukRoute
+  '/admin/infografis/stunting': typeof AdminInfografisStuntingRoute
+  '/admin/konten/beranda': typeof AdminKontenBerandaRoute
+  '/admin/konten/kontak': typeof AdminKontenKontakRoute
+  '/admin/konten/perangkat': typeof AdminKontenPerangkatRoute
+  '/admin/konten/profil': typeof AdminKontenProfilRoute
+  '/admin/master/kategori': typeof AdminMasterKategoriRoute
+  '/admin/master/kategori-pengaduan': typeof AdminMasterKategoriPengaduanRoute
   '/admin/berita/': typeof AdminBeritaIndexRoute
-  '/admin/kelembagaan/': typeof AdminKelembagaanIndexRoute
   '/admin/berita/edit/$id': typeof AdminBeritaEditIdRoute
-  '/admin/kelembagaan/kelola/$id': typeof AdminKelembagaanKelolaIdRoute
+  '/admin/konten/kelembagaan/tambah': typeof AdminKontenKelembagaanTambahRoute
+  '/admin/konten/kelembagaan/': typeof AdminKontenKelembagaanIndexRoute
+  '/admin/konten/kelembagaan/kelola/$id': typeof AdminKontenKelembagaanKelolaIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/profil': typeof ProfilRoute
-  '/admin/apbdes': typeof AdminApbdesRoute
-  '/admin/bansos': typeof AdminBansosRoute
-  '/admin/beranda': typeof AdminBerandaRoute
-  '/admin/kategori': typeof AdminKategoriRoute
-  '/admin/kategori-pengaduan': typeof AdminKategoriPengaduanRoute
-  '/admin/kontak': typeof AdminKontakRoute
-  '/admin/penduduk': typeof AdminPendudukRoute
   '/admin/pengaduan': typeof AdminPengaduanRoute
-  '/admin/perangkat': typeof AdminPerangkatRoute
-  '/admin/profil': typeof AdminProfilRoute
   '/admin/settings': typeof AdminSettingsRoute
-  '/admin/stunting': typeof AdminStuntingRoute
   '/berita/$id': typeof BeritaIdRoute
   '/infografis/apbdes': typeof InfografisApbdesRoute
   '/infografis/bansos': typeof InfografisBansosRoute
@@ -280,11 +273,21 @@ export interface FileRoutesByTo {
   '/admin/analytic/r2': typeof AdminAnalyticR2Route
   '/admin/analytic/turnstile': typeof AdminAnalyticTurnstileRoute
   '/admin/berita/tambah': typeof AdminBeritaTambahRoute
-  '/admin/kelembagaan/tambah': typeof AdminKelembagaanTambahRoute
+  '/admin/infografis/apbdes': typeof AdminInfografisApbdesRoute
+  '/admin/infografis/bansos': typeof AdminInfografisBansosRoute
+  '/admin/infografis/penduduk': typeof AdminInfografisPendudukRoute
+  '/admin/infografis/stunting': typeof AdminInfografisStuntingRoute
+  '/admin/konten/beranda': typeof AdminKontenBerandaRoute
+  '/admin/konten/kontak': typeof AdminKontenKontakRoute
+  '/admin/konten/perangkat': typeof AdminKontenPerangkatRoute
+  '/admin/konten/profil': typeof AdminKontenProfilRoute
+  '/admin/master/kategori': typeof AdminMasterKategoriRoute
+  '/admin/master/kategori-pengaduan': typeof AdminMasterKategoriPengaduanRoute
   '/admin/berita': typeof AdminBeritaIndexRoute
-  '/admin/kelembagaan': typeof AdminKelembagaanIndexRoute
   '/admin/berita/edit/$id': typeof AdminBeritaEditIdRoute
-  '/admin/kelembagaan/kelola/$id': typeof AdminKelembagaanKelolaIdRoute
+  '/admin/konten/kelembagaan/tambah': typeof AdminKontenKelembagaanTambahRoute
+  '/admin/konten/kelembagaan': typeof AdminKontenKelembagaanIndexRoute
+  '/admin/konten/kelembagaan/kelola/$id': typeof AdminKontenKelembagaanKelolaIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -294,18 +297,8 @@ export interface FileRoutesById {
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/profil': typeof ProfilRoute
-  '/admin/apbdes': typeof AdminApbdesRoute
-  '/admin/bansos': typeof AdminBansosRoute
-  '/admin/beranda': typeof AdminBerandaRoute
-  '/admin/kategori': typeof AdminKategoriRoute
-  '/admin/kategori-pengaduan': typeof AdminKategoriPengaduanRoute
-  '/admin/kontak': typeof AdminKontakRoute
-  '/admin/penduduk': typeof AdminPendudukRoute
   '/admin/pengaduan': typeof AdminPengaduanRoute
-  '/admin/perangkat': typeof AdminPerangkatRoute
-  '/admin/profil': typeof AdminProfilRoute
   '/admin/settings': typeof AdminSettingsRoute
-  '/admin/stunting': typeof AdminStuntingRoute
   '/berita/$id': typeof BeritaIdRoute
   '/infografis/apbdes': typeof InfografisApbdesRoute
   '/infografis/bansos': typeof InfografisBansosRoute
@@ -317,11 +310,21 @@ export interface FileRoutesById {
   '/admin/analytic/r2': typeof AdminAnalyticR2Route
   '/admin/analytic/turnstile': typeof AdminAnalyticTurnstileRoute
   '/admin/berita/tambah': typeof AdminBeritaTambahRoute
-  '/admin/kelembagaan/tambah': typeof AdminKelembagaanTambahRoute
+  '/admin/infografis/apbdes': typeof AdminInfografisApbdesRoute
+  '/admin/infografis/bansos': typeof AdminInfografisBansosRoute
+  '/admin/infografis/penduduk': typeof AdminInfografisPendudukRoute
+  '/admin/infografis/stunting': typeof AdminInfografisStuntingRoute
+  '/admin/konten/beranda': typeof AdminKontenBerandaRoute
+  '/admin/konten/kontak': typeof AdminKontenKontakRoute
+  '/admin/konten/perangkat': typeof AdminKontenPerangkatRoute
+  '/admin/konten/profil': typeof AdminKontenProfilRoute
+  '/admin/master/kategori': typeof AdminMasterKategoriRoute
+  '/admin/master/kategori-pengaduan': typeof AdminMasterKategoriPengaduanRoute
   '/admin/berita/': typeof AdminBeritaIndexRoute
-  '/admin/kelembagaan/': typeof AdminKelembagaanIndexRoute
   '/admin/berita/edit/$id': typeof AdminBeritaEditIdRoute
-  '/admin/kelembagaan/kelola/$id': typeof AdminKelembagaanKelolaIdRoute
+  '/admin/konten/kelembagaan/tambah': typeof AdminKontenKelembagaanTambahRoute
+  '/admin/konten/kelembagaan/': typeof AdminKontenKelembagaanIndexRoute
+  '/admin/konten/kelembagaan/kelola/$id': typeof AdminKontenKelembagaanKelolaIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -332,18 +335,8 @@ export interface FileRouteTypes {
     | '/kontak'
     | '/login'
     | '/profil'
-    | '/admin/apbdes'
-    | '/admin/bansos'
-    | '/admin/beranda'
-    | '/admin/kategori'
-    | '/admin/kategori-pengaduan'
-    | '/admin/kontak'
-    | '/admin/penduduk'
     | '/admin/pengaduan'
-    | '/admin/perangkat'
-    | '/admin/profil'
     | '/admin/settings'
-    | '/admin/stunting'
     | '/berita/$id'
     | '/infografis/apbdes'
     | '/infografis/bansos'
@@ -355,29 +348,29 @@ export interface FileRouteTypes {
     | '/admin/analytic/r2'
     | '/admin/analytic/turnstile'
     | '/admin/berita/tambah'
-    | '/admin/kelembagaan/tambah'
+    | '/admin/infografis/apbdes'
+    | '/admin/infografis/bansos'
+    | '/admin/infografis/penduduk'
+    | '/admin/infografis/stunting'
+    | '/admin/konten/beranda'
+    | '/admin/konten/kontak'
+    | '/admin/konten/perangkat'
+    | '/admin/konten/profil'
+    | '/admin/master/kategori'
+    | '/admin/master/kategori-pengaduan'
     | '/admin/berita/'
-    | '/admin/kelembagaan/'
     | '/admin/berita/edit/$id'
-    | '/admin/kelembagaan/kelola/$id'
+    | '/admin/konten/kelembagaan/tambah'
+    | '/admin/konten/kelembagaan/'
+    | '/admin/konten/kelembagaan/kelola/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/kontak'
     | '/login'
     | '/profil'
-    | '/admin/apbdes'
-    | '/admin/bansos'
-    | '/admin/beranda'
-    | '/admin/kategori'
-    | '/admin/kategori-pengaduan'
-    | '/admin/kontak'
-    | '/admin/penduduk'
     | '/admin/pengaduan'
-    | '/admin/perangkat'
-    | '/admin/profil'
     | '/admin/settings'
-    | '/admin/stunting'
     | '/berita/$id'
     | '/infografis/apbdes'
     | '/infografis/bansos'
@@ -389,11 +382,21 @@ export interface FileRouteTypes {
     | '/admin/analytic/r2'
     | '/admin/analytic/turnstile'
     | '/admin/berita/tambah'
-    | '/admin/kelembagaan/tambah'
+    | '/admin/infografis/apbdes'
+    | '/admin/infografis/bansos'
+    | '/admin/infografis/penduduk'
+    | '/admin/infografis/stunting'
+    | '/admin/konten/beranda'
+    | '/admin/konten/kontak'
+    | '/admin/konten/perangkat'
+    | '/admin/konten/profil'
+    | '/admin/master/kategori'
+    | '/admin/master/kategori-pengaduan'
     | '/admin/berita'
-    | '/admin/kelembagaan'
     | '/admin/berita/edit/$id'
-    | '/admin/kelembagaan/kelola/$id'
+    | '/admin/konten/kelembagaan/tambah'
+    | '/admin/konten/kelembagaan'
+    | '/admin/konten/kelembagaan/kelola/$id'
   id:
     | '__root__'
     | '/'
@@ -402,18 +405,8 @@ export interface FileRouteTypes {
     | '/kontak'
     | '/login'
     | '/profil'
-    | '/admin/apbdes'
-    | '/admin/bansos'
-    | '/admin/beranda'
-    | '/admin/kategori'
-    | '/admin/kategori-pengaduan'
-    | '/admin/kontak'
-    | '/admin/penduduk'
     | '/admin/pengaduan'
-    | '/admin/perangkat'
-    | '/admin/profil'
     | '/admin/settings'
-    | '/admin/stunting'
     | '/berita/$id'
     | '/infografis/apbdes'
     | '/infografis/bansos'
@@ -425,11 +418,21 @@ export interface FileRouteTypes {
     | '/admin/analytic/r2'
     | '/admin/analytic/turnstile'
     | '/admin/berita/tambah'
-    | '/admin/kelembagaan/tambah'
+    | '/admin/infografis/apbdes'
+    | '/admin/infografis/bansos'
+    | '/admin/infografis/penduduk'
+    | '/admin/infografis/stunting'
+    | '/admin/konten/beranda'
+    | '/admin/konten/kontak'
+    | '/admin/konten/perangkat'
+    | '/admin/konten/profil'
+    | '/admin/master/kategori'
+    | '/admin/master/kategori-pengaduan'
     | '/admin/berita/'
-    | '/admin/kelembagaan/'
     | '/admin/berita/edit/$id'
-    | '/admin/kelembagaan/kelola/$id'
+    | '/admin/konten/kelembagaan/tambah'
+    | '/admin/konten/kelembagaan/'
+    | '/admin/konten/kelembagaan/kelola/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -543,32 +546,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BeritaIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/stunting': {
-      id: '/admin/stunting'
-      path: '/stunting'
-      fullPath: '/admin/stunting'
-      preLoaderRoute: typeof AdminStuntingRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/settings'
       fullPath: '/admin/settings'
       preLoaderRoute: typeof AdminSettingsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/profil': {
-      id: '/admin/profil'
-      path: '/profil'
-      fullPath: '/admin/profil'
-      preLoaderRoute: typeof AdminProfilRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/perangkat': {
-      id: '/admin/perangkat'
-      path: '/perangkat'
-      fullPath: '/admin/perangkat'
-      preLoaderRoute: typeof AdminPerangkatRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/pengaduan': {
@@ -578,62 +560,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPengaduanRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/penduduk': {
-      id: '/admin/penduduk'
-      path: '/penduduk'
-      fullPath: '/admin/penduduk'
-      preLoaderRoute: typeof AdminPendudukRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/kontak': {
-      id: '/admin/kontak'
-      path: '/kontak'
-      fullPath: '/admin/kontak'
-      preLoaderRoute: typeof AdminKontakRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/kategori-pengaduan': {
-      id: '/admin/kategori-pengaduan'
-      path: '/kategori-pengaduan'
-      fullPath: '/admin/kategori-pengaduan'
-      preLoaderRoute: typeof AdminKategoriPengaduanRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/kategori': {
-      id: '/admin/kategori'
-      path: '/kategori'
-      fullPath: '/admin/kategori'
-      preLoaderRoute: typeof AdminKategoriRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/beranda': {
-      id: '/admin/beranda'
-      path: '/beranda'
-      fullPath: '/admin/beranda'
-      preLoaderRoute: typeof AdminBerandaRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/bansos': {
-      id: '/admin/bansos'
-      path: '/bansos'
-      fullPath: '/admin/bansos'
-      preLoaderRoute: typeof AdminBansosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/apbdes': {
-      id: '/admin/apbdes'
-      path: '/apbdes'
-      fullPath: '/admin/apbdes'
-      preLoaderRoute: typeof AdminApbdesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/kelembagaan/': {
-      id: '/admin/kelembagaan/'
-      path: '/kelembagaan'
-      fullPath: '/admin/kelembagaan/'
-      preLoaderRoute: typeof AdminKelembagaanIndexRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/berita/': {
       id: '/admin/berita/'
       path: '/berita'
@@ -641,11 +567,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBeritaIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/kelembagaan/tambah': {
-      id: '/admin/kelembagaan/tambah'
-      path: '/kelembagaan/tambah'
-      fullPath: '/admin/kelembagaan/tambah'
-      preLoaderRoute: typeof AdminKelembagaanTambahRouteImport
+    '/admin/master/kategori-pengaduan': {
+      id: '/admin/master/kategori-pengaduan'
+      path: '/master/kategori-pengaduan'
+      fullPath: '/admin/master/kategori-pengaduan'
+      preLoaderRoute: typeof AdminMasterKategoriPengaduanRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/master/kategori': {
+      id: '/admin/master/kategori'
+      path: '/master/kategori'
+      fullPath: '/admin/master/kategori'
+      preLoaderRoute: typeof AdminMasterKategoriRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/konten/profil': {
+      id: '/admin/konten/profil'
+      path: '/konten/profil'
+      fullPath: '/admin/konten/profil'
+      preLoaderRoute: typeof AdminKontenProfilRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/konten/perangkat': {
+      id: '/admin/konten/perangkat'
+      path: '/konten/perangkat'
+      fullPath: '/admin/konten/perangkat'
+      preLoaderRoute: typeof AdminKontenPerangkatRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/konten/kontak': {
+      id: '/admin/konten/kontak'
+      path: '/konten/kontak'
+      fullPath: '/admin/konten/kontak'
+      preLoaderRoute: typeof AdminKontenKontakRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/konten/beranda': {
+      id: '/admin/konten/beranda'
+      path: '/konten/beranda'
+      fullPath: '/admin/konten/beranda'
+      preLoaderRoute: typeof AdminKontenBerandaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/infografis/stunting': {
+      id: '/admin/infografis/stunting'
+      path: '/infografis/stunting'
+      fullPath: '/admin/infografis/stunting'
+      preLoaderRoute: typeof AdminInfografisStuntingRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/infografis/penduduk': {
+      id: '/admin/infografis/penduduk'
+      path: '/infografis/penduduk'
+      fullPath: '/admin/infografis/penduduk'
+      preLoaderRoute: typeof AdminInfografisPendudukRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/infografis/bansos': {
+      id: '/admin/infografis/bansos'
+      path: '/infografis/bansos'
+      fullPath: '/admin/infografis/bansos'
+      preLoaderRoute: typeof AdminInfografisBansosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/infografis/apbdes': {
+      id: '/admin/infografis/apbdes'
+      path: '/infografis/apbdes'
+      fullPath: '/admin/infografis/apbdes'
+      preLoaderRoute: typeof AdminInfografisApbdesRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/berita/tambah': {
@@ -669,11 +658,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAnalyticR2RouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/kelembagaan/kelola/$id': {
-      id: '/admin/kelembagaan/kelola/$id'
-      path: '/kelembagaan/kelola/$id'
-      fullPath: '/admin/kelembagaan/kelola/$id'
-      preLoaderRoute: typeof AdminKelembagaanKelolaIdRouteImport
+    '/admin/konten/kelembagaan/': {
+      id: '/admin/konten/kelembagaan/'
+      path: '/konten/kelembagaan'
+      fullPath: '/admin/konten/kelembagaan/'
+      preLoaderRoute: typeof AdminKontenKelembagaanIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/konten/kelembagaan/tambah': {
+      id: '/admin/konten/kelembagaan/tambah'
+      path: '/konten/kelembagaan/tambah'
+      fullPath: '/admin/konten/kelembagaan/tambah'
+      preLoaderRoute: typeof AdminKontenKelembagaanTambahRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/berita/edit/$id': {
@@ -683,55 +679,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBeritaEditIdRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/konten/kelembagaan/kelola/$id': {
+      id: '/admin/konten/kelembagaan/kelola/$id'
+      path: '/konten/kelembagaan/kelola/$id'
+      fullPath: '/admin/konten/kelembagaan/kelola/$id'
+      preLoaderRoute: typeof AdminKontenKelembagaanKelolaIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
-  AdminApbdesRoute: typeof AdminApbdesRoute
-  AdminBansosRoute: typeof AdminBansosRoute
-  AdminBerandaRoute: typeof AdminBerandaRoute
-  AdminKategoriRoute: typeof AdminKategoriRoute
-  AdminKategoriPengaduanRoute: typeof AdminKategoriPengaduanRoute
-  AdminKontakRoute: typeof AdminKontakRoute
-  AdminPendudukRoute: typeof AdminPendudukRoute
   AdminPengaduanRoute: typeof AdminPengaduanRoute
-  AdminPerangkatRoute: typeof AdminPerangkatRoute
-  AdminProfilRoute: typeof AdminProfilRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
-  AdminStuntingRoute: typeof AdminStuntingRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminAnalyticR2Route: typeof AdminAnalyticR2Route
   AdminAnalyticTurnstileRoute: typeof AdminAnalyticTurnstileRoute
   AdminBeritaTambahRoute: typeof AdminBeritaTambahRoute
-  AdminKelembagaanTambahRoute: typeof AdminKelembagaanTambahRoute
+  AdminInfografisApbdesRoute: typeof AdminInfografisApbdesRoute
+  AdminInfografisBansosRoute: typeof AdminInfografisBansosRoute
+  AdminInfografisPendudukRoute: typeof AdminInfografisPendudukRoute
+  AdminInfografisStuntingRoute: typeof AdminInfografisStuntingRoute
+  AdminKontenBerandaRoute: typeof AdminKontenBerandaRoute
+  AdminKontenKontakRoute: typeof AdminKontenKontakRoute
+  AdminKontenPerangkatRoute: typeof AdminKontenPerangkatRoute
+  AdminKontenProfilRoute: typeof AdminKontenProfilRoute
+  AdminMasterKategoriRoute: typeof AdminMasterKategoriRoute
+  AdminMasterKategoriPengaduanRoute: typeof AdminMasterKategoriPengaduanRoute
   AdminBeritaIndexRoute: typeof AdminBeritaIndexRoute
-  AdminKelembagaanIndexRoute: typeof AdminKelembagaanIndexRoute
   AdminBeritaEditIdRoute: typeof AdminBeritaEditIdRoute
-  AdminKelembagaanKelolaIdRoute: typeof AdminKelembagaanKelolaIdRoute
+  AdminKontenKelembagaanTambahRoute: typeof AdminKontenKelembagaanTambahRoute
+  AdminKontenKelembagaanIndexRoute: typeof AdminKontenKelembagaanIndexRoute
+  AdminKontenKelembagaanKelolaIdRoute: typeof AdminKontenKelembagaanKelolaIdRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
-  AdminApbdesRoute: AdminApbdesRoute,
-  AdminBansosRoute: AdminBansosRoute,
-  AdminBerandaRoute: AdminBerandaRoute,
-  AdminKategoriRoute: AdminKategoriRoute,
-  AdminKategoriPengaduanRoute: AdminKategoriPengaduanRoute,
-  AdminKontakRoute: AdminKontakRoute,
-  AdminPendudukRoute: AdminPendudukRoute,
   AdminPengaduanRoute: AdminPengaduanRoute,
-  AdminPerangkatRoute: AdminPerangkatRoute,
-  AdminProfilRoute: AdminProfilRoute,
   AdminSettingsRoute: AdminSettingsRoute,
-  AdminStuntingRoute: AdminStuntingRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminAnalyticR2Route: AdminAnalyticR2Route,
   AdminAnalyticTurnstileRoute: AdminAnalyticTurnstileRoute,
   AdminBeritaTambahRoute: AdminBeritaTambahRoute,
-  AdminKelembagaanTambahRoute: AdminKelembagaanTambahRoute,
+  AdminInfografisApbdesRoute: AdminInfografisApbdesRoute,
+  AdminInfografisBansosRoute: AdminInfografisBansosRoute,
+  AdminInfografisPendudukRoute: AdminInfografisPendudukRoute,
+  AdminInfografisStuntingRoute: AdminInfografisStuntingRoute,
+  AdminKontenBerandaRoute: AdminKontenBerandaRoute,
+  AdminKontenKontakRoute: AdminKontenKontakRoute,
+  AdminKontenPerangkatRoute: AdminKontenPerangkatRoute,
+  AdminKontenProfilRoute: AdminKontenProfilRoute,
+  AdminMasterKategoriRoute: AdminMasterKategoriRoute,
+  AdminMasterKategoriPengaduanRoute: AdminMasterKategoriPengaduanRoute,
   AdminBeritaIndexRoute: AdminBeritaIndexRoute,
-  AdminKelembagaanIndexRoute: AdminKelembagaanIndexRoute,
   AdminBeritaEditIdRoute: AdminBeritaEditIdRoute,
-  AdminKelembagaanKelolaIdRoute: AdminKelembagaanKelolaIdRoute,
+  AdminKontenKelembagaanTambahRoute: AdminKontenKelembagaanTambahRoute,
+  AdminKontenKelembagaanIndexRoute: AdminKontenKelembagaanIndexRoute,
+  AdminKontenKelembagaanKelolaIdRoute: AdminKontenKelembagaanKelolaIdRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

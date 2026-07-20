@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from 'convex/react'
-import { api } from '../../../convex/_generated/api'
-import AdminKelembagaanKelola from '../../components/pages/admin/AdminKelembagaanKelola'
-import { Skeleton } from '../../components/ui/skeleton'
-import type { Id } from '../../../convex/_generated/dataModel'
+import { api } from '../../../../convex/_generated/api'
+import AdminKelembagaanKelola from '../../../components/pages/admin/AdminKelembagaanKelola'
+import { Skeleton } from '../../../components/ui/skeleton'
+import type { Id } from '../../../../convex/_generated/dataModel'
 
-export const Route = createFileRoute('/admin/kelembagaan/kelola/$id')({
+export const Route = createFileRoute('/admin/konten/kelembagaan/kelola/$id')({
   component: KelolaKelembagaanComponent,
 })
 

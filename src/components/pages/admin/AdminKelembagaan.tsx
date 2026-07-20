@@ -99,7 +99,7 @@ export default function AdminKelembagaan() {
           </p>
         </div>
         <Button
-          onClick={() => navigate({ to: '/admin/kelembagaan/tambah' })}
+          onClick={() => navigate({ to: '/admin/konten/kelembagaan/tambah' })}
           className="gap-2"
         >
           <Plus className="w-4 h-4" /> Tambah Lembaga
@@ -162,7 +162,7 @@ export default function AdminKelembagaan() {
                           size="icon"
                           onClick={() =>
                             navigate({
-                              to: '/admin/kelembagaan/kelola/$id',
+                              to: '/admin/konten/kelembagaan/kelola/$id',
                               params: { id: item._id },
                             })
                           }

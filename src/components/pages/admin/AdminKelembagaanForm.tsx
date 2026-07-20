@@ -52,7 +52,10 @@ export default function AdminKelembagaanForm() {
       toast.success('Lembaga berhasil ditambahkan!')
 
       // Redirect to the management page to add members
-      navigate({ to: '/admin/kelembagaan/kelola/$id', params: { id: newId } })
+      navigate({
+        to: '/admin/konten/kelembagaan/kelola/$id',
+        params: { id: newId },
+      })
     } catch (error: any) {
       toast.error(error.message || 'Gagal menyimpan lembaga baru.')
     } finally {
@@ -61,7 +64,7 @@ export default function AdminKelembagaanForm() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto pb-10">
+    <div className="space-y-6 pb-10 w-full">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <Button
@@ -69,7 +72,7 @@ export default function AdminKelembagaanForm() {
             variant="ghost"
             size="sm"
             className="mb-2 -ml-2 text-slate-500"
-            onClick={() => navigate({ to: '/admin/kelembagaan' })}
+            onClick={() => navigate({ to: '/admin/konten/kelembagaan' })}
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Kembali ke Daftar
@@ -181,7 +184,7 @@ export default function AdminKelembagaanForm() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate({ to: '/admin/kelembagaan' })}
+                onClick={() => navigate({ to: '/admin/konten/kelembagaan' })}
                 disabled={isSubmitting}
               >
                 Batal

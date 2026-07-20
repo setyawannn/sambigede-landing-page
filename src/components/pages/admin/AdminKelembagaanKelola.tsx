@@ -171,7 +171,7 @@ export default function AdminKelembagaanKelola({
   }
 
   return (
-    <div className="space-y-6 pb-10">
+    <div className="space-y-6 pb-10 w-full">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <Button
@@ -179,7 +179,7 @@ export default function AdminKelembagaanKelola({
             variant="ghost"
             size="sm"
             className="mb-2 -ml-2 text-slate-500"
-            onClick={() => navigate({ to: '/admin/kelembagaan' })}
+            onClick={() => navigate({ to: '/admin/konten/kelembagaan' })}
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Kembali ke Daftar Lembaga
