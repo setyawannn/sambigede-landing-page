@@ -1,27 +1,16 @@
 import { useQuery } from 'convex/react'
 import { api } from '../../../../convex/_generated/api'
-import { Landmark, ArrowUpRight, ArrowDownRight, Activity } from 'lucide-react'
+import { Landmark, ArrowUpRight, ArrowDownRight, Activity, Search, Filter } from 'lucide-react'
 import { Skeleton } from '../../ui/skeleton'
+import { useState, useMemo } from 'react'
 
 export default function ApbdesTab() {
-  const apbdesList = useQuery(api.apbdes.getApbdes)
+  const activeTahun = useQuery(api.apbdes.getApbdesTahunActive)
+  const apbdesList = useQuery(api.apbdes.getActiveApbdesItems)
 
-  const calculateTotals = () => {
-    if (!apbdesList) return { pendapatan: 0, belanja: 0, pembiayaan: 0 }
-    return {
-      pendapatan: apbdesList
-        .filter((a) => a.kategori === 'Pendapatan')
-        .reduce((acc, curr) => acc + curr.realisasi, 0),
-      belanja: apbdesList
-        .filter((a) => a.kategori === 'Belanja')
-        .reduce((acc, curr) => acc + curr.realisasi, 0),
-      pembiayaan: apbdesList
-        .filter((a) => a.kategori === 'Pembiayaan')
-        .reduce((acc, curr) => acc + curr.realisasi, 0),
-    }
-  }
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filterBidang, setFilterBidang] = useState<string>('Semua')
 
-  const totals = calculateTotals()
   const formatRupiah = (angka: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -30,145 +19,249 @@ export default function ApbdesTab() {
     }).format(angka)
   }
 
+  // Derive unique Bidang from data for filtering
+  const availableBidang = useMemo(() => {
+    if (!apbdesList) return []
+    const bidangSet = new Set<string>()
+    apbdesList.forEach(item => {
+      if (item.kategori === 'Belanja' && item.bidang) {
+        bidangSet.add(item.bidang)
+      }
+    })
+    return Array.from(bidangSet)
+  }, [apbdesList])
+
+  const filteredItems = useMemo(() => {
+    if (!apbdesList) return []
+    return apbdesList.filter(item => {
+      const matchSearch = item.uraian.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          (item.sumberDana && item.sumberDana.toLowerCase().includes(searchTerm.toLowerCase()))
+      const matchBidang = filterBidang === 'Semua' || item.bidang === filterBidang || item.kategori !== 'Belanja' // Always show Pendapatan/Pembiayaan if not filtering specific Belanja, or we can just filter all. Let's filter everything strictly if a bidang is selected.
+      
+      // If a specific bidang is selected, only show items matching that bidang.
+      if (filterBidang !== 'Semua') {
+        return item.bidang === filterBidang && matchSearch
+      }
+      
+      return matchSearch
+    })
+  }, [apbdesList, searchTerm, filterBidang])
+
   return (
     <div className="flex flex-col gap-8">
-      <div className="bg-white rounded-2xl border border-[#E5E5E5] p-8 shadow-sm text-center">
-        <h2 className="text-xl font-bold text-[#333] mb-4">
-          Transparansi Anggaran (APBDes)
-        </h2>
-        <p className="text-[#666] text-sm max-w-2xl mx-auto">
-          Laporan realisasi Anggaran Pendapatan dan Belanja Desa (APBDes)
-          Sambigede. Kami menjunjung tinggi prinsip transparansi dan
-          akuntabilitas dalam pengelolaan keuangan desa.
-        </p>
+      <div className="bg-gradient-to-br from-[#1F3D2B] to-[#3F7D4A] rounded-3xl p-8 md:p-12 shadow-xl text-center relative overflow-hidden">
+        {/* Abstract shapes for background */}
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-white opacity-5 blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-emerald-300 opacity-10 blur-3xl"></div>
+        
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-2 bg-white/20 text-white px-4 py-1.5 rounded-full mb-6 backdrop-blur-sm text-sm font-medium border border-white/10">
+            <Landmark className="w-4 h-4" />
+            Tahun Anggaran {activeTahun?.tahun || '...'} ({activeTahun?.jenis || '...'})
+          </div>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4 leading-tight">
+            Transparansi APBDes
+          </h2>
+          <p className="text-emerald-50 text-sm md:text-base max-w-2xl mx-auto font-medium opacity-90 leading-relaxed">
+            Laporan realisasi Anggaran Pendapatan dan Belanja Desa (APBDes)
+            Sambigede. Kami menjunjung tinggi prinsip transparansi dan
+            akuntabilitas dalam pengelolaan keuangan desa untuk kesejahteraan bersama.
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-[#E5E5E5]">
-          <div className="flex items-center gap-3 mb-4 text-green-600">
-            <ArrowDownRight className="w-6 h-6" />
-            <h3 className="font-bold">Total Pendapatan</h3>
+        <div className="bg-white rounded-2xl p-6 shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-[#E5E5E5] relative overflow-hidden transition-all hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-green-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+          <div className="relative z-10">
+            <div className="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-4">
+              <ArrowDownRight className="w-6 h-6" />
+            </div>
+            <h3 className="font-semibold text-slate-500 mb-1">Pendapatan Desa</h3>
+            {activeTahun === undefined ? (
+              <Skeleton className="h-8 w-3/4" />
+            ) : (
+              <div>
+                <p className="text-2xl md:text-3xl font-bold text-slate-800">
+                  {formatRupiah(activeTahun?.totalPendapatan || 0)}
+                </p>
+                {activeTahun?.totalPendapatanSemula !== undefined && activeTahun?.totalPendapatanSemula !== activeTahun?.totalPendapatan && (
+                  <p className="text-sm text-slate-500 mt-1">
+                    <span className="text-emerald-600 font-medium">Semula: </span>
+                    {formatRupiah(activeTahun.totalPendapatanSemula)}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
-          {apbdesList === undefined ? (
-            <Skeleton className="h-10 w-3/4" />
-          ) : (
-            <p className="text-2xl font-bold text-[#333]">
-              {formatRupiah(totals.pendapatan)}
-            </p>
-          )}
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-[#E5E5E5]">
-          <div className="flex items-center gap-3 mb-4 text-red-600">
-            <ArrowUpRight className="w-6 h-6" />
-            <h3 className="font-bold">Total Belanja</h3>
+        <div className="bg-white rounded-2xl p-6 shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-[#E5E5E5] relative overflow-hidden transition-all hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+          <div className="relative z-10">
+            <div className="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center mb-4">
+              <ArrowUpRight className="w-6 h-6" />
+            </div>
+            <h3 className="font-semibold text-slate-500 mb-1">Belanja Desa</h3>
+            {activeTahun === undefined ? (
+              <Skeleton className="h-8 w-3/4" />
+            ) : (
+              <div>
+                <p className="text-2xl md:text-3xl font-bold text-slate-800">
+                  {formatRupiah(activeTahun?.totalBelanja || 0)}
+                </p>
+                {activeTahun?.totalBelanjaSemula !== undefined && activeTahun?.totalBelanjaSemula !== activeTahun?.totalBelanja && (
+                  <p className="text-sm text-slate-500 mt-1">
+                    <span className="text-red-600 font-medium">Semula: </span>
+                    {formatRupiah(activeTahun.totalBelanjaSemula)}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
-          {apbdesList === undefined ? (
-            <Skeleton className="h-10 w-3/4" />
-          ) : (
-            <p className="text-2xl font-bold text-[#333]">
-              {formatRupiah(totals.belanja)}
-            </p>
-          )}
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-[#E5E5E5]">
-          <div className="flex items-center gap-3 mb-4 text-blue-600">
-            <Activity className="w-6 h-6" />
-            <h3 className="font-bold">Pembiayaan</h3>
+        <div className="bg-white rounded-2xl p-6 shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-[#E5E5E5] relative overflow-hidden transition-all hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+          <div className="relative z-10">
+            <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4">
+              <Activity className="w-6 h-6" />
+            </div>
+            <h3 className="font-semibold text-slate-500 mb-1">Pembiayaan (Netto)</h3>
+            {activeTahun === undefined ? (
+              <Skeleton className="h-8 w-3/4" />
+            ) : (
+              <p className="text-2xl md:text-3xl font-bold text-slate-800">
+                {formatRupiah(activeTahun?.pembiayaanNetto || 0)}
+              </p>
+            )}
           </div>
-          {apbdesList === undefined ? (
-            <Skeleton className="h-10 w-3/4" />
-          ) : (
-            <p className="text-2xl font-bold text-[#333]">
-              {formatRupiah(totals.pembiayaan)}
-            </p>
-          )}
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-[#E5E5E5] overflow-hidden shadow-sm">
-        <div className="px-6 py-5 border-b border-[#E5E5E5] bg-[#F9F9F9] flex items-center justify-between">
-          <h3 className="font-bold text-[#333] flex items-center gap-2">
-            <Landmark className="w-5 h-5 text-[#3F7D4A]" /> Rincian APBDes
+      <div className="bg-white rounded-2xl border border-[#E5E5E5] shadow-[0_2px_20px_rgba(0,0,0,0.03)] overflow-hidden">
+        <div className="px-6 py-5 border-b border-[#E5E5E5] bg-[#F9F9F9] flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <h3 className="font-bold text-slate-800 flex items-center gap-2 text-lg">
+            <Landmark className="w-5 h-5 text-emerald-600" /> Rincian APBDes
           </h3>
+          
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input 
+                type="text" 
+                placeholder="Cari kegiatan/sumber..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+              />
+            </div>
+            <div className="relative">
+              <Filter className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <select
+                value={filterBidang}
+                onChange={(e) => setFilterBidang(e.target.value)}
+                className="pl-9 pr-8 py-2 border border-slate-200 rounded-xl text-sm w-full sm:w-auto appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 cursor-pointer transition-all"
+              >
+                <option value="Semua">Semua Kategori</option>
+                {availableBidang.map(b => (
+                  <option key={b} value={b}>{b}</option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
+        
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          <table className="w-full min-w-[900px] text-sm text-left">
             <thead className="bg-white border-b border-[#E5E5E5]">
               <tr>
-                <th className="px-6 py-4 font-semibold text-[#333] uppercase tracking-wide text-xs">
+                <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider text-xs">
                   Uraian / Nama Program
                 </th>
-                <th className="px-6 py-4 font-semibold text-[#333] uppercase tracking-wide text-xs">
+                <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider text-xs">
                   Kategori
                 </th>
-                <th className="px-6 py-4 font-semibold text-[#333] uppercase tracking-wide text-xs text-right">
-                  Anggaran
+                <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider text-xs text-right">
+                  Anggaran Semula
                 </th>
-                <th className="px-6 py-4 font-semibold text-[#333] uppercase tracking-wide text-xs text-right">
-                  Realisasi
+                <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider text-xs text-right">
+                  Anggaran Menjadi
                 </th>
-                <th className="px-6 py-4 font-semibold text-[#333] uppercase tracking-wide text-xs text-center">
-                  Capaian
+                <th className="px-6 py-4 font-semibold text-slate-500 uppercase tracking-wider text-xs text-right">
+                  Kurang / Lebih
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E5E5E5]">
+            <tbody className="divide-y divide-slate-100">
               {apbdesList === undefined ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-[#999]">
-                    Memuat data...
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
+                    <div className="flex flex-col items-center gap-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-4 w-48" />
+                    </div>
                   </td>
                 </tr>
               ) : apbdesList.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-[#999]">
-                    Belum ada data APBDes.
+                  <td colSpan={5} className="px-6 py-16 text-center text-slate-500">
+                    <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Landmark className="w-8 h-8 text-slate-300" />
+                    </div>
+                    Belum ada data rincian APBDes untuk tahun ini.
+                  </td>
+                </tr>
+              ) : filteredItems.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
+                    Tidak ditemukan data yang cocok dengan filter pencarian.
                   </td>
                 </tr>
               ) : (
-                apbdesList.map((item, idx) => {
-                  const capaian =
-                    item.nilai > 0 ? (item.realisasi / item.nilai) * 100 : 0
+                filteredItems.map((item) => {
+                  const selisih = (item.anggaranMenjadi || 0) - (item.anggaranSemula || 0)
                   return (
-                    <tr key={idx} className="hover:bg-[#F5F5F5]">
-                      <td className="px-6 py-4 font-medium text-[#333]">
-                        {item.nama}
-                        <div className="text-xs text-[#999] mt-1">
-                          Sumber: {item.sumberDana}
+                    <tr key={item._id} className="hover:bg-slate-50/80 transition-colors group">
+                      <td className="px-6 py-4">
+                        <div className="font-semibold text-slate-800 group-hover:text-emerald-700 transition-colors">
+                          {item.uraian}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                          {item.sumberDana && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                              {item.sumberDana}
+                            </span>
+                          )}
+                          {item.bidang && (
+                            <span className="text-xs text-slate-500 truncate max-w-xs" title={item.bidang}>
+                              {item.bidang}
+                            </span>
+                          )}
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 align-top pt-5">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold
+                          className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide
                           ${
                             item.kategori === 'Pendapatan'
-                              ? 'bg-green-100 text-green-700'
+                              ? 'bg-emerald-100/50 text-emerald-700 border border-emerald-200'
                               : item.kategori === 'Belanja'
-                                ? 'bg-red-100 text-red-700'
-                                : 'bg-blue-100 text-blue-700'
+                                ? 'bg-red-100/50 text-red-700 border border-red-200'
+                                : 'bg-blue-100/50 text-blue-700 border border-blue-200'
                           }`}
                         >
                           {item.kategori}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right text-[#666]">
-                        {formatRupiah(item.nilai)}
+                      <td className="px-6 py-4 align-top pt-5 text-right font-medium text-slate-500 whitespace-nowrap">
+                        {formatRupiah(item.anggaranSemula || 0)}
                       </td>
-                      <td className="px-6 py-4 text-right font-medium text-[#333]">
-                        {formatRupiah(item.realisasi)}
+                      <td className="px-6 py-4 align-top pt-5 text-right font-bold text-slate-800 whitespace-nowrap">
+                        {formatRupiah(item.anggaranMenjadi || 0)}
                       </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-1 max-w-[100px] mx-auto">
-                          <div
-                            className="bg-[#3F7D4A] h-2.5 rounded-full"
-                            style={{ width: `${Math.min(capaian, 100)}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-xs text-[#666]">
-                          {capaian.toFixed(1)}%
-                        </span>
+                      <td className={`px-6 py-4 align-top pt-5 text-right font-bold whitespace-nowrap ${selisih > 0 ? 'text-emerald-600' : selisih < 0 ? 'text-red-600' : 'text-slate-400'}`}>
+                        {selisih > 0 ? '+' : ''}{formatRupiah(selisih)}
                       </td>
                     </tr>
                   )

@@ -1,33 +1,6 @@
-import { Link, Outlet, useLocation, useNavigate } from '@tanstack/react-router'
-import {
-  LayoutDashboard,
-  Newspaper,
-  Settings,
-  LogOut,
-  Bell,
-  Database,
-  ChevronDown,
-  PieChart,
-  Landmark,
-  Building2,
-  Handshake,
-  Users,
-  FolderOpen,
-  Home,
-  Phone,
-  ShieldAlert,
-  Activity,
-} from 'lucide-react'
-import React, { useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import { Link, useLocation, useNavigate, Outlet } from '@tanstack/react-router'
 import { useAuth } from '../../../lib/auth'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '../../ui/breadcrumb'
 import {
   Sidebar,
   SidebarContent,
@@ -39,27 +12,59 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarProvider,
   SidebarTrigger,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-  SidebarMenuSubButton,
+  useSidebar,
 } from '../../ui/sidebar'
+import {
+  LayoutDashboard,
+  Newspaper,
+  PieChart,
+  FolderOpen,
+  Database,
+  Activity,
+  ChevronDown,
+  LogOut,
+  ShieldAlert,
+  Settings,
+  Globe,
+} from 'lucide-react'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '../../ui/collapsible'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from '../../ui/dropdown-menu'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '../../ui/breadcrumb'
 import { Avatar, AvatarFallback } from '../../ui/avatar'
-import { Button } from '../../ui/button'
-import { Skeleton } from '../../ui/skeleton'
-
-import { Toaster } from '../../ui/sonner'
+import { ScrollArea } from '../../ui/scroll-area'
 
 export default function AdminLayout() {
+  const [mounted, setMounted] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
   const { user, logout, isLoading } = useAuth()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -67,171 +72,140 @@ export default function AdminLayout() {
     }
   }, [user, isLoading, navigate])
 
-  // Early returns removed to allow layout CSR rendering
+  const userRole = user?.role || ''
 
   const menuItems = [
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
-    { name: 'Kelola Berita', path: '/admin/berita', icon: Newspaper },
-    { name: 'Pengaduan & Log', path: '/admin/pengaduan', icon: ShieldAlert },
+    ...(userRole === 'Superadmin' || userRole === 'Editor Konten' || userRole === 'Editor'
+      ? [{ name: 'Kelola Berita', path: '/admin/berita', icon: Newspaper }]
+      : []),
+    ...(userRole === 'Superadmin' || userRole === 'Petugas Pengaduan'
+      ? [{ name: 'Pengaduan & Log', path: '/admin/pengaduan', icon: ShieldAlert }]
+      : []),
   ]
 
-  const infografisItems = [
-    { name: 'Data Penduduk', path: '/admin/infografis/penduduk' },
-    { name: 'Penerima Bansos', path: '/admin/infografis/bansos' },
-    { name: 'Stunting', path: '/admin/infografis/stunting' },
-    { name: 'Keuangan APBDes', path: '/admin/infografis/apbdes' },
-  ]
+  const infografisItems =
+    userRole === 'Superadmin' || userRole === 'Operator Infografis'
+      ? [
+          { name: 'Data Penduduk', path: '/admin/infografis/penduduk' },
+          { name: 'Penerima Bansos', path: '/admin/infografis/bansos' },
+          { name: 'Stunting', path: '/admin/infografis/stunting' },
+          { name: 'Keuangan APBDes', path: '/admin/infografis/apbdes' },
+        ]
+      : []
 
   const masterDataItems = [
-    { name: 'Kategori Berita', path: '/admin/master/kategori' },
-    { name: 'Kategori Pengaduan', path: '/admin/master/kategori-pengaduan' },
+    ...(userRole === 'Superadmin' || userRole === 'Editor Konten' || userRole === 'Editor'
+      ? [{ name: 'Kategori Berita', path: '/admin/master/kategori' }]
+      : []),
+    ...(userRole === 'Superadmin' || userRole === 'Petugas Pengaduan'
+      ? [{ name: 'Kategori Pengaduan', path: '/admin/master/kategori-pengaduan' }]
+      : []),
+    ...(userRole === 'Superadmin'
+      ? [{ name: 'Kelola User Admin', path: '/admin/master/users' }]
+      : []),
   ]
 
-  const analyticItems = [
-    { name: 'Turnstile Security', path: '/admin/analytic/turnstile' },
-    { name: 'Cloudflare R2', path: '/admin/analytic/r2' },
-  ]
+  const analyticItems =
+    userRole === 'Superadmin'
+      ? [
+          { name: 'Turnstile Security', path: '/admin/analytic/turnstile' },
+          { name: 'Cloudflare R2', path: '/admin/analytic/r2' },
+        ]
+      : []
 
-  const kelolaKontenItems = [
-    { name: 'Beranda', path: '/admin/konten/beranda' },
-    { name: 'Profil Desa & Visi Misi', path: '/admin/konten/profil' },
-    { name: 'Kelembagaan', path: '/admin/konten/kelembagaan' },
-    { name: 'Perangkat Desa', path: '/admin/konten/perangkat' },
-    { name: 'Informasi Kontak', path: '/admin/konten/kontak' },
-  ]
+  const kelolaKontenItems =
+    userRole === 'Superadmin' || userRole === 'Editor Konten' || userRole === 'Editor'
+      ? [
+          { name: 'Beranda', path: '/admin/konten/beranda' },
+          { name: 'Profil Desa & Visi Misi', path: '/admin/konten/profil' },
+          { name: 'Kelembagaan', path: '/admin/konten/kelembagaan' },
+          { name: 'Perangkat Desa', path: '/admin/konten/perangkat' },
+          { name: 'Ketua RT & RW', path: '/admin/konten/rt-rw' },
+          { name: 'Informasi Kontak', path: '/admin/konten/kontak' },
+        ]
+      : []
 
   const handleLogout = () => {
     logout()
-    navigate({ to: '/' })
+    navigate({ to: '/login' })
   }
 
+  // Breadcrumbs Helper
+  const getBreadcrumbItems = () => {
+    const paths = location.pathname.split('/').filter(Boolean)
+    const items = []
+    
+    let currentPath = ''
+    for (let i = 0; i < paths.length; i++) {
+      currentPath += `/${paths[i]}`
+      let label = paths[i].charAt(0).toUpperCase() + paths[i].slice(1).replace(/-/g, ' ')
+      
+      // Map names logically
+      if (paths[i] === 'admin') label = 'Dashboard'
+      if (paths[i] === 'infografis') label = 'Infografis'
+      if (paths[i] === 'konten') label = 'Konten'
+      if (paths[i] === 'master') label = 'Master Data'
+      
+      // Make parents non-clickable if they don't have their own page (e.g. /admin/master)
+      const hasNoPage = ['infografis', 'konten', 'master', 'analytic'].includes(paths[i])
+      
+      items.push({
+        label,
+        url: hasNoPage ? null : currentPath,
+      })
+    }
+    
+    return items
+  }
+  const breadcrumbs = getBreadcrumbItems()
+
+  // Active state helpers
   const isInfografisActive = location.pathname.startsWith('/admin/infografis')
   const isMasterDataActive = location.pathname.startsWith('/admin/master')
   const isAnalyticActive = location.pathname.startsWith('/admin/analytic')
   const isKelolaKontenActive = location.pathname.startsWith('/admin/konten')
 
-  const getBreadcrumbItems = (pathname: string) => {
-    const items = []
-
-    // Base Admin Path
-    items.push({
-      label: 'Admin',
-      url: '/admin',
-    })
-
-    const segments = pathname.split('/').filter(Boolean)
-
-    if (segments.length > 1 && segments[0] === 'admin') {
-      const parent = segments[1]
-      const child = segments[2]
-      const subChild = segments[3]
-
-      if (parent === 'infografis') {
-        items.push({ label: 'Infografis', url: null })
-        if (child === 'penduduk')
-          items.push({
-            label: 'Data Penduduk',
-            url: '/admin/infografis/penduduk',
-          })
-        if (child === 'bansos')
-          items.push({
-            label: 'Penerima Bansos',
-            url: '/admin/infografis/bansos',
-          })
-        if (child === 'stunting')
-          items.push({ label: 'Stunting', url: '/admin/infografis/stunting' })
-        if (child === 'apbdes')
-          items.push({
-            label: 'Keuangan APBDes',
-            url: '/admin/infografis/apbdes',
-          })
-      } else if (parent === 'konten') {
-        items.push({ label: 'Konten Desa', url: null })
-        if (child === 'beranda')
-          items.push({ label: 'Beranda', url: '/admin/konten/beranda' })
-        if (child === 'profil')
-          items.push({ label: 'Profil Desa', url: '/admin/konten/profil' })
-        if (child === 'kelembagaan') {
-          items.push({ label: 'Kelembagaan', url: '/admin/konten/kelembagaan' })
-          if (subChild === 'tambah')
-            items.push({
-              label: 'Tambah Lembaga',
-              url: '/admin/konten/kelembagaan/tambah',
-            })
-          if (subChild === 'kelola')
-            items.push({
-              label: 'Kelola Anggota',
-              url: `/admin/konten/kelembagaan/kelola/${segments[4]}`,
-            })
-        }
-        if (child === 'perangkat')
-          items.push({
-            label: 'Perangkat Desa',
-            url: '/admin/konten/perangkat',
-          })
-        if (child === 'kontak')
-          items.push({ label: 'Informasi Kontak', url: '/admin/konten/kontak' })
-      } else if (parent === 'master') {
-        items.push({ label: 'Master Data', url: null })
-        if (child === 'kategori')
-          items.push({
-            label: 'Kategori Berita',
-            url: '/admin/master/kategori',
-          })
-        if (child === 'kategori-pengaduan')
-          items.push({
-            label: 'Kategori Pengaduan',
-            url: '/admin/master/kategori-pengaduan',
-          })
-      } else if (parent === 'analytic') {
-        items.push({ label: 'Analitik Sistem', url: null })
-        if (child === 'turnstile')
-          items.push({
-            label: 'Turnstile Security',
-            url: '/admin/analytic/turnstile',
-          })
-        if (child === 'r2')
-          items.push({ label: 'Cloudflare R2', url: '/admin/analytic/r2' })
-      } else if (parent === 'berita') {
-        items.push({ label: 'Kelola Berita', url: '/admin/berita' })
-        if (child === 'tambah')
-          items.push({ label: 'Tambah Berita', url: '/admin/berita/tambah' })
-        if (child === 'edit')
-          items.push({
-            label: 'Edit Berita',
-            url: `/admin/berita/edit/${segments[3]}`,
-          })
-      } else if (parent === 'pengaduan') {
-        items.push({ label: 'Laporan Pengaduan', url: '/admin/pengaduan' })
-      } else if (parent === 'settings') {
-        items.push({ label: 'Pengaturan', url: '/admin/settings' })
-      }
-    }
-
-    return items
+  if (!mounted || isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    )
   }
 
-  const breadcrumbs = getBreadcrumbItems(location.pathname)
+  if (!user) return null
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-slate-50/50">
-        <Sidebar
-          collapsible="icon"
-          variant="sidebar"
-          className="border-r bg-white"
-        >
-          <SidebarHeader className="h-16 flex flex-row items-center gap-2 px-4 border-b">
-            <Landmark className="w-6 h-6 text-primary shrink-0" />
-            <h1 className="text-primary font-bold text-lg tracking-wider truncate group-data-[collapsible=icon]:hidden">
-              Sambigede Admin
-            </h1>
+      <div className="flex min-h-screen w-full bg-slate-50 overflow-hidden">
+        <Sidebar className="border-r border-slate-200">
+          <SidebarHeader className="h-16 flex flex-row items-center px-6 border-b border-slate-100">
+            <Link
+              to="/admin"
+              className="flex items-center gap-3 hover:opacity-90 transition-opacity w-full"
+            >
+              <img 
+                src="/images/logo-desa-sambigede.webp" 
+                alt="Logo Desa Sambigede" 
+                className="w-8 h-8 object-contain" 
+              />
+              <div className="flex flex-col justify-center pt-0.5">
+                <span className="font-bold text-lg leading-none text-slate-800">
+                  Sambigede
+                </span>
+                <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider mt-0.5">
+                  Admin Panel
+                </span>
+              </div>
+            </Link>
           </SidebarHeader>
+
           <SidebarContent>
-            {/* GRUP 1: UTAMA */}
+            {/* GRUP 1: MENU UTAMA */}
             <SidebarGroup>
               <SidebarGroupLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                Utama
+                Menu Utama
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
@@ -270,384 +244,387 @@ export default function AdminLayout() {
             </SidebarGroup>
 
             {/* GRUP 2: KONTEN DESA */}
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                Konten Desa
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <Collapsible
-                    defaultOpen={isKelolaKontenActive}
-                    className="group/collapsible"
-                  >
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton
-                          tooltip="Halaman & Konten Desa"
-                          isActive={isKelolaKontenActive}
-                          className={
-                            isKelolaKontenActive
-                              ? '!text-primary !font-semibold !bg-transparent hover:!bg-primary/10'
-                              : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
-                          }
-                        >
-                          <FolderOpen className="w-5 h-5" />
-                          <span className="group-data-[collapsible=icon]:hidden">
-                            Halaman & Konten Desa
-                          </span>
-                          <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
-                          {kelolaKontenItems.map((item) => {
-                            const isActive =
-                              location.pathname === item.path ||
-                              location.pathname.startsWith(item.path + '/')
-                            return (
-                              <SidebarMenuSubItem key={item.name}>
-                                <SidebarMenuSubButton
-                                  asChild
-                                  isActive={isActive}
-                                  className={
-                                    isActive
-                                      ? '!bg-primary/10 !text-primary !font-semibold hover:!bg-primary/15'
-                                      : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
-                                  }
-                                >
-                                  <Link
-                                    to={item.path}
-                                    className="flex items-center gap-2"
+            {kelolaKontenItems.length > 0 && (
+              <SidebarGroup>
+                <SidebarGroupLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                  Konten Desa
+                </SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    <Collapsible
+                      defaultOpen={isKelolaKontenActive}
+                      className="group/collapsible"
+                    >
+                      <SidebarMenuItem>
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuButton
+                            tooltip="Halaman & Konten Desa"
+                            isActive={isKelolaKontenActive}
+                            className={
+                              isKelolaKontenActive
+                                ? '!text-primary !font-semibold !bg-transparent hover:!bg-primary/10'
+                                : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
+                            }
+                          >
+                            <FolderOpen className="w-5 h-5" />
+                            <span className="group-data-[collapsible=icon]:hidden">
+                              Halaman & Konten Desa
+                            </span>
+                            <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
+                          </SidebarMenuButton>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
+                            {kelolaKontenItems.map((item) => {
+                              const isActive =
+                                location.pathname === item.path ||
+                                location.pathname.startsWith(item.path + '/')
+                              return (
+                                <SidebarMenuSubItem key={item.name}>
+                                  <SidebarMenuSubButton
+                                    asChild
+                                    isActive={isActive}
+                                    className={
+                                      isActive
+                                        ? '!bg-primary/10 !text-primary !font-semibold hover:!bg-primary/15'
+                                        : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
+                                    }
                                   >
-                                    <span>{item.name}</span>
-                                  </Link>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            )
-                          })}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+                                    <Link
+                                      to={item.path}
+                                      className="flex items-center gap-2"
+                                    >
+                                      <span>{item.name}</span>
+                                    </Link>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              )
+                            })}
+                          </SidebarMenuSub>
+                        </CollapsibleContent>
+                      </SidebarMenuItem>
+                    </Collapsible>
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            )}
 
             {/* GRUP 3: DATA & INFOGRAFIS */}
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                Data & Infografis
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <Collapsible
-                    defaultOpen={isInfografisActive}
-                    className="group/collapsible"
-                  >
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton
-                          tooltip="Infografis Desa"
-                          isActive={isInfografisActive}
-                          className={
-                            isInfografisActive
-                              ? '!text-primary !font-semibold !bg-transparent hover:!bg-primary/10'
-                              : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
-                          }
-                        >
-                          <PieChart className="w-5 h-5" />
-                          <span className="group-data-[collapsible=icon]:hidden">
-                            Infografis Desa
-                          </span>
-                          <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
-                          {infografisItems.map((item) => {
-                            const isActive =
-                              location.pathname === item.path ||
-                              location.pathname.startsWith(item.path + '/')
-                            return (
-                              <SidebarMenuSubItem key={item.name}>
-                                <SidebarMenuSubButton
-                                  asChild
-                                  isActive={isActive}
-                                  className={
-                                    isActive
-                                      ? '!bg-primary/10 !text-primary !font-semibold hover:!bg-primary/15'
-                                      : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
-                                  }
-                                >
-                                  <Link to={item.path}>
-                                    <span>{item.name}</span>
-                                  </Link>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            )
-                          })}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+            {infografisItems.length > 0 && (
+              <SidebarGroup>
+                <SidebarGroupLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                  Data & Infografis
+                </SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    <Collapsible
+                      defaultOpen={isInfografisActive}
+                      className="group/collapsible"
+                    >
+                      <SidebarMenuItem>
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuButton
+                            tooltip="Infografis Desa"
+                            isActive={isInfografisActive}
+                            className={
+                              isInfografisActive
+                                ? '!text-primary !font-semibold !bg-transparent hover:!bg-primary/10'
+                                : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
+                            }
+                          >
+                            <PieChart className="w-5 h-5" />
+                            <span className="group-data-[collapsible=icon]:hidden">
+                              Infografis Desa
+                            </span>
+                            <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
+                          </SidebarMenuButton>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
+                            {infografisItems.map((item) => {
+                              const isActive =
+                                location.pathname === item.path ||
+                                location.pathname.startsWith(item.path + '/')
+                              return (
+                                <SidebarMenuSubItem key={item.name}>
+                                  <SidebarMenuSubButton
+                                    asChild
+                                    isActive={isActive}
+                                    className={
+                                      isActive
+                                        ? '!bg-primary/10 !text-primary !font-semibold hover:!bg-primary/15'
+                                        : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
+                                    }
+                                  >
+                                    <Link to={item.path}>
+                                      <span>{item.name}</span>
+                                    </Link>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              )
+                            })}
+                          </SidebarMenuSub>
+                        </CollapsibleContent>
+                      </SidebarMenuItem>
+                    </Collapsible>
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            )}
 
             {/* GRUP 4: SISTEM & PENGATURAN */}
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                Sistem & Pengaturan
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <Collapsible
-                    defaultOpen={isMasterDataActive}
-                    className="group/collapsible"
-                  >
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton
-                          tooltip="Master Data"
-                          isActive={isMasterDataActive}
-                          className={
-                            isMasterDataActive
-                              ? '!text-primary !font-semibold !bg-transparent hover:!bg-primary/10'
-                              : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
-                          }
-                        >
-                          <Database className="w-5 h-5" />
-                          <span className="group-data-[collapsible=icon]:hidden">
-                            Master Data
-                          </span>
-                          <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
-                          {masterDataItems.map((item) => {
-                            const isActive =
-                              location.pathname === item.path ||
-                              location.pathname.startsWith(item.path + '/')
-                            return (
-                              <SidebarMenuSubItem key={item.name}>
-                                <SidebarMenuSubButton
-                                  asChild
-                                  isActive={isActive}
-                                  className={
-                                    isActive
-                                      ? '!bg-primary/10 !text-primary !font-semibold hover:!bg-primary/15'
-                                      : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
-                                  }
-                                >
-                                  <Link to={item.path}>
-                                    <span>{item.name}</span>
-                                  </Link>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            )
-                          })}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
-
-                  <Collapsible
-                    defaultOpen={isAnalyticActive}
-                    className="group/collapsible"
-                  >
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton
-                          tooltip="Analitik Sistem"
-                          isActive={isAnalyticActive}
-                          className={
-                            isAnalyticActive
-                              ? '!text-primary !font-semibold !bg-transparent hover:!bg-primary/10'
-                              : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
-                          }
-                        >
-                          <Activity className="w-5 h-5" />
-                          <span className="group-data-[collapsible=icon]:hidden">
-                            Analitik Sistem
-                          </span>
-                          <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
-                          {analyticItems.map((item) => {
-                            const isActive =
-                              location.pathname === item.path ||
-                              location.pathname.startsWith(item.path + '/')
-                            return (
-                              <SidebarMenuSubItem key={item.name}>
-                                <SidebarMenuSubButton
-                                  asChild
-                                  isActive={isActive}
-                                  className={
-                                    isActive
-                                      ? '!bg-primary/10 !text-primary !font-semibold hover:!bg-primary/15'
-                                      : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
-                                  }
-                                >
-                                  <Link to={item.path}>
-                                    <span>{item.name}</span>
-                                  </Link>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            )
-                          })}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
-
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={location.pathname === '/admin/settings'}
-                      tooltip="Pengaturan"
-                      className={
-                        location.pathname === '/admin/settings'
-                          ? '!bg-primary/10 !text-primary !font-semibold hover:!bg-primary/15'
-                          : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
-                      }
-                    >
-                      <Link
-                        to="/admin/settings"
-                        className="flex items-center gap-3"
+            {(masterDataItems.length > 0 || analyticItems.length > 0 || userRole === 'Superadmin') && (
+              <SidebarGroup>
+                <SidebarGroupLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                  Sistem & Pengaturan
+                </SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {masterDataItems.length > 0 && (
+                      <Collapsible
+                        defaultOpen={isMasterDataActive}
+                        className="group/collapsible"
                       >
-                        <Settings className="w-5 h-5" />
-                        <span className="group-data-[collapsible=icon]:hidden">
-                          Pengaturan
-                        </span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+                        <SidebarMenuItem>
+                          <CollapsibleTrigger asChild>
+                            <SidebarMenuButton
+                              tooltip="Master Data"
+                              isActive={isMasterDataActive}
+                              className={
+                                isMasterDataActive
+                                  ? '!text-primary !font-semibold !bg-transparent hover:!bg-primary/10'
+                                  : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
+                              }
+                            >
+                              <Database className="w-5 h-5" />
+                              <span className="group-data-[collapsible=icon]:hidden">
+                                Master Data
+                              </span>
+                              <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
+                            </SidebarMenuButton>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
+                              {masterDataItems.map((item) => {
+                                const isActive =
+                                  location.pathname === item.path ||
+                                  location.pathname.startsWith(item.path + '/')
+                                return (
+                                  <SidebarMenuSubItem key={item.name}>
+                                    <SidebarMenuSubButton
+                                      asChild
+                                      isActive={isActive}
+                                      className={
+                                        isActive
+                                          ? '!bg-primary/10 !text-primary !font-semibold hover:!bg-primary/15'
+                                          : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
+                                      }
+                                    >
+                                      <Link to={item.path}>
+                                        <span>{item.name}</span>
+                                      </Link>
+                                    </SidebarMenuSubButton>
+                                  </SidebarMenuSubItem>
+                                )
+                              })}
+                            </SidebarMenuSub>
+                          </CollapsibleContent>
+                        </SidebarMenuItem>
+                      </Collapsible>
+                    )}
+
+                    {analyticItems.length > 0 && (
+                      <Collapsible
+                        defaultOpen={isAnalyticActive}
+                        className="group/collapsible"
+                      >
+                        <SidebarMenuItem>
+                          <CollapsibleTrigger asChild>
+                            <SidebarMenuButton
+                              tooltip="Analitik Sistem"
+                              isActive={isAnalyticActive}
+                              className={
+                                isAnalyticActive
+                                  ? '!text-primary !font-semibold !bg-transparent hover:!bg-primary/10'
+                                  : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
+                              }
+                            >
+                              <Activity className="w-5 h-5" />
+                              <span className="group-data-[collapsible=icon]:hidden">
+                                Analitik Sistem
+                              </span>
+                              <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
+                            </SidebarMenuButton>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <SidebarMenuSub className="group-data-[collapsible=icon]:hidden">
+                              {analyticItems.map((item) => {
+                                const isActive =
+                                  location.pathname === item.path ||
+                                  location.pathname.startsWith(item.path + '/')
+                                return (
+                                  <SidebarMenuSubItem key={item.name}>
+                                    <SidebarMenuSubButton
+                                      asChild
+                                      isActive={isActive}
+                                      className={
+                                        isActive
+                                          ? '!bg-primary/10 !text-primary !font-semibold hover:!bg-primary/15'
+                                          : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
+                                      }
+                                    >
+                                      <Link to={item.path}>
+                                        <span>{item.name}</span>
+                                      </Link>
+                                    </SidebarMenuSubButton>
+                                  </SidebarMenuSubItem>
+                                )
+                              })}
+                            </SidebarMenuSub>
+                          </CollapsibleContent>
+                        </SidebarMenuItem>
+                      </Collapsible>
+                    )}
+
+                    {userRole === 'Superadmin' && (
+                      <SidebarMenuItem>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={location.pathname === '/admin/settings'}
+                          tooltip="Pengaturan"
+                          className={
+                            location.pathname === '/admin/settings'
+                              ? '!bg-primary/10 !text-primary !font-semibold hover:!bg-primary/15'
+                              : 'font-normal text-slate-600 hover:!bg-primary/10 hover:!text-primary'
+                          }
+                        >
+                          <Link
+                            to="/admin/settings"
+                            className="flex items-center gap-3"
+                          >
+                            <Settings className="w-5 h-5" />
+                            <span className="group-data-[collapsible=icon]:hidden">
+                              Pengaturan
+                            </span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            )}
           </SidebarContent>
-          <SidebarFooter className="p-4 border-t border-slate-100">
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={handleLogout}
-                  className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                >
-                  <LogOut className="w-5 h-5" />
-                  <span className="group-data-[collapsible=icon]:hidden">
-                    Logout
-                  </span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarFooter>
         </Sidebar>
 
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
-          {/* Top Header */}
-          <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 shrink-0 z-10 sticky top-0">
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Header */}
+          <header className="h-16 flex items-center justify-between px-6 bg-white border-b border-slate-200 sticky top-0 z-10">
             <div className="flex items-center gap-4">
-              <SidebarTrigger className="text-slate-500" />
-              <div className="hidden md:flex items-center">
+              <SidebarTrigger className="hover:bg-slate-100 p-2 rounded-md transition-colors" />
+              <div className="hidden md:flex">
                 <Breadcrumb>
                   <BreadcrumbList>
-                    {breadcrumbs.map((item, index) => {
-                      const isLast = index === breadcrumbs.length - 1
-                      return (
-                        <React.Fragment key={index}>
-                          <BreadcrumbItem>
-                            {isLast ? (
-                              <BreadcrumbPage className="font-semibold text-slate-800 max-w-[150px] sm:max-w-[300px] truncate">
-                                {item.label}
-                              </BreadcrumbPage>
-                            ) : item.url ? (
-                              <BreadcrumbLink asChild>
-                                <Link to={item.url}>{item.label}</Link>
-                              </BreadcrumbLink>
-                            ) : (
-                              <span className="text-slate-500 font-normal">
-                                {item.label}
-                              </span>
-                            )}
-                          </BreadcrumbItem>
-                          {!isLast && <BreadcrumbSeparator />}
-                        </React.Fragment>
-                      )
-                    })}
+                    {breadcrumbs.map((item, index) => (
+                      <div key={item.label} className="flex items-center">
+                        <BreadcrumbItem>
+                          {index === breadcrumbs.length - 1 ? (
+                            <BreadcrumbPage className="font-semibold text-slate-800">
+                              {item.label}
+                            </BreadcrumbPage>
+                          ) : item.url ? (
+                            <BreadcrumbLink asChild>
+                              <Link to={item.url}>{item.label}</Link>
+                            </BreadcrumbLink>
+                          ) : (
+                            <span className="text-slate-500">{item.label}</span>
+                          )}
+                        </BreadcrumbItem>
+                        {index < breadcrumbs.length - 1 && (
+                          <BreadcrumbSeparator className="mx-2" />
+                        )}
+                      </div>
+                    ))}
                   </BreadcrumbList>
                 </Breadcrumb>
               </div>
             </div>
-
+            
             <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative text-slate-500"
-              >
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-              </Button>
-              <div className="h-8 w-px bg-slate-200"></div>
-              <div className="flex items-center gap-3">
-                <div className="hidden md:block text-right">
-                  <div className="text-sm font-semibold text-slate-800 leading-none">
-                    {isLoading || !user ? (
-                      <Skeleton className="h-4 w-20 ml-auto" />
-                    ) : (
-                      user.nama
-                    )}
-                  </div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    {isLoading || !user ? (
-                      <Skeleton className="h-3 w-12 ml-auto" />
-                    ) : (
-                      user.role
-                    )}
-                  </div>
-                </div>
-                <Avatar className="h-9 w-9 bg-primary">
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {user?.nama.charAt(0).toUpperCase() || '?'}
-                  </AvatarFallback>
-                </Avatar>
+              <div className="hidden md:flex items-center gap-2 mr-2">
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span className="text-sm font-medium text-slate-600">
+                  Sistem Online
+                </span>
               </div>
+
+              {/* Avatar Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center gap-2 hover:bg-slate-50 p-1.5 rounded-lg transition-colors outline-none border border-transparent hover:border-slate-200">
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-bold">
+                      {user.nama.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="hidden md:grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold text-slate-900">
+                      {user.nama}
+                    </span>
+                    <span className="truncate text-xs text-slate-500">
+                      {user.role}
+                    </span>
+                  </div>
+                  <ChevronDown className="w-4 h-4 text-slate-500 hidden md:block" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 rounded-lg" sideOffset={8}>
+                  <DropdownMenuLabel className="p-0 font-normal">
+                    <div className="flex items-center gap-2 px-2 py-2 text-left text-sm">
+                      <Avatar className="h-8 w-8 rounded-lg">
+                        <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-bold">
+                          {user.nama.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="grid flex-1 text-left text-sm leading-tight">
+                        <span className="truncate font-semibold">
+                          {user.nama}
+                        </span>
+                        <span className="truncate text-xs text-slate-500">
+                          @{user.username}
+                        </span>
+                      </div>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/" className="cursor-pointer">
+                      <Globe className="w-4 h-4 mr-2" />
+                      Kembali ke Website
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </header>
 
-          {/* Dashboard Content */}
-          <main className="flex-1 overflow-y-auto p-4 lg:p-8">
-            <div className="w-full space-y-6">
-              {isLoading || !user ? (
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <div className="space-y-2">
-                      <Skeleton className="h-8 w-48" />
-                      <Skeleton className="h-4 w-64" />
-                    </div>
-                    <Skeleton className="h-10 w-32" />
-                  </div>
-                  <Skeleton className="h-12 w-full max-w-sm" />
-                  <div className="space-y-3">
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-12 w-full" />
-                  </div>
-                </div>
-              ) : (
+          {/* Main Content */}
+          <ScrollArea className="flex-1">
+            <main className="p-6 md:p-8 flex flex-col min-h-full">
+              <div className="w-full mx-auto max-w-full flex-1">
                 <Outlet />
-              )}
-            </div>
-          </main>
+              </div>
+            </main>
+          </ScrollArea>
         </div>
       </div>
-      <Toaster />
     </SidebarProvider>
   )
 }

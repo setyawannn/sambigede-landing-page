@@ -17,15 +17,7 @@ import {
 } from 'lucide-react'
 
 import { LembagaCard } from './ProfilLembaga'
-import {
-  bpdAnggota,
-  lpmdAnggota,
-  pkkAnggota,
-  ktAnggota,
-  satlinmasAnggota,
-  posyanduAnggota,
-  perangkatList,
-} from './ProfilData'
+
 
 const LembagaIcon = ({ url, name }: { url?: string; name: string }) => {
   const [error, setError] = useState(false)
@@ -42,6 +34,7 @@ const LembagaIcon = ({ url, name }: { url?: string; name: string }) => {
 
 export default function ProfilPage() {
   const [showAllPerangkat, setShowAllPerangkat] = useState(false)
+  const [showAllRtRw, setShowAllRtRw] = useState(false)
 
   const { data: profilData } = useQuery(convexQuery(api.profil.getProfil, {}))
   const { data: kelembagaanList } = useQuery(
@@ -49,6 +42,9 @@ export default function ProfilPage() {
   )
   const { data: perangkatData } = useQuery(
     convexQuery(api.perangkat.getPerangkatList, { status: 'Aktif' }),
+  )
+  const { data: rtRwData } = useQuery(
+    convexQuery(api.rt_rw.getRtRwList, { status: 'Aktif' }),
   )
 
   // Fallback Visi Misi
@@ -70,8 +66,8 @@ export default function ProfilPage() {
     profilData?.baganStrukturUrl ||
     '/images/SUSUNAN_ORGANISASI___tATA_KERJA_PEMERINTAH_DESA_SAMBIGEDE_KECAMATAN_BINANGUN_KABUPATEN_BLITAR.png'
 
-  const pList =
-    perangkatData && perangkatData.length > 0 ? perangkatData : perangkatList
+  const pList = perangkatData || []
+  const rtRwList = rtRwData || []
 
   const cardColors = [
     { bg: 'bg-blue-50', text: 'text-blue-500' },
@@ -206,56 +202,9 @@ export default function ProfilPage() {
               )
             })
           ) : (
-            <>
-              <LembagaCard
-                icon={<Handshake className="w-7 h-7" />}
-                colorBg="bg-blue-50"
-                colorText="text-blue-500"
-                title="BPD"
-                subtitle="Badan Permusyawaratan Desa"
-                anggota={bpdAnggota}
-              />
-              <LembagaCard
-                icon={<Building2 className="w-7 h-7" />}
-                colorBg="bg-orange-50"
-                colorText="text-orange-500"
-                title="LPMD"
-                subtitle="Lembaga Pemberdayaan Masyarakat Desa"
-                anggota={lpmdAnggota}
-              />
-              <LembagaCard
-                icon={<Users2 className="w-7 h-7" />}
-                colorBg="bg-pink-50"
-                colorText="text-pink-500"
-                title="TP PKK"
-                subtitle="Tim Penggerak Pemberdayaan Kesejahteraan Keluarga"
-                anggota={pkkAnggota}
-              />
-              <LembagaCard
-                icon={<UsersRound className="w-7 h-7" />}
-                colorBg="bg-purple-50"
-                colorText="text-purple-500"
-                title="Karang Taruna"
-                subtitle="Organisasi Kepemudaan Desa"
-                anggota={ktAnggota}
-              />
-              <LembagaCard
-                icon={<ShieldAlert className="w-7 h-7" />}
-                colorBg="bg-green-50"
-                colorText="text-green-600"
-                title="Satlinmas"
-                subtitle="Satuan Perlindungan Masyarakat"
-                anggota={satlinmasAnggota}
-              />
-              <LembagaCard
-                icon={<Activity className="w-7 h-7" />}
-                colorBg="bg-red-50"
-                colorText="text-red-500"
-                title="Posyandu"
-                subtitle="Pos Pelayanan Terpadu Kesehatan Balita & Lansia"
-                anggota={posyanduAnggota}
-              />
-            </>
+            <div className="col-span-full py-10 text-center text-[#666]">
+              Belum ada data kelembagaan yang ditambahkan.
+            </div>
           )}
         </div>
       </div>
@@ -359,6 +308,112 @@ export default function ProfilPage() {
                     <>
                       <ChevronDown className="w-4 h-4" /> Tampilkan Semua
                       Perangkat ({pList.length})
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {/* Daftar Ketua RT & RW */}
+      <div className="max-w-[1200px] mx-auto px-6 w-full mt-16 md:mt-20">
+        <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 md:p-10 shadow-sm overflow-hidden">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+              <Users className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold text-[#333]">
+                Daftar Ketua RT & RW
+              </h2>
+              <p className="text-sm text-[#666]">
+                Struktur kepengurusan Rukun Tetangga dan Rukun Warga Desa Sambigede
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[800px] text-left border-collapse">
+                <thead>
+                  <tr className="border-y border-[#E5E5E5] bg-[#F9F9F9]">
+                    <th className="px-5 py-4 font-semibold text-[#333] text-sm w-16">
+                      No
+                    </th>
+                    <th className="px-5 py-4 font-semibold text-[#333] text-sm">
+                      Nama Lengkap
+                    </th>
+                    <th className="px-5 py-4 font-semibold text-[#333] text-sm">
+                      Jabatan
+                    </th>
+                    <th className="px-5 py-4 font-semibold text-[#333] text-sm">
+                      RT / RW
+                    </th>
+                    <th className="px-5 py-4 font-semibold text-[#333] text-sm">
+                      Dusun
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E5E5E5]">
+                  {rtRwList.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-5 py-10 text-center text-[#666]">
+                        Belum ada data ketua RT dan RW
+                      </td>
+                    </tr>
+                  ) : (
+                    (showAllRtRw ? rtRwList : rtRwList.slice(0, 5)).map(
+                      (p: any, index: number) => (
+                        <tr
+                          key={p._id || index}
+                          className="hover:bg-[#F5F5F5] transition-colors"
+                        >
+                          <td className="px-5 py-3 text-[#999] text-xs w-16">
+                            {index + 1}
+                          </td>
+                          <td className="px-5 py-3 font-medium text-[#333]">
+                            {p.nama}
+                          </td>
+                          <td className="px-5 py-3">
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                p.jabatan === 'Ketua RW'
+                                  ? 'bg-blue-100 text-blue-700'
+                                  : 'bg-green-100 text-green-700'
+                              }`}
+                            >
+                              {p.jabatan}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3 font-semibold text-[#555]">
+                            {p.rtRw}
+                          </td>
+                          <td className="px-5 py-3 text-[#666]">
+                            {p.dusun}
+                          </td>
+                        </tr>
+                      ),
+                    )
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {rtRwList.length > 5 && (
+              <div className="mt-4 flex justify-center">
+                <button
+                  onClick={() => setShowAllRtRw(!showAllRtRw)}
+                  className="flex items-center gap-1.5 text-sm font-semibold text-[#3F7D4A] hover:text-[#1F3D2B] transition-colors bg-[#3F7D4A]/10 hover:bg-[#3F7D4A]/20 px-4 py-2 rounded-full"
+                >
+                  {showAllRtRw ? (
+                    <>
+                      <ChevronUp className="w-4 h-4" /> Tampilkan Lebih Sedikit
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="w-4 h-4" /> Tampilkan Semua
+                      RT/RW ({rtRwList.length})
                     </>
                   )}
                 </button>

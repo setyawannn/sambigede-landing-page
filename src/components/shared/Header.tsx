@@ -1,9 +1,26 @@
-import { Link } from '@tanstack/react-router'
-import { Menu, X } from 'lucide-react'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { Menu, X, ChevronDown, LayoutDashboard, LogOut } from 'lucide-react'
 import { useState } from 'react'
+import { useAuth } from '../../lib/auth'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from '../ui/dropdown-menu'
+import { Avatar, AvatarFallback } from '../ui/avatar'
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate({ to: '/' })
+  }
 
   const links = [
     { to: '/', label: 'Beranda' },
@@ -18,9 +35,11 @@ export default function Header() {
       <div className="max-w-[1200px] mx-auto px-6 h-[72px] flex items-center justify-between">
         {/* Logo & Brand */}
         <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#3F7D4A] rounded-full flex items-center justify-center">
-            <div className="w-5 h-5 bg-white rounded-sm rotate-45"></div>
-          </div>
+          <img 
+            src="/images/logo-desa-sambigede.webp" 
+            alt="Logo Desa Sambigede" 
+            className="w-10 h-10 object-contain drop-shadow-sm" 
+          />
           <div>
             <h1 className="font-bold text-[#333] text-base leading-tight">
               Desa Sambigede
@@ -45,22 +64,120 @@ export default function Header() {
             </Link>
           ))}
           <div className="w-[1px] h-6 bg-[#E5E5E5] mx-2"></div>
-          <Link
-            to="/admin"
-            className="text-sm font-medium px-4 py-2 bg-[#3F7D4A]/10 text-[#3F7D4A] rounded-lg hover:bg-[#3F7D4A] hover:text-white transition-colors whitespace-nowrap"
-          >
-            Masuk
-          </Link>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-2 hover:bg-slate-50 p-1.5 rounded-lg transition-colors outline-none border border-transparent hover:border-slate-200">
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarFallback className="rounded-lg bg-[#3F7D4A]/10 text-[#3F7D4A] font-bold">
+                    {user.nama.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="hidden lg:grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold text-slate-900">
+                    {user.nama}
+                  </span>
+                </div>
+                <ChevronDown className="w-4 h-4 text-slate-500" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 rounded-lg" sideOffset={8}>
+                <DropdownMenuLabel className="p-0 font-normal">
+                  <div className="flex items-center gap-2 px-2 py-2 text-left text-sm">
+                    <Avatar className="h-8 w-8 rounded-lg">
+                      <AvatarFallback className="rounded-lg bg-[#3F7D4A]/10 text-[#3F7D4A] font-bold">
+                        {user.nama.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">
+                        {user.nama}
+                      </span>
+                      <span className="truncate text-xs text-slate-500">
+                        {user.role}
+                      </span>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/admin" className="cursor-pointer">
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Admin Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              to="/admin"
+              className="text-sm font-medium px-4 py-2 bg-[#3F7D4A]/10 text-[#3F7D4A] rounded-lg hover:bg-[#3F7D4A] hover:text-white transition-colors whitespace-nowrap"
+            >
+              Masuk
+            </Link>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center gap-4">
-          <Link
-            to="/admin"
-            className="text-xs font-medium px-3 py-1.5 bg-[#3F7D4A]/10 text-[#3F7D4A] rounded-lg whitespace-nowrap"
-          >
-            Masuk
-          </Link>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarFallback className="rounded-lg bg-[#3F7D4A]/10 text-[#3F7D4A] font-bold">
+                    {user.nama.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 rounded-lg" sideOffset={8}>
+                <DropdownMenuLabel className="p-0 font-normal">
+                  <div className="flex items-center gap-2 px-2 py-2 text-left text-sm">
+                    <Avatar className="h-8 w-8 rounded-lg">
+                      <AvatarFallback className="rounded-lg bg-[#3F7D4A]/10 text-[#3F7D4A] font-bold">
+                        {user.nama.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">
+                        {user.nama}
+                      </span>
+                      <span className="truncate text-xs text-slate-500">
+                        {user.role}
+                      </span>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/admin" className="cursor-pointer">
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Admin Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              to="/admin"
+              className="text-xs font-medium px-3 py-1.5 bg-[#3F7D4A]/10 text-[#3F7D4A] rounded-lg whitespace-nowrap"
+            >
+              Masuk
+            </Link>
+          )}
           <button className="text-[#333] p-1" onClick={() => setIsOpen(true)}>
             <Menu className="w-6 h-6" />
           </button>

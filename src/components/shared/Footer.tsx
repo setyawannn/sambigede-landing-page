@@ -24,9 +24,11 @@ export default function Footer() {
         {/* Brand */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-              <div className="w-5 h-5 bg-[#3F7D4A] rounded-sm rotate-45"></div>
-            </div>
+            <img 
+              src="/images/logo-desa-sambigede.webp" 
+              alt="Logo Desa Sambigede" 
+              className="w-10 h-10 object-contain drop-shadow-sm bg-white rounded-full p-1" 
+            />
             <div>
               <h2 className="font-bold text-base leading-tight">
                 Desa Sambigede
@@ -134,12 +136,26 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Copyright */}
-      <div className="bg-[#1F3D2B] py-4 px-6 text-center">
-        <p className="text-xs text-white/90">
-          &copy; {new Date().getFullYear()} Hak Cipta Desa Sambigede Kecamatan
-          Binangun Kabupaten Blitar
-        </p>
+      {/* Copyright & Attribution */}
+      <div className="bg-[#1F3D2B] py-4 px-6">
+        <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-white/90 text-center md:text-left">
+            &copy; {new Date().getFullYear()} Hak Cipta Desa Sambigede Kecamatan
+            Binangun Kabupaten Blitar
+          </p>
+          
+          <div className="flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity cursor-default">
+            <div className="h-4 w-px bg-white/30 hidden md:block"></div>
+            <p className="text-[11px] text-white/80 tracking-wide text-center md:text-right">
+              Dikembangkan oleh MMD FILKOM UB Kelompok 20
+            </p>
+            <img 
+              src="/images/logo-mmd-filkom-20-2026.webp" 
+              alt="Logo MMD Filkom UB Kelompok 20 2026" 
+              className="h-6 w-auto object-contain drop-shadow-md"
+            />
+          </div>
+        </div>
       </div>
     </footer>
   )

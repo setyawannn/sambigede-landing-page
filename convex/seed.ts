@@ -260,28 +260,6 @@ export const seedDatabase = mutation({
       await ctx.db.insert('stunting', s)
     }
 
-    // Seed Data APBDes
-    const SEED_APBDES: any[] = [
-      {
-        nama: 'Dana Desa (DD)',
-        kategori: 'Pendapatan',
-        nilai: 850000000,
-        realisasi: 850000000,
-        sumberDana: 'APBN',
-      },
-      {
-        nama: 'Pembangunan Infrastruktur',
-        kategori: 'Belanja',
-        nilai: 450000000,
-        realisasi: 400000000,
-        sumberDana: 'DD',
-      },
-    ]
-
-    for (const a of SEED_APBDES) {
-      await ctx.db.insert('apbdes', a)
-    }
-
     // Seed Profil Desa
     const existingProfil = await ctx.db.query('profil_desa').first()
     if (!existingProfil) {
@@ -394,6 +372,54 @@ export const seedDatabase = mutation({
       ]
       for (const kp of SEED_KATEGORI_PENGADUAN) {
         await ctx.db.insert('kategori_pengaduan', kp)
+      }
+    }
+
+    // Seed RT / RW
+    const SEED_RTRW: any[] = [
+      { urutan: 1, nama: 'HARIYANTO', dusun: 'SAMBIGEDE', jabatan: 'Ketua RW', rtRw: 'RW 001', status: 'Aktif' },
+      { urutan: 2, nama: 'MURKAERI', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 001 / RW 001', status: 'Aktif' },
+      { urutan: 3, nama: 'WAN DANUSI', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 002 / RW 001', status: 'Aktif' },
+      { urutan: 4, nama: 'GANDUNG', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 003 / RW 001', status: 'Aktif' },
+      { urutan: 5, nama: 'SUMADJI', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 004 / RW 001', status: 'Aktif' },
+      { urutan: 6, nama: 'MARODIN', dusun: 'SAMBIGEDE', jabatan: 'Ketua RW', rtRw: 'RW 002', status: 'Aktif' },
+      { urutan: 7, nama: 'LAMIRIN', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 001 / RW 002', status: 'Aktif' },
+      { urutan: 8, nama: 'JOKO', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 002 / RW 002', status: 'Aktif' },
+      { urutan: 9, nama: 'RIDAWANTO', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 003 / RW 002', status: 'Aktif' },
+      { urutan: 10, nama: 'SUPRIANTO', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 004 / RW 002', status: 'Aktif' },
+      { urutan: 11, nama: 'SUTARI', dusun: 'SAMBIGEDE', jabatan: 'Ketua RW', rtRw: 'RW 003', status: 'Aktif' },
+      { urutan: 12, nama: 'SUGENG SANTOSO', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 001 / RW 003', status: 'Aktif' },
+      { urutan: 13, nama: 'BASUKI', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 002 / RW 003', status: 'Aktif' },
+      { urutan: 14, nama: 'GITO ROLIS', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 003 / RW 003', status: 'Aktif' },
+      { urutan: 15, nama: 'TUKIJO', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 004 / RW 003', status: 'Aktif' },
+      { urutan: 16, nama: 'SUHARI', dusun: 'SAMBIGEDE', jabatan: 'Ketua RW', rtRw: 'RW 004', status: 'Aktif' },
+      { urutan: 17, nama: 'WALUYO', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 001 / RW 004', status: 'Aktif' },
+      { urutan: 18, nama: 'KUSNU AMAR', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 002 / RW 004', status: 'Aktif' },
+      { urutan: 19, nama: 'DEDI IRAWAN', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 003 / RW 004', status: 'Aktif' },
+      { urutan: 20, nama: 'SUJI', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 004 / RW 004', status: 'Aktif' },
+      { urutan: 21, nama: 'SUBUR SUTRISNO', dusun: 'SAMBIGEDE', jabatan: 'Ketua RW', rtRw: 'RW 005', status: 'Aktif' },
+      { urutan: 22, nama: 'HERMANTO', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 001 / RW 005', status: 'Aktif' },
+      { urutan: 23, nama: 'HENDRA', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 002 / RW 005', status: 'Aktif' },
+      { urutan: 24, nama: 'MUJIANTO', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 003 / RW 005', status: 'Aktif' },
+      { urutan: 25, nama: 'HERU SANTOSO', dusun: 'SAMBIGEDE', jabatan: 'Ketua RT', rtRw: 'RT 004 / RW 005', status: 'Aktif' },
+      { urutan: 26, nama: 'HARIADI', dusun: 'PALDOYONG', jabatan: 'Ketua RW', rtRw: 'RW 001', status: 'Aktif' },
+      { urutan: 27, nama: 'SUTIK', dusun: 'PALDOYONG', jabatan: 'Ketua RT', rtRw: 'RT 001 / RW 001', status: 'Aktif' },
+      { urutan: 28, nama: 'KATENO', dusun: 'PALDOYONG', jabatan: 'Ketua RT', rtRw: 'RT 002 / RW 001', status: 'Aktif' },
+      { urutan: 29, nama: 'AHMAD SANTOSO', dusun: 'PALDOYONG', jabatan: 'Ketua RT', rtRw: 'RT 003 / RW 001', status: 'Aktif' },
+      { urutan: 30, nama: 'MOHAMMAD HASAN', dusun: 'PALDOYONG', jabatan: 'Ketua RT', rtRw: 'RT 004 / RW 001', status: 'Aktif' },
+      { urutan: 31, nama: 'GIMIN', dusun: 'PALDOYONG', jabatan: 'Ketua RT', rtRw: 'RT 005 / RW 001', status: 'Aktif' },
+      { urutan: 32, nama: 'MISTAJI', dusun: 'PALDOYONG', jabatan: 'Ketua RW', rtRw: 'RW 002', status: 'Aktif' },
+      { urutan: 33, nama: 'GUNAWAN', dusun: 'PALDOYONG', jabatan: 'Ketua RT', rtRw: 'RT 001 / RW 002', status: 'Aktif' },
+      { urutan: 34, nama: 'KARIM', dusun: 'PALDOYONG', jabatan: 'Ketua RT', rtRw: 'RT 002 / RW 002', status: 'Aktif' },
+      { urutan: 35, nama: 'WAGITO', dusun: 'PALDOYONG', jabatan: 'Ketua RT', rtRw: 'RT 003 / RW 002', status: 'Aktif' },
+      { urutan: 36, nama: 'SUWAKIN', dusun: 'PALDOYONG', jabatan: 'Ketua RT', rtRw: 'RT 004 / RW 002', status: 'Aktif' },
+      { urutan: 37, nama: 'SUNARI', dusun: 'PALDOYONG', jabatan: 'Ketua RT', rtRw: 'RT 005 / RW 002', status: 'Aktif' },
+    ]
+
+    const existingRtRw = await ctx.db.query('rt_rw').collect()
+    if (existingRtRw.length === 0) {
+      for (const item of SEED_RTRW) {
+        await ctx.db.insert('rt_rw', item)
       }
     }
 

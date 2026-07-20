@@ -66,23 +66,52 @@ export default defineSchema({
     .index('by_dusun', ['dusun'])
     .index('by_status', ['status']),
 
+  apbdes_tahun: defineTable({
+    tahun: v.number(),
+    jenis: v.union(v.literal('Awal'), v.literal('Perubahan')),
+    totalPendapatanSemula: v.optional(v.number()),
+    totalPendapatan: v.number(), // Menjadi
+    totalBelanjaSemula: v.optional(v.number()),
+    totalBelanja: v.number(), // Menjadi
+    pembiayaanNetto: v.number(),
+    status: v.union(v.literal('Aktif'), v.literal('Arsip')),
+  })
+    .index('by_tahun', ['tahun'])
+    .index('by_status', ['status']),
+
   apbdes: defineTable({
-    nama: v.string(),
-    kategori: v.union(
+    tahunId: v.optional(v.id('apbdes_tahun')),
+    kategori: v.optional(v.union(
       v.literal('Pendapatan'),
       v.literal('Belanja'),
       v.literal('Pembiayaan'),
-    ),
-    nilai: v.number(),
-    realisasi: v.number(),
-    sumberDana: v.string(),
-  }).index('by_kategori', ['kategori']),
+    )),
+    bidang: v.optional(v.string()), 
+    subBidang: v.optional(v.string()), 
+    kodeRekening: v.optional(v.string()),
+    uraian: v.optional(v.string()), 
+    nama: v.optional(v.string()), // old field
+    nilai: v.optional(v.number()), // old field
+    anggaranSemula: v.optional(v.number()), 
+    anggaranMenjadi: v.optional(v.number()), 
+    realisasi: v.optional(v.number()),
+    sumberDana: v.optional(v.string()), 
+  })
+    .index('by_tahunId', ['tahunId'])
+    .index('by_kategori', ['kategori'])
+    .index('by_tahun_kategori', ['tahunId', 'kategori']),
 
   admin_users: defineTable({
     username: v.string(),
     passwordHash: v.string(),
     nama: v.string(),
-    role: v.union(v.literal('Superadmin'), v.literal('Editor')),
+    role: v.union(
+      v.literal('Superadmin'),
+      v.literal('Editor Konten'),
+      v.literal('Operator Infografis'),
+      v.literal('Petugas Pengaduan'),
+      v.literal('Editor'),
+    ),
   }).index('by_username', ['username']),
 
   profil_desa: defineTable({
@@ -121,6 +150,18 @@ export default defineSchema({
   })
     .index('by_urutan', ['urutan'])
     .index('by_status', ['status']),
+
+  rt_rw: defineTable({
+    nama: v.string(),
+    dusun: v.string(),
+    jabatan: v.union(v.literal('Ketua RT'), v.literal('Ketua RW')),
+    rtRw: v.string(),
+    urutan: v.number(),
+    status: v.union(v.literal('Aktif'), v.literal('Nonaktif')),
+  })
+    .index('by_urutan', ['urutan'])
+    .index('by_status', ['status'])
+    .index('by_jabatan', ['jabatan']),
 
   beranda_config: defineTable({
     heroBadge: v.string(),

@@ -11,15 +11,13 @@ import {
   ChevronUp,
   Grid,
   Newspaper,
+  User,
 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import { perangkatList } from '../profil/ProfilData'
 import R2Image from '../../ui/R2Image'
 import { useQuery } from '@tanstack/react-query'
 import { convexQuery } from '@convex-dev/react-query'
 import { api } from '../../../../convex/_generated/api'
-
-const kadesImg = '/images/ROIHAN AL MADZAR.jpg'
 
 const findImageFor = (personName: string) => {
   const base = personName
@@ -32,9 +30,6 @@ const findImageFor = (personName: string) => {
 
 export default function HomePage() {
   const [showAllPerangkat, setShowAllPerangkat] = useState(false)
-  const visiblePerangkatList = showAllPerangkat
-    ? perangkatList
-    : perangkatList.slice(0, 4)
 
   // Fetch data
   const { data: berandaData } = useQuery(
@@ -44,14 +39,20 @@ export default function HomePage() {
     convexQuery(api.perangkat.getPerangkatList, { status: 'Aktif' }),
   )
   const { data: beritaData } = useQuery(convexQuery(api.berita.getBerita, {}))
+  const { data: demografiData } = useQuery(
+    convexQuery(api.demografi.getSummary, {}),
+  )
 
   const recentBerita = beritaData?.slice(0, 3) || []
+  
+  const visiblePerangkatList = showAllPerangkat
+    ? perangkatData || []
+    : (perangkatData || []).slice(0, 4)
 
   const kades = perangkatData?.find(
     (p) => p.jabatan.toLowerCase() === 'kepala desa',
   )
-  const kadesNama = kades?.nama || 'Roihan Al Madzhar'
-  const kadesImage = kades?.imageUrl || '/images/ROIHAN AL MADZAR.jpg'
+  const kadesNama = kades?.nama || 'Kepala Desa'
 
   return (
     <div className="flex flex-col w-full">
@@ -64,14 +65,13 @@ export default function HomePage() {
           }}
         ></div>
         {/* Backdrop hitam agar teks kontras dan mudah dibaca */}
-        <div className="absolute inset-0 bg-black/60"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
 
         <div className="relative z-10 max-w-[1200px] mx-auto px-6 w-full flex flex-col gap-6">
           {berandaData?.heroBadge && (
             <div className="inline-flex items-center gap-2 bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full w-fit border border-white/20">
-              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
               <span className="text-white text-xs md:text-sm font-medium">
                 {berandaData.heroBadge}
               </span>
@@ -194,14 +194,17 @@ export default function HomePage() {
         <div className="max-w-[1200px] mx-auto w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative w-full max-w-[400px] mx-auto lg:mx-0">
-              <div className="aspect-square rounded-2xl overflow-hidden shadow-xl bg-white">
-                <R2Image
-                  src={kadesImage}
-                  alt={`Kepala Desa Sambigede - ${kadesNama}`}
-                  className="w-full h-full object-cover"
-                  style={{ objectPosition: 'center 30%' }}
-                  fallbackSrc="/images/placeholder.jpg"
-                />
+              <div className="aspect-square rounded-2xl overflow-hidden shadow-xl bg-slate-100 flex items-center justify-center">
+                {kades?.imageUrl ? (
+                  <R2Image
+                    src={kades.imageUrl}
+                    alt={`Kepala Desa Sambigede - ${kadesNama}`}
+                    className="w-full h-full object-cover"
+                    style={{ objectPosition: 'center 30%' }}
+                  />
+                ) : (
+                  <User className="w-32 h-32 text-slate-300" />
+                )}
               </div>
               <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-[#3F7D4A] rounded-2xl -z-10 opacity-20"></div>
               <div className="absolute -top-6 -left-6 w-32 h-32 border-2 border-[#3F7D4A] rounded-2xl -z-10 opacity-20"></div>
@@ -252,25 +255,25 @@ export default function HomePage() {
             {[
               {
                 label: 'Total Penduduk',
-                count: '2,728',
+                count: demografiData?.totalPenduduk || '0',
                 icon: <Search />,
                 color: 'text-yellow-600 bg-yellow-100',
               },
               {
                 label: 'Laki-Laki',
-                count: '1,364',
+                count: demografiData?.jumlahLaki || '0',
                 icon: <Search />,
                 color: 'text-blue-600 bg-blue-100',
               },
               {
                 label: 'Perempuan',
-                count: '1,364',
+                count: demografiData?.jumlahPerempuan || '0',
                 icon: <Search />,
                 color: 'text-pink-600 bg-pink-100',
               },
               {
-                label: 'Balita',
-                count: '77',
+                label: 'Kepala Keluarga',
+                count: demografiData?.jumlahKK || '0',
                 icon: <Search />,
                 color: 'text-purple-600 bg-purple-100',
               },
@@ -308,37 +311,52 @@ export default function HomePage() {
                 Susunan kepengurusan perangkat Desa Sambigede.
               </p>
             </div>
-            <Link
-              to="/profil"
-              className="inline-flex items-center justify-center px-4 py-2 border border-[#3F7D4A] text-[#3F7D4A] hover:bg-[#3F7D4A] hover:text-white rounded-lg text-sm font-medium transition-colors"
-            >
-              Lihat Selengkapnya
-            </Link>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {visiblePerangkatList.map((person, i) => (
               <div
-                key={person.no || i}
-                className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
+                key={person._id || i}
+                className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group"
               >
-                <div className="aspect-square overflow-hidden bg-gray-100">
-                  <R2Image
-                    src={findImageFor(person.nama)}
-                    alt={person.nama}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    fallbackSrc="/images/placeholder.jpg"
-                  />
+                <div className="aspect-square overflow-hidden bg-slate-100 relative flex items-center justify-center">
+                  {person.imageUrl ? (
+                    <R2Image
+                      src={person.imageUrl}
+                      alt={person.nama}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      fallbackSrc="/images/placeholder.jpg"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100 text-slate-300 group-hover:scale-105 transition-transform duration-300">
+                      <User className="w-16 h-16" />
+                    </div>
+                  )}
                 </div>
                 <div className="bg-[#3F7D4A] p-3 text-center h-full">
-                  <h4 className="text-white text-sm font-bold uppercase">
+                  <h4 className="text-white text-sm font-bold uppercase line-clamp-1">
                     {person.nama}
                   </h4>
-                  <p className="text-white/90 text-xs">{person.jabatan}</p>
+                  <p className="text-white/90 text-xs line-clamp-1">{person.jabatan}</p>
                 </div>
               </div>
             ))}
           </div>
+
+          {(perangkatData?.length || 0) > 4 && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={() => setShowAllPerangkat(!showAllPerangkat)}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-[#3F7D4A] text-[#3F7D4A] hover:bg-[#3F7D4A] hover:text-white rounded-lg text-sm font-medium transition-colors"
+              >
+                {showAllPerangkat ? (
+                  <>Tampilkan Lebih Sedikit <ChevronUp className="w-4 h-4" /></>
+                ) : (
+                  <>Lihat Selengkapnya <ChevronDown className="w-4 h-4" /></>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -414,45 +432,8 @@ export default function HomePage() {
               className="inline-flex items-center gap-2 px-6 py-3 border border-[#3F7D4A] text-[#3F7D4A] hover:bg-[#3F7D4A] hover:text-white rounded-lg text-sm font-medium transition-colors"
             >
               <Newspaper className="w-4 h-4" />
-              READ MORE
+              Baca Selengkapnya
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Galeri Desa */}
-      <section className="bg-[#F5F5F5] py-16 md:py-20 px-6">
-        <div className="max-w-[1200px] mx-auto w-full">
-          <div className="text-center flex flex-col items-center gap-3 mb-10">
-            <h2 className="text-2xl font-bold text-[#3F7D4A]">Galeri Desa</h2>
-            <p className="text-[#666] text-sm max-w-[600px]">
-              Menampilkan kegiatan dan pesona Desa Sambigede secara langsung.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {[
-              'https://images.unsplash.com/photo-1560493676-04071c5f467b?auto=format&fit=crop&w=600&q=80',
-              'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80',
-              'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80',
-              'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=600&q=80',
-              'https://images.unsplash.com/photo-1573483769572-42cefd97a0c6?auto=format&fit=crop&w=600&q=80',
-              'https://images.unsplash.com/photo-1476611338391-6f395a0ebc7b?auto=format&fit=crop&w=600&q=80',
-            ].map((img, i) => (
-              <div
-                key={i}
-                className="aspect-square rounded-xl overflow-hidden group relative cursor-pointer shadow-sm"
-              >
-                <img
-                  src={img}
-                  alt={`Galeri ${i + 1}`}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
-                  <Search className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform scale-50 group-hover:scale-100" />
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>

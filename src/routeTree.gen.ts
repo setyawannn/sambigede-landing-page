@@ -26,8 +26,10 @@ import { Route as BeritaIdRouteImport } from './routes/berita/$id'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminPengaduanRouteImport } from './routes/admin/pengaduan'
 import { Route as AdminBeritaIndexRouteImport } from './routes/admin/berita.index'
+import { Route as AdminMasterUsersRouteImport } from './routes/admin/master/users'
 import { Route as AdminMasterKategoriPengaduanRouteImport } from './routes/admin/master/kategori-pengaduan'
 import { Route as AdminMasterKategoriRouteImport } from './routes/admin/master/kategori'
+import { Route as AdminKontenRtRwRouteImport } from './routes/admin/konten/rt-rw'
 import { Route as AdminKontenProfilRouteImport } from './routes/admin/konten/profil'
 import { Route as AdminKontenPerangkatRouteImport } from './routes/admin/konten/perangkat'
 import { Route as AdminKontenKontakRouteImport } from './routes/admin/konten/kontak'
@@ -41,6 +43,7 @@ import { Route as AdminAnalyticTurnstileRouteImport } from './routes/admin/analy
 import { Route as AdminAnalyticR2RouteImport } from './routes/admin/analytic/r2'
 import { Route as AdminKontenKelembagaanIndexRouteImport } from './routes/admin/konten/kelembagaan.index'
 import { Route as AdminKontenKelembagaanTambahRouteImport } from './routes/admin/konten/kelembagaan.tambah'
+import { Route as AdminInfografisApbdesTahunIdRouteImport } from './routes/admin/infografis/apbdes_.$tahunId'
 import { Route as AdminBeritaEditIdRouteImport } from './routes/admin/berita.edit.$id'
 import { Route as AdminKontenKelembagaanKelolaIdRouteImport } from './routes/admin/konten/kelembagaan.kelola.$id'
 
@@ -129,6 +132,11 @@ const AdminBeritaIndexRoute = AdminBeritaIndexRouteImport.update({
   path: '/berita/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMasterUsersRoute = AdminMasterUsersRouteImport.update({
+  id: '/master/users',
+  path: '/master/users',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminMasterKategoriPengaduanRoute =
   AdminMasterKategoriPengaduanRouteImport.update({
     id: '/master/kategori-pengaduan',
@@ -138,6 +146,11 @@ const AdminMasterKategoriPengaduanRoute =
 const AdminMasterKategoriRoute = AdminMasterKategoriRouteImport.update({
   id: '/master/kategori',
   path: '/master/kategori',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKontenRtRwRoute = AdminKontenRtRwRouteImport.update({
+  id: '/konten/rt-rw',
+  path: '/konten/rt-rw',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminKontenProfilRoute = AdminKontenProfilRouteImport.update({
@@ -207,6 +220,12 @@ const AdminKontenKelembagaanTambahRoute =
     path: '/konten/kelembagaan/tambah',
     getParentRoute: () => AdminRoute,
   } as any)
+const AdminInfografisApbdesTahunIdRoute =
+  AdminInfografisApbdesTahunIdRouteImport.update({
+    id: '/infografis/apbdes_/$tahunId',
+    path: '/infografis/apbdes/$tahunId',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminBeritaEditIdRoute = AdminBeritaEditIdRouteImport.update({
   id: '/berita/edit/$id',
   path: '/berita/edit/$id',
@@ -247,10 +266,13 @@ export interface FileRoutesByFullPath {
   '/admin/konten/kontak': typeof AdminKontenKontakRoute
   '/admin/konten/perangkat': typeof AdminKontenPerangkatRoute
   '/admin/konten/profil': typeof AdminKontenProfilRoute
+  '/admin/konten/rt-rw': typeof AdminKontenRtRwRoute
   '/admin/master/kategori': typeof AdminMasterKategoriRoute
   '/admin/master/kategori-pengaduan': typeof AdminMasterKategoriPengaduanRoute
+  '/admin/master/users': typeof AdminMasterUsersRoute
   '/admin/berita/': typeof AdminBeritaIndexRoute
   '/admin/berita/edit/$id': typeof AdminBeritaEditIdRoute
+  '/admin/infografis/apbdes/$tahunId': typeof AdminInfografisApbdesTahunIdRoute
   '/admin/konten/kelembagaan/tambah': typeof AdminKontenKelembagaanTambahRoute
   '/admin/konten/kelembagaan/': typeof AdminKontenKelembagaanIndexRoute
   '/admin/konten/kelembagaan/kelola/$id': typeof AdminKontenKelembagaanKelolaIdRoute
@@ -281,10 +303,13 @@ export interface FileRoutesByTo {
   '/admin/konten/kontak': typeof AdminKontenKontakRoute
   '/admin/konten/perangkat': typeof AdminKontenPerangkatRoute
   '/admin/konten/profil': typeof AdminKontenProfilRoute
+  '/admin/konten/rt-rw': typeof AdminKontenRtRwRoute
   '/admin/master/kategori': typeof AdminMasterKategoriRoute
   '/admin/master/kategori-pengaduan': typeof AdminMasterKategoriPengaduanRoute
+  '/admin/master/users': typeof AdminMasterUsersRoute
   '/admin/berita': typeof AdminBeritaIndexRoute
   '/admin/berita/edit/$id': typeof AdminBeritaEditIdRoute
+  '/admin/infografis/apbdes/$tahunId': typeof AdminInfografisApbdesTahunIdRoute
   '/admin/konten/kelembagaan/tambah': typeof AdminKontenKelembagaanTambahRoute
   '/admin/konten/kelembagaan': typeof AdminKontenKelembagaanIndexRoute
   '/admin/konten/kelembagaan/kelola/$id': typeof AdminKontenKelembagaanKelolaIdRoute
@@ -318,10 +343,13 @@ export interface FileRoutesById {
   '/admin/konten/kontak': typeof AdminKontenKontakRoute
   '/admin/konten/perangkat': typeof AdminKontenPerangkatRoute
   '/admin/konten/profil': typeof AdminKontenProfilRoute
+  '/admin/konten/rt-rw': typeof AdminKontenRtRwRoute
   '/admin/master/kategori': typeof AdminMasterKategoriRoute
   '/admin/master/kategori-pengaduan': typeof AdminMasterKategoriPengaduanRoute
+  '/admin/master/users': typeof AdminMasterUsersRoute
   '/admin/berita/': typeof AdminBeritaIndexRoute
   '/admin/berita/edit/$id': typeof AdminBeritaEditIdRoute
+  '/admin/infografis/apbdes_/$tahunId': typeof AdminInfografisApbdesTahunIdRoute
   '/admin/konten/kelembagaan/tambah': typeof AdminKontenKelembagaanTambahRoute
   '/admin/konten/kelembagaan/': typeof AdminKontenKelembagaanIndexRoute
   '/admin/konten/kelembagaan/kelola/$id': typeof AdminKontenKelembagaanKelolaIdRoute
@@ -356,10 +384,13 @@ export interface FileRouteTypes {
     | '/admin/konten/kontak'
     | '/admin/konten/perangkat'
     | '/admin/konten/profil'
+    | '/admin/konten/rt-rw'
     | '/admin/master/kategori'
     | '/admin/master/kategori-pengaduan'
+    | '/admin/master/users'
     | '/admin/berita/'
     | '/admin/berita/edit/$id'
+    | '/admin/infografis/apbdes/$tahunId'
     | '/admin/konten/kelembagaan/tambah'
     | '/admin/konten/kelembagaan/'
     | '/admin/konten/kelembagaan/kelola/$id'
@@ -390,10 +421,13 @@ export interface FileRouteTypes {
     | '/admin/konten/kontak'
     | '/admin/konten/perangkat'
     | '/admin/konten/profil'
+    | '/admin/konten/rt-rw'
     | '/admin/master/kategori'
     | '/admin/master/kategori-pengaduan'
+    | '/admin/master/users'
     | '/admin/berita'
     | '/admin/berita/edit/$id'
+    | '/admin/infografis/apbdes/$tahunId'
     | '/admin/konten/kelembagaan/tambah'
     | '/admin/konten/kelembagaan'
     | '/admin/konten/kelembagaan/kelola/$id'
@@ -426,10 +460,13 @@ export interface FileRouteTypes {
     | '/admin/konten/kontak'
     | '/admin/konten/perangkat'
     | '/admin/konten/profil'
+    | '/admin/konten/rt-rw'
     | '/admin/master/kategori'
     | '/admin/master/kategori-pengaduan'
+    | '/admin/master/users'
     | '/admin/berita/'
     | '/admin/berita/edit/$id'
+    | '/admin/infografis/apbdes_/$tahunId'
     | '/admin/konten/kelembagaan/tambah'
     | '/admin/konten/kelembagaan/'
     | '/admin/konten/kelembagaan/kelola/$id'
@@ -567,6 +604,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBeritaIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/master/users': {
+      id: '/admin/master/users'
+      path: '/master/users'
+      fullPath: '/admin/master/users'
+      preLoaderRoute: typeof AdminMasterUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/master/kategori-pengaduan': {
       id: '/admin/master/kategori-pengaduan'
       path: '/master/kategori-pengaduan'
@@ -579,6 +623,13 @@ declare module '@tanstack/react-router' {
       path: '/master/kategori'
       fullPath: '/admin/master/kategori'
       preLoaderRoute: typeof AdminMasterKategoriRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/konten/rt-rw': {
+      id: '/admin/konten/rt-rw'
+      path: '/konten/rt-rw'
+      fullPath: '/admin/konten/rt-rw'
+      preLoaderRoute: typeof AdminKontenRtRwRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/konten/profil': {
@@ -672,6 +723,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminKontenKelembagaanTambahRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/infografis/apbdes_/$tahunId': {
+      id: '/admin/infografis/apbdes_/$tahunId'
+      path: '/infografis/apbdes/$tahunId'
+      fullPath: '/admin/infografis/apbdes/$tahunId'
+      preLoaderRoute: typeof AdminInfografisApbdesTahunIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/berita/edit/$id': {
       id: '/admin/berita/edit/$id'
       path: '/berita/edit/$id'
@@ -704,10 +762,13 @@ interface AdminRouteChildren {
   AdminKontenKontakRoute: typeof AdminKontenKontakRoute
   AdminKontenPerangkatRoute: typeof AdminKontenPerangkatRoute
   AdminKontenProfilRoute: typeof AdminKontenProfilRoute
+  AdminKontenRtRwRoute: typeof AdminKontenRtRwRoute
   AdminMasterKategoriRoute: typeof AdminMasterKategoriRoute
   AdminMasterKategoriPengaduanRoute: typeof AdminMasterKategoriPengaduanRoute
+  AdminMasterUsersRoute: typeof AdminMasterUsersRoute
   AdminBeritaIndexRoute: typeof AdminBeritaIndexRoute
   AdminBeritaEditIdRoute: typeof AdminBeritaEditIdRoute
+  AdminInfografisApbdesTahunIdRoute: typeof AdminInfografisApbdesTahunIdRoute
   AdminKontenKelembagaanTambahRoute: typeof AdminKontenKelembagaanTambahRoute
   AdminKontenKelembagaanIndexRoute: typeof AdminKontenKelembagaanIndexRoute
   AdminKontenKelembagaanKelolaIdRoute: typeof AdminKontenKelembagaanKelolaIdRoute
@@ -728,10 +789,13 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminKontenKontakRoute: AdminKontenKontakRoute,
   AdminKontenPerangkatRoute: AdminKontenPerangkatRoute,
   AdminKontenProfilRoute: AdminKontenProfilRoute,
+  AdminKontenRtRwRoute: AdminKontenRtRwRoute,
   AdminMasterKategoriRoute: AdminMasterKategoriRoute,
   AdminMasterKategoriPengaduanRoute: AdminMasterKategoriPengaduanRoute,
+  AdminMasterUsersRoute: AdminMasterUsersRoute,
   AdminBeritaIndexRoute: AdminBeritaIndexRoute,
   AdminBeritaEditIdRoute: AdminBeritaEditIdRoute,
+  AdminInfografisApbdesTahunIdRoute: AdminInfografisApbdesTahunIdRoute,
   AdminKontenKelembagaanTambahRoute: AdminKontenKelembagaanTambahRoute,
   AdminKontenKelembagaanIndexRoute: AdminKontenKelembagaanIndexRoute,
   AdminKontenKelembagaanKelolaIdRoute: AdminKontenKelembagaanKelolaIdRoute,

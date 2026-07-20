@@ -24,6 +24,7 @@ import type * as pengaduan from "../pengaduan.js";
 import type * as perangkat from "../perangkat.js";
 import type * as profil from "../profil.js";
 import type * as r2_analytics from "../r2_analytics.js";
+import type * as rt_rw from "../rt_rw.js";
 import type * as seed from "../seed.js";
 import type * as stunting from "../stunting.js";
 import type * as turnstile from "../turnstile.js";
@@ -52,6 +53,7 @@ declare const fullApi: ApiFromModules<{
   perangkat: typeof perangkat;
   profil: typeof profil;
   r2_analytics: typeof r2_analytics;
+  rt_rw: typeof rt_rw;
   seed: typeof seed;
   stunting: typeof stunting;
   turnstile: typeof turnstile;
