@@ -104,13 +104,13 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center gap-3 mt-2">
             <a
               href="#layanan"
-              className="bg-[#6B8E23] hover:bg-[#5A7A1E] text-white px-6 py-3 rounded-lg font-medium text-sm transition-colors shadow-lg"
+              className="bg-[#3F7D4A] hover:bg-[#1F3D2B] text-white px-6 py-3 rounded-lg font-medium text-sm transition-colors shadow-lg"
             >
               Akses Layanan
             </a>
             <Link
               to="/kontak"
-              className="bg-transparent border border-white hover:bg-white hover:text-[#6B8E23] text-white px-6 py-3 rounded-lg font-medium text-sm transition-colors shadow-lg flex items-center gap-2"
+              className="bg-transparent border border-white hover:bg-white hover:text-[#3F7D4A] text-white px-6 py-3 rounded-lg font-medium text-sm transition-colors shadow-lg flex items-center gap-2"
             >
               <Phone className="w-4 h-4" />
               Layanan Pengaduan
@@ -125,7 +125,7 @@ export default function HomePage() {
         className="py-16 md:py-20 px-6 max-w-[1200px] mx-auto w-full"
       >
         <div className="text-center flex flex-col items-center gap-3 mb-12">
-          <h2 className="text-2xl font-bold text-[#6B8E23]">
+          <h2 className="text-2xl font-bold text-[#3F7D4A]">
             Layanan & Informasi
           </h2>
           <p className="text-[#666] text-sm max-w-[600px]">
@@ -137,7 +137,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <Link
             to="/profil"
-            className="group bg-white border border-[#E5E5E5] rounded-xl p-8 flex flex-col items-center text-center hover:border-[#6B8E23] hover:shadow-xl hover:-translate-y-1 transition-all"
+            className="group bg-white border border-[#E5E5E5] rounded-xl p-8 flex flex-col items-center text-center hover:border-[#3F7D4A] hover:shadow-xl hover:-translate-y-1 transition-all"
           >
             <div className="w-16 h-16 rounded-2xl bg-yellow-50 text-yellow-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Building2 className="w-8 h-8" />
@@ -150,7 +150,7 @@ export default function HomePage() {
 
           <Link
             to="/infografis"
-            className="group bg-white border border-[#E5E5E5] rounded-xl p-8 flex flex-col items-center text-center hover:border-[#6B8E23] hover:shadow-xl hover:-translate-y-1 transition-all"
+            className="group bg-white border border-[#E5E5E5] rounded-xl p-8 flex flex-col items-center text-center hover:border-[#3F7D4A] hover:shadow-xl hover:-translate-y-1 transition-all"
           >
             <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Search className="w-8 h-8" />
@@ -163,7 +163,7 @@ export default function HomePage() {
 
           <Link
             to="/infografis"
-            className="group bg-white border border-[#E5E5E5] rounded-xl p-8 flex flex-col items-center text-center hover:border-[#6B8E23] hover:shadow-xl hover:-translate-y-1 transition-all"
+            className="group bg-white border border-[#E5E5E5] rounded-xl p-8 flex flex-col items-center text-center hover:border-[#3F7D4A] hover:shadow-xl hover:-translate-y-1 transition-all"
           >
             <div className="w-16 h-16 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Package className="w-8 h-8" />
@@ -176,7 +176,7 @@ export default function HomePage() {
 
           <Link
             to="/kontak"
-            className="group bg-white border border-[#E5E5E5] rounded-xl p-8 flex flex-col items-center text-center hover:border-[#6B8E23] hover:shadow-xl hover:-translate-y-1 transition-all"
+            className="group bg-white border border-[#E5E5E5] rounded-xl p-8 flex flex-col items-center text-center hover:border-[#3F7D4A] hover:shadow-xl hover:-translate-y-1 transition-all"
           >
             <div className="w-16 h-16 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Phone className="w-8 h-8" />
@@ -203,14 +203,14 @@ export default function HomePage() {
                   fallbackSrc="/images/placeholder.jpg"
                 />
               </div>
-              <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-[#6B8E23] rounded-2xl -z-10 opacity-20"></div>
-              <div className="absolute -top-6 -left-6 w-32 h-32 border-2 border-[#6B8E23] rounded-2xl -z-10 opacity-20"></div>
+              <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-[#3F7D4A] rounded-2xl -z-10 opacity-20"></div>
+              <div className="absolute -top-6 -left-6 w-32 h-32 border-2 border-[#3F7D4A] rounded-2xl -z-10 opacity-20"></div>
             </div>
             <div className="flex flex-col gap-4 text-center lg:text-left">
-              <h2 className="text-[20px] font-bold text-[#6B8E23]">
+              <h2 className="text-[20px] font-bold text-[#3F7D4A]">
                 Sambutan Kepala Desa Sambigede
               </h2>
-              <div className="w-10 h-[3px] bg-[#6B8E23] mx-auto lg:mx-0 mt-1 mb-2"></div>
+              <div className="w-10 h-[3px] bg-[#3F7D4A] mx-auto lg:mx-0 mt-1 mb-2"></div>
               <div>
                 <h3 className="text-lg font-bold text-[#333]">{kadesNama}</h3>
                 <p className="text-sm text-[#666]">
@@ -233,7 +233,7 @@ export default function HomePage() {
         <div className="max-w-[1200px] mx-auto w-full">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
-              <h2 className="text-2xl font-bold text-[#6B8E23] mb-3">
+              <h2 className="text-2xl font-bold text-[#3F7D4A] mb-3">
                 Administrasi Penduduk
               </h2>
               <p className="text-[#666] text-sm">
@@ -242,7 +242,7 @@ export default function HomePage() {
             </div>
             <Link
               to="/infografis"
-              className="inline-flex items-center justify-center px-4 py-2 border border-[#6B8E23] text-[#6B8E23] hover:bg-[#6B8E23] hover:text-white rounded-lg text-sm font-medium transition-colors"
+              className="inline-flex items-center justify-center px-4 py-2 border border-[#3F7D4A] text-[#3F7D4A] hover:bg-[#3F7D4A] hover:text-white rounded-lg text-sm font-medium transition-colors"
             >
               Lihat Detail
             </Link>
@@ -277,7 +277,7 @@ export default function HomePage() {
             ].map((stat, i) => (
               <div
                 key={i}
-                className="bg-white rounded-xl p-6 shadow-sm border border-transparent hover:border-[#6B8E23]/30 transition-colors"
+                className="bg-white rounded-xl p-6 shadow-sm border border-transparent hover:border-[#3F7D4A]/30 transition-colors"
               >
                 <div className="flex items-center gap-4 mb-4">
                   <div
@@ -301,7 +301,7 @@ export default function HomePage() {
         <div className="max-w-[1200px] mx-auto w-full">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
-              <h2 className="text-2xl font-bold text-[#6B8E23] mb-3">
+              <h2 className="text-2xl font-bold text-[#3F7D4A] mb-3">
                 Struktur Organisasi
               </h2>
               <p className="text-[#666] text-sm">
@@ -310,7 +310,7 @@ export default function HomePage() {
             </div>
             <Link
               to="/profil"
-              className="inline-flex items-center justify-center px-4 py-2 border border-[#6B8E23] text-[#6B8E23] hover:bg-[#6B8E23] hover:text-white rounded-lg text-sm font-medium transition-colors"
+              className="inline-flex items-center justify-center px-4 py-2 border border-[#3F7D4A] text-[#3F7D4A] hover:bg-[#3F7D4A] hover:text-white rounded-lg text-sm font-medium transition-colors"
             >
               Lihat Selengkapnya
             </Link>
@@ -330,7 +330,7 @@ export default function HomePage() {
                     fallbackSrc="/images/placeholder.jpg"
                   />
                 </div>
-                <div className="bg-[#6B8E23] p-3 text-center h-full">
+                <div className="bg-[#3F7D4A] p-3 text-center h-full">
                   <h4 className="text-white text-sm font-bold uppercase">
                     {person.nama}
                   </h4>
@@ -346,7 +346,7 @@ export default function HomePage() {
       <section className="bg-white py-16 md:py-20 px-6">
         <div className="max-w-[1200px] mx-auto w-full">
           <div className="text-center flex flex-col items-center gap-3 mb-10">
-            <h2 className="text-2xl font-bold text-[#6B8E23]">
+            <h2 className="text-2xl font-bold text-[#3F7D4A]">
               Berita & Pengumuman Terbaru
             </h2>
             <p className="text-[#666] text-sm max-w-[600px]">
@@ -379,19 +379,19 @@ export default function HomePage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       fallbackSrc="/images/placeholder.jpg"
                     />
-                    <div className="absolute top-4 left-4 bg-[#6B8E23] text-white text-xs font-medium px-3 py-1 rounded-full">
+                    <div className="absolute top-4 left-4 bg-[#3F7D4A] text-white text-xs font-medium px-3 py-1 rounded-full">
                       {news.category}
                     </div>
                   </div>
                   <div className="p-5 flex flex-col flex-1">
-                    <h3 className="text-lg font-bold text-[#333] mb-2 line-clamp-2 group-hover:text-[#6B8E23] transition-colors">
+                    <h3 className="text-lg font-bold text-[#333] mb-2 line-clamp-2 group-hover:text-[#3F7D4A] transition-colors">
                       {news.title}
                     </h3>
                     <p className="text-sm text-[#666] mb-4 line-clamp-2">
                       {news.excerpt}
                     </p>
                     <div className="mt-auto pt-4 border-t border-[#E5E5E5] flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-[#6B8E23] flex items-center justify-center text-white text-xs font-bold">
+                      <div className="w-6 h-6 rounded-full bg-[#3F7D4A] flex items-center justify-center text-white text-xs font-bold">
                         {news.author.charAt(0)}
                       </div>
                       <div className="flex items-center gap-1.5 text-xs text-[#666]">
@@ -411,7 +411,7 @@ export default function HomePage() {
           <div className="mt-8 text-center">
             <Link
               to="/berita"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-[#6B8E23] text-[#6B8E23] hover:bg-[#6B8E23] hover:text-white rounded-lg text-sm font-medium transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 border border-[#3F7D4A] text-[#3F7D4A] hover:bg-[#3F7D4A] hover:text-white rounded-lg text-sm font-medium transition-colors"
             >
               <Newspaper className="w-4 h-4" />
               READ MORE
@@ -424,7 +424,7 @@ export default function HomePage() {
       <section className="bg-[#F5F5F5] py-16 md:py-20 px-6">
         <div className="max-w-[1200px] mx-auto w-full">
           <div className="text-center flex flex-col items-center gap-3 mb-10">
-            <h2 className="text-2xl font-bold text-[#6B8E23]">Galeri Desa</h2>
+            <h2 className="text-2xl font-bold text-[#3F7D4A]">Galeri Desa</h2>
             <p className="text-[#666] text-sm max-w-[600px]">
               Menampilkan kegiatan dan pesona Desa Sambigede secara langsung.
             </p>

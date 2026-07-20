@@ -19,13 +19,13 @@ export default function Footer() {
   const alamatParts = alamatRaw.split(',')
 
   return (
-    <footer className="bg-[#6B8E23] text-white w-full mt-auto">
+    <footer className="bg-[#3F7D4A] text-white w-full mt-auto">
       <div className="max-w-[1200px] mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Brand */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-              <div className="w-5 h-5 bg-[#6B8E23] rounded-sm rotate-45"></div>
+              <div className="w-5 h-5 bg-[#3F7D4A] rounded-sm rotate-45"></div>
             </div>
             <div>
               <h2 className="font-bold text-base leading-tight">
@@ -135,7 +135,7 @@ export default function Footer() {
       </div>
 
       {/* Copyright */}
-      <div className="bg-[#5A7A1E] py-4 px-6 text-center">
+      <div className="bg-[#1F3D2B] py-4 px-6 text-center">
         <p className="text-xs text-white/90">
           &copy; {new Date().getFullYear()} Hak Cipta Desa Sambigede Kecamatan
           Binangun Kabupaten Blitar

@@ -89,7 +89,7 @@ export default function ProfilPage() {
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="flex flex-col md:flex-row gap-8 items-start md:items-center justify-between">
             <div>
-              <div className="inline-flex items-center gap-2 bg-[#6B8E23]/10 text-[#6B8E23] px-3 py-1.5 rounded-full mb-4">
+              <div className="inline-flex items-center gap-2 bg-[#3F7D4A]/10 text-[#3F7D4A] px-3 py-1.5 rounded-full mb-4">
                 <Building2 className="w-4 h-4" />
                 <span className="text-sm font-semibold tracking-wide">
                   PROFIL DESA
@@ -150,7 +150,7 @@ export default function ProfilPage() {
             </p>
           </div>
 
-          <div className="bg-[#6B8E23] rounded-2xl p-8 shadow-md text-white">
+          <div className="bg-[#3F7D4A] rounded-2xl p-8 shadow-md text-white">
             <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-6">
               <Map className="w-6 h-6" />
             </div>
@@ -349,7 +349,7 @@ export default function ProfilPage() {
               <div className="mt-4 flex justify-center">
                 <button
                   onClick={() => setShowAllPerangkat(!showAllPerangkat)}
-                  className="flex items-center gap-1.5 text-sm font-semibold text-[#6B8E23] hover:text-[#5A7A1E] transition-colors bg-[#6B8E23]/10 hover:bg-[#6B8E23]/20 px-4 py-2 rounded-full"
+                  className="flex items-center gap-1.5 text-sm font-semibold text-[#3F7D4A] hover:text-[#1F3D2B] transition-colors bg-[#3F7D4A]/10 hover:bg-[#3F7D4A]/20 px-4 py-2 rounded-full"
                 >
                   {showAllPerangkat ? (
                     <>

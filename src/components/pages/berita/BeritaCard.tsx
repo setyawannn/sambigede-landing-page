@@ -37,7 +37,7 @@ export function BeritaCard({
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           fallbackSrc="/images/placeholder.jpg"
         />
-        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-[#6B8E23] shadow-sm">
+        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-[#3F7D4A] shadow-sm">
           {category}
         </div>
       </div>
@@ -54,7 +54,7 @@ export function BeritaCard({
           </div>
         </div>
 
-        <h3 className="text-xl font-bold text-[#333] mb-3 line-clamp-2 group-hover:text-[#6B8E23] transition-colors">
+        <h3 className="text-xl font-bold text-[#333] mb-3 line-clamp-2 group-hover:text-[#3F7D4A] transition-colors">
           {title}
         </h3>
 
@@ -65,7 +65,7 @@ export function BeritaCard({
         <Link
           to="/berita/$id"
           params={{ id }}
-          className="inline-flex items-center text-sm font-bold text-[#6B8E23] hover:text-[#5A7A1E] transition-colors mt-auto"
+          className="inline-flex items-center text-sm font-bold text-[#3F7D4A] hover:text-[#1F3D2B] transition-colors mt-auto"
         >
           Baca Selengkapnya
           <svg

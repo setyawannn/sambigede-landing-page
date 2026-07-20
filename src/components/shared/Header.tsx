@@ -18,7 +18,7 @@ export default function Header() {
       <div className="max-w-[1200px] mx-auto px-6 h-[72px] flex items-center justify-between">
         {/* Logo & Brand */}
         <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#6B8E23] rounded-full flex items-center justify-center">
+          <div className="w-10 h-10 bg-[#3F7D4A] rounded-full flex items-center justify-center">
             <div className="w-5 h-5 bg-white rounded-sm rotate-45"></div>
           </div>
           <div>
@@ -38,16 +38,16 @@ export default function Header() {
               key={link.to}
               to={link.to}
               activeOptions={{ exact: link.to === '/' }}
-              className="text-sm font-medium transition-colors hover:text-[#6B8E23] relative group whitespace-nowrap text-[#666] [&.active]:text-[#6B8E23]"
+              className="text-sm font-medium transition-colors hover:text-[#3F7D4A] relative group whitespace-nowrap text-[#666] [&.active]:text-[#3F7D4A]"
             >
               {link.label}
-              <span className="absolute -bottom-1 left-0 h-[2px] bg-[#6B8E23] transition-all duration-200 w-0 group-hover:w-full group-[.active]:w-full"></span>
+              <span className="absolute -bottom-1 left-0 h-[2px] bg-[#3F7D4A] transition-all duration-200 w-0 group-hover:w-full group-[.active]:w-full"></span>
             </Link>
           ))}
           <div className="w-[1px] h-6 bg-[#E5E5E5] mx-2"></div>
           <Link
             to="/admin"
-            className="text-sm font-medium px-4 py-2 bg-[#6B8E23]/10 text-[#6B8E23] rounded-lg hover:bg-[#6B8E23] hover:text-white transition-colors whitespace-nowrap"
+            className="text-sm font-medium px-4 py-2 bg-[#3F7D4A]/10 text-[#3F7D4A] rounded-lg hover:bg-[#3F7D4A] hover:text-white transition-colors whitespace-nowrap"
           >
             Masuk
           </Link>
@@ -57,7 +57,7 @@ export default function Header() {
         <div className="md:hidden flex items-center gap-4">
           <Link
             to="/admin"
-            className="text-xs font-medium px-3 py-1.5 bg-[#6B8E23]/10 text-[#6B8E23] rounded-lg whitespace-nowrap"
+            className="text-xs font-medium px-3 py-1.5 bg-[#3F7D4A]/10 text-[#3F7D4A] rounded-lg whitespace-nowrap"
           >
             Masuk
           </Link>
@@ -93,7 +93,7 @@ export default function Header() {
                   to={link.to}
                   activeOptions={{ exact: link.to === '/' }}
                   onClick={() => setIsOpen(false)}
-                  className="text-lg font-medium p-2 -mx-2 rounded-lg text-[#666] [&.active]:bg-[#F5F5F5] [&.active]:text-[#6B8E23]"
+                  className="text-lg font-medium p-2 -mx-2 rounded-lg text-[#666] [&.active]:bg-[#F5F5F5] [&.active]:text-[#3F7D4A]"
                 >
                   {link.label}
                 </Link>

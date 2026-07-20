@@ -102,7 +102,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="font-sans antialiased text-[#333] bg-white selection:bg-[#6B8E23]/20">
+      <body className="font-sans antialiased text-[#333] bg-white selection:bg-[#3F7D4A]/20">
         <AuthProvider>
           <ConvexProvider>
             <div className="min-h-screen flex flex-col pt-[72px]">

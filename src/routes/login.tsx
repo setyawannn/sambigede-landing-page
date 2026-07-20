@@ -22,7 +22,7 @@ function LoginRoute() {
   if (isLoading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-gray-50">
-        <Loader2 className="w-8 h-8 text-[#6B8E23] animate-spin" />
+        <Loader2 className="w-8 h-8 text-[#3F7D4A] animate-spin" />
       </div>
     )
   }

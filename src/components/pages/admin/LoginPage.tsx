@@ -79,7 +79,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex bg-[#F8FAFC]">
-      <div className="hidden lg:flex w-1/2 bg-[#6B8E23] flex-col items-center justify-center p-12 text-center relative overflow-hidden">
+      <div className="hidden lg:flex w-1/2 bg-[#3F7D4A] flex-col items-center justify-center p-12 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative z-10 space-y-6">
           <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl border border-white/30">
@@ -100,8 +100,8 @@ export default function LoginPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center lg:text-left">
-            <div className="lg:hidden w-16 h-16 bg-[#6B8E23]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Lock className="w-8 h-8 text-[#6B8E23]" />
+            <div className="lg:hidden w-16 h-16 bg-[#3F7D4A]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Lock className="w-8 h-8 text-[#3F7D4A]" />
             </div>
             <h2 className="text-3xl font-black text-gray-900 tracking-tight">
               Selamat Datang
@@ -131,7 +131,7 @@ export default function LoginPage() {
                   onBlur={() =>
                     setTouched((prev) => ({ ...prev, username: true }))
                   }
-                  className={`w-full px-4 py-3 rounded-xl border ${uErr ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white'} focus:border-[#6B8E23] focus:ring-2 focus:ring-[#6B8E23]/20 transition-all outline-none`}
+                  className={`w-full px-4 py-3 rounded-xl border ${uErr ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white'} focus:border-[#3F7D4A] focus:ring-2 focus:ring-[#3F7D4A]/20 transition-all outline-none`}
                   placeholder="Masukkan username Anda"
                 />
                 {uErr && (
@@ -155,7 +155,7 @@ export default function LoginPage() {
                     onBlur={() =>
                       setTouched((prev) => ({ ...prev, password: true }))
                     }
-                    className={`w-full px-4 py-3 pr-12 rounded-xl border ${pErr ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white'} focus:border-[#6B8E23] focus:ring-2 focus:ring-[#6B8E23]/20 transition-all outline-none`}
+                    className={`w-full px-4 py-3 pr-12 rounded-xl border ${pErr ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white'} focus:border-[#3F7D4A] focus:ring-2 focus:ring-[#3F7D4A]/20 transition-all outline-none`}
                     placeholder="Masukkan password Anda"
                   />
                   <button
@@ -208,7 +208,7 @@ export default function LoginPage() {
               type="submit"
               disabled={loading}
               className={`w-full py-3.5 px-4 rounded-xl text-white font-bold text-base transition-all transform active:scale-[0.98] flex items-center justify-center gap-2
-                ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#6B8E23] hover:bg-[#5A7A1E] shadow-lg shadow-[#6B8E23]/30'}`}
+                ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#3F7D4A] hover:bg-[#1F3D2B] shadow-lg shadow-[#3F7D4A]/30'}`}
             >
               {loading ? (
                 <>

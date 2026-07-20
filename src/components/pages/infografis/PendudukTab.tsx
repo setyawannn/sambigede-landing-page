@@ -112,7 +112,7 @@ export default function PendudukTab() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === tab.id
-                  ? 'bg-[#6B8E23] text-white shadow-md shadow-[#6B8E23]/20'
+                  ? 'bg-[#3F7D4A] text-white shadow-md shadow-[#3F7D4A]/20'
                   : 'text-[#666] bg-[#F9F9F9] hover:bg-[#E5E5E5]'
               }`}
             >
@@ -249,7 +249,7 @@ export default function PendudukTab() {
                               <div className="flex items-center justify-end gap-2">
                                 <div className="w-24 bg-gray-200 rounded-full h-2">
                                   <div
-                                    className="bg-[#6B8E23] h-2 rounded-full"
+                                    className="bg-[#3F7D4A] h-2 rounded-full"
                                     style={{ width: `${percentage}%` }}
                                   ></div>
                                 </div>
@@ -321,7 +321,7 @@ export default function PendudukTab() {
                                 <div className="flex items-center justify-end gap-2">
                                   <div className="w-24 bg-gray-200 rounded-full h-2">
                                     <div
-                                      className="bg-[#6B8E23] h-2 rounded-full"
+                                      className="bg-[#3F7D4A] h-2 rounded-full"
                                       style={{ width: `${percentage}%` }}
                                     ></div>
                                   </div>
@@ -393,7 +393,7 @@ export default function PendudukTab() {
                                 <div className="flex items-center justify-end gap-2">
                                   <div className="w-24 bg-gray-200 rounded-full h-2">
                                     <div
-                                      className="bg-[#6B8E23] h-2 rounded-full"
+                                      className="bg-[#3F7D4A] h-2 rounded-full"
                                       style={{ width: `${percentage}%` }}
                                     ></div>
                                   </div>

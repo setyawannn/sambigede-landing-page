@@ -36,7 +36,7 @@ export default function BeritaPage() {
       {/* Header Section */}
       <div className="bg-white py-12 md:py-16 border-b border-[#E5E5E5]">
         <div className="max-w-[1200px] mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-2 bg-[#6B8E23]/10 text-[#6B8E23] px-4 py-1.5 rounded-full mb-6 mx-auto">
+          <div className="inline-flex items-center gap-2 bg-[#3F7D4A]/10 text-[#3F7D4A] px-4 py-1.5 rounded-full mb-6 mx-auto">
             <Newspaper className="w-5 h-5" />
             <span className="text-sm font-semibold tracking-wide uppercase">
               Kabar Desa
@@ -56,14 +56,14 @@ export default function BeritaPage() {
           {/* Search Bar */}
           <div className="max-w-[500px] mx-auto relative group">
             <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <Search className="w-5 h-5 text-gray-400 group-focus-within:text-[#6B8E23] transition-colors" />
+              <Search className="w-5 h-5 text-gray-400 group-focus-within:text-[#3F7D4A] transition-colors" />
             </div>
             <input
               type="text"
               placeholder="Cari berita atau pengumuman..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#F9F9F9] border-2 border-transparent focus:border-[#6B8E23]/30 focus:bg-white text-gray-800 rounded-full py-4 pl-12 pr-6 outline-none transition-all shadow-sm focus:shadow-md"
+              className="w-full bg-[#F9F9F9] border-2 border-transparent focus:border-[#3F7D4A]/30 focus:bg-white text-gray-800 rounded-full py-4 pl-12 pr-6 outline-none transition-all shadow-sm focus:shadow-md"
             />
           </div>
         </div>
@@ -80,8 +80,8 @@ export default function BeritaPage() {
               className={`px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all
                 ${
                   activeCategory === cat
-                    ? 'bg-[#6B8E23] text-white shadow-md shadow-[#6B8E23]/20'
-                    : 'bg-white text-[#666] border border-[#E5E5E5] hover:border-[#6B8E23] hover:text-[#6B8E23]'
+                    ? 'bg-[#3F7D4A] text-white shadow-md shadow-[#3F7D4A]/20'
+                    : 'bg-white text-[#666] border border-[#E5E5E5] hover:border-[#3F7D4A] hover:text-[#3F7D4A]'
                 }`}
             >
               {cat}
@@ -127,7 +127,7 @@ export default function BeritaPage() {
                 setSearchQuery('')
                 setActiveCategory('Semua')
               }}
-              className="mt-6 text-[#6B8E23] font-bold hover:underline"
+              className="mt-6 text-[#3F7D4A] font-bold hover:underline"
             >
               Reset Pencarian
             </button>

@@ -121,7 +121,7 @@ export default function BansosTab() {
   if (bansosList === undefined) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6B8E23]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3F7D4A]"></div>
       </div>
     )
   }
@@ -182,7 +182,7 @@ export default function BansosTab() {
       {/* Distribution of Bansos */}
       <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
         <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-          <PieChart className="text-[#6B8E23]" /> Sebaran Jenis Bantuan Sosial
+          <PieChart className="text-[#3F7D4A]" /> Sebaran Jenis Bantuan Sosial
         </h2>
 
         {/* Bar Chart Visualization */}
@@ -234,7 +234,7 @@ export default function BansosTab() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div>
             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-              <Search className="text-[#6B8E23]" /> Daftar Penerima Bantuan
+              <Search className="text-[#3F7D4A]" /> Daftar Penerima Bantuan
             </h2>
             <p className="text-gray-500 text-sm mt-1">
               Cari berdasarkan NIK, Nama Lengkap, atau Alamat untuk mengecek
@@ -251,7 +251,7 @@ export default function BansosTab() {
               placeholder="Masukkan Nama, NIK, atau Alamat..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#6B8E23] focus:ring-2 focus:ring-[#6B8E23]/20 rounded-xl outline-none transition-all"
+              className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#3F7D4A] focus:ring-2 focus:ring-[#3F7D4A]/20 rounded-xl outline-none transition-all"
             />
           </div>
           <div className="flex gap-3">
@@ -260,7 +260,7 @@ export default function BansosTab() {
               <select
                 value={filterJenis}
                 onChange={(e) => setFilterJenis(e.target.value)}
-                className="appearance-none pl-9 pr-8 py-3 bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#6B8E23] focus:ring-2 focus:ring-[#6B8E23]/20 rounded-xl outline-none transition-all text-sm font-medium text-gray-700"
+                className="appearance-none pl-9 pr-8 py-3 bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#3F7D4A] focus:ring-2 focus:ring-[#3F7D4A]/20 rounded-xl outline-none transition-all text-sm font-medium text-gray-700"
               >
                 <option value="Semua">Semua Jenis Bansos</option>
                 <option value="PKH">PKH</option>

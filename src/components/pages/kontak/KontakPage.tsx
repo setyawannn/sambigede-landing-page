@@ -128,7 +128,7 @@ export default function KontakPage() {
       {/* Header */}
       <div className="bg-white py-12 md:py-16 border-b border-[#E5E5E5]">
         <div className="max-w-[1200px] mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-2 bg-[#6B8E23]/10 text-[#6B8E23] px-4 py-1.5 rounded-full mb-6 mx-auto">
+          <div className="inline-flex items-center gap-2 bg-[#3F7D4A]/10 text-[#3F7D4A] px-4 py-1.5 rounded-full mb-6 mx-auto">
             <Phone className="w-5 h-5" />
             <span className="text-sm font-semibold tracking-wide uppercase">
               Hubungi Kami
@@ -155,7 +155,7 @@ export default function KontakPage() {
 
               <div className="space-y-6">
                 <div className="flex items-start gap-4 group">
-                  <div className="w-12 h-12 bg-gray-50 group-hover:bg-[#6B8E23] group-hover:text-white rounded-xl flex items-center justify-center text-[#6B8E23] transition-colors shrink-0">
+                  <div className="w-12 h-12 bg-gray-50 group-hover:bg-[#3F7D4A] group-hover:text-white rounded-xl flex items-center justify-center text-[#3F7D4A] transition-colors shrink-0">
                     <MapPin className="w-6 h-6" />
                   </div>
                   <div>
@@ -170,7 +170,7 @@ export default function KontakPage() {
                 </div>
 
                 <div className="flex items-start gap-4 group">
-                  <div className="w-12 h-12 bg-gray-50 group-hover:bg-[#6B8E23] group-hover:text-white rounded-xl flex items-center justify-center text-[#6B8E23] transition-colors shrink-0">
+                  <div className="w-12 h-12 bg-gray-50 group-hover:bg-[#3F7D4A] group-hover:text-white rounded-xl flex items-center justify-center text-[#3F7D4A] transition-colors shrink-0">
                     <Phone className="w-6 h-6" />
                   </div>
                   <div>
@@ -189,7 +189,7 @@ export default function KontakPage() {
                 </div>
 
                 <div className="flex items-start gap-4 group">
-                  <div className="w-12 h-12 bg-gray-50 group-hover:bg-[#6B8E23] group-hover:text-white rounded-xl flex items-center justify-center text-[#6B8E23] transition-colors shrink-0">
+                  <div className="w-12 h-12 bg-gray-50 group-hover:bg-[#3F7D4A] group-hover:text-white rounded-xl flex items-center justify-center text-[#3F7D4A] transition-colors shrink-0">
                     <Mail className="w-6 h-6" />
                   </div>
                   <div>
@@ -203,7 +203,7 @@ export default function KontakPage() {
                 </div>
 
                 <div className="flex items-start gap-4 group">
-                  <div className="w-12 h-12 bg-gray-50 group-hover:bg-[#6B8E23] group-hover:text-white rounded-xl flex items-center justify-center text-[#6B8E23] transition-colors shrink-0">
+                  <div className="w-12 h-12 bg-gray-50 group-hover:bg-[#3F7D4A] group-hover:text-white rounded-xl flex items-center justify-center text-[#3F7D4A] transition-colors shrink-0">
                     <Clock className="w-6 h-6" />
                   </div>
                   <div>
@@ -307,7 +307,7 @@ export default function KontakPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
-                      className="w-full bg-[#F9F9F9] border border-[#E5E5E5] focus:border-[#6B8E23] rounded-lg px-4 py-3 outline-none text-[#333] transition-colors"
+                      className="w-full bg-[#F9F9F9] border border-[#E5E5E5] focus:border-[#3F7D4A] rounded-lg px-4 py-3 outline-none text-[#333] transition-colors"
                       placeholder="Masukkan nama Anda..."
                       maxLength={100}
                     />
@@ -323,7 +323,7 @@ export default function KontakPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
                       }
-                      className="w-full bg-[#F9F9F9] border border-[#E5E5E5] focus:border-[#6B8E23] rounded-lg px-4 py-3 outline-none text-[#333] transition-colors"
+                      className="w-full bg-[#F9F9F9] border border-[#E5E5E5] focus:border-[#3F7D4A] rounded-lg px-4 py-3 outline-none text-[#333] transition-colors"
                       placeholder="Email atau No. Handphone..."
                       maxLength={100}
                     />
@@ -340,7 +340,7 @@ export default function KontakPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, subject: e.target.value })
                     }
-                    className="w-full bg-[#F9F9F9] border border-[#E5E5E5] focus:border-[#6B8E23] rounded-lg px-4 py-3 outline-none text-[#333] transition-colors"
+                    className="w-full bg-[#F9F9F9] border border-[#E5E5E5] focus:border-[#3F7D4A] rounded-lg px-4 py-3 outline-none text-[#333] transition-colors"
                   >
                     <option value="" disabled>
                       Pilih Kategori Laporan...
@@ -367,7 +367,7 @@ export default function KontakPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, message: e.target.value })
                     }
-                    className="w-full bg-[#F9F9F9] border border-[#E5E5E5] focus:border-[#6B8E23] rounded-lg px-4 py-3 outline-none text-[#333] transition-colors resize-none"
+                    className="w-full bg-[#F9F9F9] border border-[#E5E5E5] focus:border-[#3F7D4A] rounded-lg px-4 py-3 outline-none text-[#333] transition-colors resize-none"
                     placeholder="Jelaskan secara detail pesan atau laporan Anda di sini..."
                     maxLength={2000}
                   ></textarea>
@@ -410,7 +410,7 @@ export default function KontakPage() {
                   className={`w-full py-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all ${
                     isSubmitting || cooldown > 0
                       ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-[#6B8E23] hover:bg-[#5A7A1E]'
+                      : 'bg-[#3F7D4A] hover:bg-[#1F3D2B]'
                   }`}
                 >
                   {isSubmitting ? (

@@ -32,7 +32,7 @@ export default function InfografisLayout() {
     <div className="flex flex-col w-full bg-[#F5F5F5] min-h-screen pb-20">
       <div className="bg-white py-12 md:py-16 border-b border-[#E5E5E5]">
         <div className="max-w-[1200px] mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-2 bg-[#6B8E23]/10 text-[#6B8E23] px-4 py-1.5 rounded-full mb-6 mx-auto">
+          <div className="inline-flex items-center gap-2 bg-[#3F7D4A]/10 text-[#3F7D4A] px-4 py-1.5 rounded-full mb-6 mx-auto">
             <PieChart className="w-5 h-5" />
             <span className="text-sm font-semibold tracking-wide uppercase">
               Transparansi Data
@@ -58,8 +58,8 @@ export default function InfografisLayout() {
                   to={tab.path}
                   className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold transition-all ${
                     isActive
-                      ? 'bg-[#6B8E23] text-white shadow-md shadow-[#6B8E23]/20'
-                      : 'text-[#666] hover:bg-[#6B8E23]/10 hover:text-[#6B8E23]'
+                      ? 'bg-[#3F7D4A] text-white shadow-md shadow-[#3F7D4A]/20'
+                      : 'text-[#666] hover:bg-[#3F7D4A]/10 hover:text-[#3F7D4A]'
                   }`}
                 >
                   {tab.icon}

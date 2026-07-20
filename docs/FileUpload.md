@@ -143,7 +143,7 @@ export default function ContohFormUnggah() {
       <button
         type="submit"
         disabled={isLoading}
-        className="bg-[#6B8E23] text-white px-4 py-2 rounded"
+        className="bg-[#3F7D4A] text-white px-4 py-2 rounded"
       >
         {isLoading ? 'Mengunggah...' : 'Simpan Berita'}
       </button>

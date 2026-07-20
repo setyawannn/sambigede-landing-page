@@ -40,7 +40,7 @@ export function LembagaCard({
         </div>
         <h4 className="font-bold text-[#333] mb-1">{title}</h4>
         <p className="text-sm text-[#666] mb-3">{subtitle}</p>
-        <span className="text-xs text-[#6B8E23] font-medium border border-[#6B8E23]/30 bg-[#6B8E23]/5 px-3 py-1 rounded-full">
+        <span className="text-xs text-[#3F7D4A] font-medium border border-[#3F7D4A]/30 bg-[#3F7D4A]/5 px-3 py-1 rounded-full">
           Lihat Susunan Pengurus
         </span>
       </div>
@@ -54,7 +54,7 @@ export function LembagaCard({
             className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden max-h-[80vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-[#6B8E23] px-6 py-5 flex items-center justify-between shrink-0">
+            <div className="bg-[#3F7D4A] px-6 py-5 flex items-center justify-between shrink-0">
               <div>
                 <h3 className="text-white font-bold text-base">{title}</h3>
                 <p className="text-white/80 text-xs mt-0.5">{subtitle}</p>

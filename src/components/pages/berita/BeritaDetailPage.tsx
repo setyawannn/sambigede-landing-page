@@ -41,7 +41,7 @@ export default function BeritaDetailPage({ id }: BeritaDetailPageProps) {
         </p>
         <Link
           to="/berita"
-          className="bg-[#6B8E23] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#5A7A1E] transition-colors"
+          className="bg-[#3F7D4A] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#1F3D2B] transition-colors"
         >
           Kembali ke Daftar Berita
         </Link>
@@ -63,13 +63,13 @@ export default function BeritaDetailPage({ id }: BeritaDetailPageProps) {
         <div className="max-w-[800px] mx-auto px-6">
           <Link
             to="/berita"
-            className="inline-flex items-center gap-2 text-[#666] hover:text-[#6B8E23] font-medium transition-colors mb-8"
+            className="inline-flex items-center gap-2 text-[#666] hover:text-[#3F7D4A] font-medium transition-colors mb-8"
           >
             <ChevronLeft className="w-5 h-5" />
             Kembali ke Berita
           </Link>
 
-          <div className="inline-block bg-[#6B8E23]/10 text-[#6B8E23] px-3 py-1 rounded-full text-sm font-semibold mb-6">
+          <div className="inline-block bg-[#3F7D4A]/10 text-[#3F7D4A] px-3 py-1 rounded-full text-sm font-semibold mb-6">
             {berita.category}
           </div>
 

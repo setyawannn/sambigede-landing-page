@@ -90,7 +90,7 @@ export default function ApbdesTab() {
       <div className="bg-white rounded-2xl border border-[#E5E5E5] overflow-hidden shadow-sm">
         <div className="px-6 py-5 border-b border-[#E5E5E5] bg-[#F9F9F9] flex items-center justify-between">
           <h3 className="font-bold text-[#333] flex items-center gap-2">
-            <Landmark className="w-5 h-5 text-[#6B8E23]" /> Rincian APBDes
+            <Landmark className="w-5 h-5 text-[#3F7D4A]" /> Rincian APBDes
           </h3>
         </div>
         <div className="overflow-x-auto">
@@ -162,7 +162,7 @@ export default function ApbdesTab() {
                       <td className="px-6 py-4 text-center">
                         <div className="w-full bg-gray-200 rounded-full h-2.5 mb-1 max-w-[100px] mx-auto">
                           <div
-                            className="bg-[#6B8E23] h-2.5 rounded-full"
+                            className="bg-[#3F7D4A] h-2.5 rounded-full"
                             style={{ width: `${Math.min(capaian, 100)}%` }}
                           ></div>
                         </div>
