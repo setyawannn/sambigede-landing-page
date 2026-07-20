@@ -1,19 +1,21 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
-import AdminKelembagaanKelola from '../../components/pages/admin/AdminKelembagaanKelola';
-import { Skeleton } from '../../components/ui/skeleton';
-import type { Id } from '../../../convex/_generated/dataModel';
+import { createFileRoute } from '@tanstack/react-router'
+import { useQuery } from 'convex/react'
+import { api } from '../../../convex/_generated/api'
+import AdminKelembagaanKelola from '../../components/pages/admin/AdminKelembagaanKelola'
+import { Skeleton } from '../../components/ui/skeleton'
+import type { Id } from '../../../convex/_generated/dataModel'
 
 export const Route = createFileRoute('/admin/kelembagaan/kelola/$id')({
-  component: KelolaKelembagaanComponent
-});
+  component: KelolaKelembagaanComponent,
+})
 
 function KelolaKelembagaanComponent() {
-  const { id } = Route.useParams();
-  const lembagaId = id as Id<"kelembagaan">;
-  
-  const lembagaData = useQuery(api.kelembagaan.getKelembagaanById, { id: lembagaId });
+  const { id } = Route.useParams()
+  const lembagaId = id as Id<'kelembagaan'>
+
+  const lembagaData = useQuery(api.kelembagaan.getKelembagaanById, {
+    id: lembagaId,
+  })
 
   if (lembagaData === undefined) {
     return (
@@ -24,12 +26,18 @@ function KelolaKelembagaanComponent() {
           <Skeleton className="h-[600px] xl:col-span-2" />
         </div>
       </div>
-    );
+    )
   }
 
   if (lembagaData === null) {
-    return <div className="p-8 text-center text-slate-500 font-medium">Data lembaga tidak ditemukan atau sudah dihapus.</div>;
+    return (
+      <div className="p-8 text-center text-slate-500 font-medium">
+        Data lembaga tidak ditemukan atau sudah dihapus.
+      </div>
+    )
   }
 
-  return <AdminKelembagaanKelola lembagaId={lembagaId} initialData={lembagaData} />;
+  return (
+    <AdminKelembagaanKelola lembagaId={lembagaId} initialData={lembagaData} />
+  )
 }

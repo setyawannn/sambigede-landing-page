@@ -1,12 +1,12 @@
-import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
+import { query, mutation } from './_generated/server'
+import { v } from 'convex/values'
 
 export const getBerandaConfig = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("beranda_config").first();
+    return await ctx.db.query('beranda_config').first()
   },
-});
+})
 
 export const updateBerandaConfig = mutation({
   args: {
@@ -19,11 +19,11 @@ export const updateBerandaConfig = mutation({
     kadesSambutan: v.string(),
   },
   handler: async (ctx, args) => {
-    const existing = await ctx.db.query("beranda_config").first();
+    const existing = await ctx.db.query('beranda_config').first()
     if (existing) {
-      return await ctx.db.patch(existing._id, args);
+      return await ctx.db.patch(existing._id, args)
     } else {
-      return await ctx.db.insert("beranda_config", args);
+      return await ctx.db.insert('beranda_config', args)
     }
   },
-});
+})

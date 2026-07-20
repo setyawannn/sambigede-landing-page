@@ -22,7 +22,7 @@ export default [
       'website-desa-sambigede-ui/**',
       '.tanstack/**',
       '.wrangler/**',
-      'dist/**'
+      'dist/**',
     ],
   },
 ]

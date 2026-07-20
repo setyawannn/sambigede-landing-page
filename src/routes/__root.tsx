@@ -10,7 +10,9 @@ import Footer from '../components/shared/Footer'
 import Header from '../components/shared/Header'
 import { Toaster } from '../components/ui/sonner'
 
-import ConvexProvider, { convexHttpClient } from '../integrations/convex/provider'
+import ConvexProvider, {
+  convexHttpClient,
+} from '../integrations/convex/provider'
 import { convexQuery } from '@convex-dev/react-query'
 import { api } from '../../convex/_generated/api'
 
@@ -37,25 +39,32 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { title: 'Desa Sambigede' },
     ],
-    links: [
-      { rel: 'stylesheet', href: appCss },
-    ],
+    links: [{ rel: 'stylesheet', href: appCss }],
   }),
   loader: async ({ context: { queryClient } }) => {
     if (typeof document === 'undefined') {
-      const kontakData = await convexHttpClient.query(api.kontak.getKontakConfig, {});
-      queryClient.setQueryData(convexQuery(api.kontak.getKontakConfig, {}).queryKey, kontakData ?? null);
+      const kontakData = await convexHttpClient.query(
+        api.kontak.getKontakConfig,
+        {},
+      )
+      queryClient.setQueryData(
+        convexQuery(api.kontak.getKontakConfig, {}).queryKey,
+        kontakData ?? null,
+      )
     } else {
-      await queryClient.ensureQueryData(convexQuery(api.kontak.getKontakConfig, {}));
+      await queryClient.ensureQueryData(
+        convexQuery(api.kontak.getKontakConfig, {}),
+      )
     }
   },
   shellComponent: RootDocument,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const routerState = useRouterState();
-  const pathname = routerState.location.pathname;
-  const isAdminOrLogin = pathname.startsWith('/admin') || pathname.startsWith('/login');
+  const routerState = useRouterState()
+  const pathname = routerState.location.pathname
+  const isAdminOrLogin =
+    pathname.startsWith('/admin') || pathname.startsWith('/login')
 
   if (isAdminOrLogin) {
     return (
@@ -71,7 +80,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               <TanStackDevtools
                 config={{ position: 'bottom-right' }}
                 plugins={[
-                  { name: 'Tanstack Router', render: <TanStackRouterDevtoolsPanel /> },
+                  {
+                    name: 'Tanstack Router',
+                    render: <TanStackRouterDevtoolsPanel />,
+                  },
                   TanStackQueryDevtools,
                   StoreDevtools,
                 ]}
@@ -81,7 +93,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <Scripts />
         </body>
       </html>
-    );
+    )
   }
 
   return (
@@ -95,15 +107,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <ConvexProvider>
             <div className="min-h-screen flex flex-col pt-[72px]">
               <Header />
-              <main className="flex-1 flex flex-col">
-                {children}
-              </main>
+              <main className="flex-1 flex flex-col">{children}</main>
               <Footer />
             </div>
             <TanStackDevtools
               config={{ position: 'bottom-right' }}
               plugins={[
-                { name: 'Tanstack Router', render: <TanStackRouterDevtoolsPanel /> },
+                {
+                  name: 'Tanstack Router',
+                  render: <TanStackRouterDevtoolsPanel />,
+                },
                 TanStackQueryDevtools,
                 StoreDevtools,
               ]}

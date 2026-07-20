@@ -1,11 +1,11 @@
-import { defineSchema, defineTable } from "convex/server";
-import { v } from "convex/values";
+import { defineSchema, defineTable } from 'convex/server'
+import { v } from 'convex/values'
 
 export default defineSchema({
   kategori_berita: defineTable({
     nama: v.string(),
     slug: v.string(),
-  }).index("by_slug", ["slug"]),
+  }).index('by_slug', ['slug']),
 
   berita: defineTable({
     title: v.string(),
@@ -16,49 +16,40 @@ export default defineSchema({
     imageKey: v.optional(v.string()),
     author: v.string(),
   })
-    .index("by_category", ["category"])
-    .index("by_author", ["author"])
-    .searchIndex("search_title", {
-      searchField: "title",
-      filterFields: ["category", "author"],
+    .index('by_category', ['category'])
+    .index('by_author', ['author'])
+    .searchIndex('search_title', {
+      searchField: 'title',
+      filterFields: ['category', 'author'],
     }),
 
   penduduk: defineTable({
     nik: v.string(),
     nama: v.string(),
     ttl: v.string(),
-    jk: v.union(v.literal("Laki-laki"), v.literal("Perempuan")),
+    jk: v.union(v.literal('Laki-laki'), v.literal('Perempuan')),
     rt: v.string(),
     rw: v.string(),
     status: v.string(), // "Kawin" | "Belum Kawin" | "Cerai Hidup" | "Cerai Mati"
     pekerjaan: v.string(),
   })
-    .index("by_nik", ["nik"])
-    .index("by_rt", ["rt"])
-    .index("by_rw", ["rw"])
-    .index("by_jk", ["jk"])
-    .searchIndex("search_nama", {
-      searchField: "nama",
-      filterFields: ["rt", "rw", "jk"],
+    .index('by_nik', ['nik'])
+    .index('by_rt', ['rt'])
+    .index('by_rw', ['rw'])
+    .index('by_jk', ['jk'])
+    .searchIndex('search_nama', {
+      searchField: 'nama',
+      filterFields: ['rt', 'rw', 'jk'],
     }),
 
   bansos: defineTable({
-    nik: v.string(),
     nama: v.string(),
-    jk: v.union(v.literal("Laki-laki"), v.literal("Perempuan"), v.literal("-")),
-    rt: v.string(),
-    rw: v.string(),
-    jenisBansos: v.union(
-      v.literal("PKH"),
-      v.literal("BPNT"),
-      v.literal("BLT Dana Desa"),
-      v.literal("Bantuan Dana Pangan"),
-      v.literal("Lainnya")
-    ),
-    nominal: v.string(),
-    periode: v.string(),
-    status: v.union(v.literal("Aktif"), v.literal("Selesai")),
-  }).index("by_nik", ["nik"]).index("by_jenisBansos", ["jenisBansos"]),
+    nik: v.optional(v.string()),
+    alamat: v.string(),
+    jenisBansos: v.string(),
+  })
+    .index('by_nik', ['nik'])
+    .index('by_jenisBansos', ['jenisBansos']),
 
   stunting: defineTable({
     nama: v.string(),
@@ -66,23 +57,33 @@ export default defineSchema({
     usia: v.string(),
     bb: v.string(),
     tb: v.string(),
-    status: v.union(v.literal("Normal"), v.literal("Risiko"), v.literal("Stunting")),
-  }).index("by_dusun", ["dusun"]).index("by_status", ["status"]),
+    status: v.union(
+      v.literal('Normal'),
+      v.literal('Risiko'),
+      v.literal('Stunting'),
+    ),
+  })
+    .index('by_dusun', ['dusun'])
+    .index('by_status', ['status']),
 
   apbdes: defineTable({
     nama: v.string(),
-    kategori: v.union(v.literal("Pendapatan"), v.literal("Belanja"), v.literal("Pembiayaan")),
+    kategori: v.union(
+      v.literal('Pendapatan'),
+      v.literal('Belanja'),
+      v.literal('Pembiayaan'),
+    ),
     nilai: v.number(),
     realisasi: v.number(),
     sumberDana: v.string(),
-  }).index("by_kategori", ["kategori"]),
+  }).index('by_kategori', ['kategori']),
 
   admin_users: defineTable({
     username: v.string(),
     passwordHash: v.string(),
     nama: v.string(),
-    role: v.union(v.literal("Superadmin"), v.literal("Editor")),
-  }).index("by_username", ["username"]),
+    role: v.union(v.literal('Superadmin'), v.literal('Editor')),
+  }).index('by_username', ['username']),
 
   profil_desa: defineTable({
     visi: v.string(),
@@ -99,14 +100,16 @@ export default defineSchema({
     logoKey: v.optional(v.string()),
     deskripsi: v.optional(v.string()),
     urutan: v.number(),
-  }).index("by_urutan", ["urutan"]),
+  }).index('by_urutan', ['urutan']),
 
   pengurus_kelembagaan: defineTable({
-    kelembagaanId: v.id("kelembagaan"),
+    kelembagaanId: v.id('kelembagaan'),
     nama: v.string(),
     jabatan: v.string(),
     urutan: v.number(),
-  }).index("by_kelembagaan", ["kelembagaanId"]).index("by_urutan", ["urutan"]),
+  })
+    .index('by_kelembagaan', ['kelembagaanId'])
+    .index('by_urutan', ['urutan']),
 
   perangkat_desa: defineTable({
     nama: v.string(),
@@ -114,8 +117,10 @@ export default defineSchema({
     imageUrl: v.string(),
     imageKey: v.optional(v.string()),
     urutan: v.number(),
-    status: v.union(v.literal("Aktif"), v.literal("Nonaktif")),
-  }).index("by_urutan", ["urutan"]).index("by_status", ["status"]),
+    status: v.union(v.literal('Aktif'), v.literal('Nonaktif')),
+  })
+    .index('by_urutan', ['urutan'])
+    .index('by_status', ['status']),
 
   beranda_config: defineTable({
     heroBadge: v.string(),
@@ -145,34 +150,96 @@ export default defineSchema({
   pengaduan: defineTable({
     namaLengkap: v.string(),
     emailOrPhone: v.string(),
-    kategoriId: v.id("kategori_pengaduan"),
+    kategoriId: v.id('kategori_pengaduan'),
     detailPesan: v.string(),
     status: v.optional(v.string()), // Legacy field
     tanggapan: v.optional(v.string()), // Legacy field
   })
-    .index("by_emailOrPhone", ["emailOrPhone"])
-    .index("by_kategori", ["kategoriId"]),
+    .index('by_emailOrPhone', ['emailOrPhone'])
+    .index('by_kategori', ['kategoriId']),
 
   audit_logs: defineTable({
     adminUsername: v.string(),
     adminNama: v.string(),
-    action: v.union(v.literal("INSERT"), v.literal("UPDATE"), v.literal("DELETE")),
+    action: v.union(
+      v.literal('INSERT'),
+      v.literal('UPDATE'),
+      v.literal('DELETE'),
+    ),
     tableName: v.string(),
     recordId: v.string(),
     oldValue: v.optional(v.string()),
     newValue: v.optional(v.string()),
     timestamp: v.number(),
-  }).index("by_timestamp", ["timestamp"]),
+  }).index('by_timestamp', ['timestamp']),
 
   turnstile_logs: defineTable({
-    action: v.union(v.literal("login"), v.literal("pengaduan")),
+    action: v.union(v.literal('login'), v.literal('pengaduan')),
     success: v.boolean(),
     visitorId: v.string(),
     errorMessage: v.optional(v.string()),
     timestamp: v.number(),
   })
-    .index("by_timestamp", ["timestamp"])
-    .index("by_success", ["success"])
-    .index("by_action", ["action"])
-    .index("by_visitorId", ["visitorId"]),
-});
+    .index('by_timestamp', ['timestamp'])
+    .index('by_success', ['success'])
+    .index('by_action', ['action'])
+    .index('by_visitorId', ['visitorId']),
+
+  demografi_summary: defineTable({
+    totalPenduduk: v.number(),
+    jumlahLaki: v.number(),
+    jumlahPerempuan: v.number(),
+    jumlahKK: v.number(),
+    usiaProduktif: v.number(),
+    usiaLanjut50Plus: v.number(),
+  }),
+
+  demografi_pekerjaan: defineTable({
+    pekerjaan: v.string(),
+    jumlahLaki: v.number(),
+    jumlahPerempuan: v.number(),
+    urutan: v.number(),
+  }).index('by_urutan', ['urutan']),
+
+  demografi_usia: defineTable({
+    kelompokUsia: v.string(),
+    jumlahLaki: v.number(),
+    jumlahPerempuan: v.number(),
+    urutan: v.number(),
+  }).index('by_urutan', ['urutan']),
+
+  demografi_pendidikan: defineTable({
+    tingkat: v.string(),
+    jumlahLaki: v.number(),
+    jumlahPerempuan: v.number(),
+    urutan: v.number(),
+  }).index('by_urutan', ['urutan']),
+
+  demografi_agama: defineTable({
+    agama: v.string(),
+    jumlahLaki: v.number(),
+    jumlahPerempuan: v.number(),
+    urutan: v.number(),
+  }).index('by_urutan', ['urutan']),
+
+  r2_settings: defineTable({
+    preventiveEnabled: v.boolean(),
+    dailyUploadLimit: v.number(), // Maksimal jumlah unggahan per hari
+    dailyBandwidthLimit: v.number(), // Maksimal bandwidth per hari (dalam bytes)
+    totalStorageBytes: v.optional(v.number()), // Total R2 storage in bytes (Cumulative)
+  }),
+
+  r2_uploads_log: defineTable({
+    fileKey: v.string(),
+    fileSize: v.number(), // dalam bytes
+    timestamp: v.number(),
+  })
+    .index('by_timestamp', ['timestamp'])
+    .index('by_fileKey', ['fileKey']),
+
+  r2_monthly_usage: defineTable({
+    month: v.string(), // Format: "YYYY-MM"
+    classACount: v.number(),
+    classBCount: v.number(),
+  }).index('by_month', ['month']),
+})

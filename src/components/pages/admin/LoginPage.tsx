@@ -1,72 +1,81 @@
-import { useState, useRef } from "react";
-import { Lock, Eye, EyeOff, AlertTriangle } from "lucide-react";
-import { useAction } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
-import { useAuth } from "../../../lib/auth";
-import { useNavigate } from "@tanstack/react-router";
-import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
+import { useState, useRef } from 'react'
+import { Lock, Eye, EyeOff, AlertTriangle } from 'lucide-react'
+import { useAction } from 'convex/react'
+import { api } from '../../../../convex/_generated/api'
+import { useAuth } from '../../../lib/auth'
+import { useNavigate } from '@tanstack/react-router'
+import { Turnstile } from '@marsidev/react-turnstile'
+import type { TurnstileInstance } from '@marsidev/react-turnstile'
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPw, setShowPw] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [touched, setTouched] = useState({ username: false, password: false });
-  const [turnstileToken, setTurnstileToken] = useState<string>("");
-  const turnstileRef = useRef<TurnstileInstance>(null);
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPw, setShowPw] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [touched, setTouched] = useState({ username: false, password: false })
+  const [turnstileToken, setTurnstileToken] = useState<string>('')
+  const turnstileRef = useRef<TurnstileInstance>(null)
 
   const getVisitorId = () => {
-    let vid = localStorage.getItem("visitor_id");
+    let vid = localStorage.getItem('visitor_id')
     if (!vid) {
-      vid = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2);
-      localStorage.setItem("visitor_id", vid);
+      vid = crypto.randomUUID
+        ? crypto.randomUUID()
+        : Math.random().toString(36).substring(2)
+      localStorage.setItem('visitor_id', vid)
     }
-    return vid;
-  };
+    return vid
+  }
 
-  const loginAction = useAction(api.auth.login);
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const loginAction = useAction(api.auth.login)
+  const { login } = useAuth()
+  const navigate = useNavigate()
 
-  const uErr = touched.username && !username.trim() ? "Username wajib diisi" : "";
-  const pErr = touched.password && !password ? "Password wajib diisi" : "";
-  const canSubmit = username.trim() && password && !uErr && !pErr;
+  const uErr =
+    touched.username && !username.trim() ? 'Username wajib diisi' : ''
+  const pErr = touched.password && !password ? 'Password wajib diisi' : ''
+  const canSubmit = username.trim() && password && !uErr && !pErr
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setTouched({ username: true, password: true });
-    
-    if (!canSubmit) return;
-    
+    e.preventDefault()
+    setTouched({ username: true, password: true })
+
+    if (!canSubmit) return
+
     if (!turnstileToken) {
-      setError("Mohon selesaikan verifikasi keamanan terlebih dahulu.");
-      return;
+      setError('Mohon selesaikan verifikasi keamanan terlebih dahulu.')
+      return
     }
-    
-    setLoading(true);
-    setError("");
-    
+
+    setLoading(true)
+    setError('')
+
     try {
-      const visitorId = getVisitorId();
-      const result = await loginAction({ username, password, turnstileToken, visitorId });
-      
+      const visitorId = getVisitorId()
+      const result = await loginAction({
+        username,
+        password,
+        turnstileToken,
+        visitorId,
+      })
+
       if (result.success && result.user) {
-        login(result.user);
-        navigate({ to: "/admin" });
+        login(result.user)
+        navigate({ to: '/admin' })
       } else {
-        setError(result.message || "Login gagal");
-        turnstileRef.current?.reset();
-        setTurnstileToken("");
+        setError(result.message || 'Login gagal')
+        turnstileRef.current?.reset()
+        setTurnstileToken('')
       }
     } catch (err) {
-      setError("Terjadi kesalahan jaringan");
-      turnstileRef.current?.reset();
-      setTurnstileToken("");
+      setError('Terjadi kesalahan jaringan')
+      turnstileRef.current?.reset()
+      setTurnstileToken('')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex bg-[#F8FAFC]">
@@ -77,10 +86,13 @@ export default function LoginPage() {
             <Lock className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl font-extrabold text-white tracking-tight leading-tight">
-            Sistem Informasi<br />Desa Sambigede
+            Sistem Informasi
+            <br />
+            Desa Sambigede
           </h1>
           <p className="text-[#E0E7C8] text-lg max-w-md mx-auto leading-relaxed">
-            Portal administrasi terpadu untuk mengelola data kependudukan, berita, dan layanan masyarakat.
+            Portal administrasi terpadu untuk mengelola data kependudukan,
+            berita, dan layanan masyarakat.
           </p>
         </div>
       </div>
@@ -91,8 +103,12 @@ export default function LoginPage() {
             <div className="lg:hidden w-16 h-16 bg-[#6B8E23]/10 rounded-full flex items-center justify-center mx-auto mb-6">
               <Lock className="w-8 h-8 text-[#6B8E23]" />
             </div>
-            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Selamat Datang</h2>
-            <p className="text-gray-500 mt-2 text-sm">Masuk ke panel admin untuk mengelola website.</p>
+            <h2 className="text-3xl font-black text-gray-900 tracking-tight">
+              Selamat Datang
+            </h2>
+            <p className="text-gray-500 mt-2 text-sm">
+              Masuk ke panel admin untuk mengelola website.
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -105,28 +121,40 @@ export default function LoginPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Username</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  Username
+                </label>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  onBlur={() => setTouched(prev => ({ ...prev, username: true }))}
+                  onBlur={() =>
+                    setTouched((prev) => ({ ...prev, username: true }))
+                  }
                   className={`w-full px-4 py-3 rounded-xl border ${uErr ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white'} focus:border-[#6B8E23] focus:ring-2 focus:ring-[#6B8E23]/20 transition-all outline-none`}
                   placeholder="Masukkan username Anda"
                 />
-                {uErr && <p className="text-red-500 text-xs mt-1.5 font-medium">{uErr}</p>}
+                {uErr && (
+                  <p className="text-red-500 text-xs mt-1.5 font-medium">
+                    {uErr}
+                  </p>
+                )}
               </div>
 
               <div>
                 <div className="flex justify-between mb-1.5">
-                  <label className="text-sm font-semibold text-gray-700">Password</label>
+                  <label className="text-sm font-semibold text-gray-700">
+                    Password
+                  </label>
                 </div>
                 <div className="relative">
                   <input
-                    type={showPw ? "text" : "password"}
+                    type={showPw ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    onBlur={() => setTouched(prev => ({ ...prev, password: true }))}
+                    onBlur={() =>
+                      setTouched((prev) => ({ ...prev, password: true }))
+                    }
                     className={`w-full px-4 py-3 pr-12 rounded-xl border ${pErr ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white'} focus:border-[#6B8E23] focus:ring-2 focus:ring-[#6B8E23]/20 transition-all outline-none`}
                     placeholder="Masukkan password Anda"
                   />
@@ -135,29 +163,43 @@ export default function LoginPage() {
                     onClick={() => setShowPw(!showPw)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   >
-                    {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPw ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
-                {pErr && <p className="text-red-500 text-xs mt-1.5 font-medium">{pErr}</p>}
+                {pErr && (
+                  <p className="text-red-500 text-xs mt-1.5 font-medium">
+                    {pErr}
+                  </p>
+                )}
               </div>
             </div>
 
             <div className="flex justify-center my-4">
               <Turnstile
                 ref={turnstileRef}
-                siteKey={import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY || ""}
+                siteKey={
+                  import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY || ''
+                }
                 onSuccess={(token) => {
-                  setTurnstileToken(token);
-                  setError("");
+                  setTurnstileToken(token)
+                  setError('')
                 }}
-                onError={() => setError("Verifikasi keamanan gagal. Silakan muat ulang halaman.")}
+                onError={() =>
+                  setError(
+                    'Verifikasi keamanan gagal. Silakan muat ulang halaman.',
+                  )
+                }
                 onExpire={() => {
-                  setTurnstileToken("");
-                  setError("Verifikasi keamanan kedaluwarsa. Silakan ulangi.");
+                  setTurnstileToken('')
+                  setError('Verifikasi keamanan kedaluwarsa. Silakan ulangi.')
                 }}
                 options={{
-                  theme: "light",
-                  size: "normal"
+                  theme: 'light',
+                  size: 'normal',
                 }}
               />
             </div>
@@ -170,21 +212,39 @@ export default function LoginPage() {
             >
               {loading ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Memverifikasi...
                 </>
-              ) : "Masuk ke Dashboard"}
+              ) : (
+                'Masuk ke Dashboard'
+              )}
             </button>
           </form>
-          
+
           <div className="text-center text-sm text-gray-500 mt-8">
             &copy; {new Date().getFullYear()} Pemerintah Desa Sambigede.
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

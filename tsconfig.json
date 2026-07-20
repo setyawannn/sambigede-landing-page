@@ -1,5 +1,11 @@
 {
-  "include": ["src/**/*.ts", "src/**/*.tsx", "eslint.config.js", "prettier.config.js", "vite.config.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "eslint.config.js",
+    "prettier.config.js",
+    "vite.config.ts"
+  ],
   "exclude": ["website-desa-sambigede-ui"],
   "compilerOptions": {
     "target": "ES2022",

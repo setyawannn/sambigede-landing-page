@@ -1,12 +1,12 @@
-import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
+import { query, mutation } from './_generated/server'
+import { v } from 'convex/values'
 
 export const getKontakConfig = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("kontak_config").first();
+    return await ctx.db.query('kontak_config').first()
   },
-});
+})
 
 export const updateKontakConfig = mutation({
   args: {
@@ -20,11 +20,11 @@ export const updateKontakConfig = mutation({
     youtube: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const existing = await ctx.db.query("kontak_config").first();
+    const existing = await ctx.db.query('kontak_config').first()
     if (existing) {
-      return await ctx.db.patch(existing._id, args);
+      return await ctx.db.patch(existing._id, args)
     } else {
-      return await ctx.db.insert("kontak_config", args);
+      return await ctx.db.insert('kontak_config', args)
     }
   },
-});
+})

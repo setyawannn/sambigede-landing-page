@@ -40,6 +40,7 @@ import { Route as AdminBeritaIndexRouteImport } from './routes/admin/berita.inde
 import { Route as AdminKelembagaanTambahRouteImport } from './routes/admin/kelembagaan.tambah'
 import { Route as AdminBeritaTambahRouteImport } from './routes/admin/berita.tambah'
 import { Route as AdminAnalyticTurnstileRouteImport } from './routes/admin/analytic/turnstile'
+import { Route as AdminAnalyticR2RouteImport } from './routes/admin/analytic/r2'
 import { Route as AdminKelembagaanKelolaIdRouteImport } from './routes/admin/kelembagaan.kelola.$id'
 import { Route as AdminBeritaEditIdRouteImport } from './routes/admin/berita.edit.$id'
 
@@ -198,6 +199,11 @@ const AdminAnalyticTurnstileRoute = AdminAnalyticTurnstileRouteImport.update({
   path: '/analytic/turnstile',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAnalyticR2Route = AdminAnalyticR2RouteImport.update({
+  id: '/analytic/r2',
+  path: '/analytic/r2',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminKelembagaanKelolaIdRoute =
   AdminKelembagaanKelolaIdRouteImport.update({
     id: '/kelembagaan/kelola/$id',
@@ -237,6 +243,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/berita/': typeof BeritaIndexRoute
   '/infografis/': typeof InfografisIndexRoute
+  '/admin/analytic/r2': typeof AdminAnalyticR2Route
   '/admin/analytic/turnstile': typeof AdminAnalyticTurnstileRoute
   '/admin/berita/tambah': typeof AdminBeritaTambahRoute
   '/admin/kelembagaan/tambah': typeof AdminKelembagaanTambahRoute
@@ -270,6 +277,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/berita': typeof BeritaIndexRoute
   '/infografis': typeof InfografisIndexRoute
+  '/admin/analytic/r2': typeof AdminAnalyticR2Route
   '/admin/analytic/turnstile': typeof AdminAnalyticTurnstileRoute
   '/admin/berita/tambah': typeof AdminBeritaTambahRoute
   '/admin/kelembagaan/tambah': typeof AdminKelembagaanTambahRoute
@@ -306,6 +314,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/berita/': typeof BeritaIndexRoute
   '/infografis/': typeof InfografisIndexRoute
+  '/admin/analytic/r2': typeof AdminAnalyticR2Route
   '/admin/analytic/turnstile': typeof AdminAnalyticTurnstileRoute
   '/admin/berita/tambah': typeof AdminBeritaTambahRoute
   '/admin/kelembagaan/tambah': typeof AdminKelembagaanTambahRoute
@@ -343,6 +352,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/berita/'
     | '/infografis/'
+    | '/admin/analytic/r2'
     | '/admin/analytic/turnstile'
     | '/admin/berita/tambah'
     | '/admin/kelembagaan/tambah'
@@ -376,6 +386,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/berita'
     | '/infografis'
+    | '/admin/analytic/r2'
     | '/admin/analytic/turnstile'
     | '/admin/berita/tambah'
     | '/admin/kelembagaan/tambah'
@@ -411,6 +422,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/berita/'
     | '/infografis/'
+    | '/admin/analytic/r2'
     | '/admin/analytic/turnstile'
     | '/admin/berita/tambah'
     | '/admin/kelembagaan/tambah'
@@ -650,6 +662,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAnalyticTurnstileRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/analytic/r2': {
+      id: '/admin/analytic/r2'
+      path: '/analytic/r2'
+      fullPath: '/admin/analytic/r2'
+      preLoaderRoute: typeof AdminAnalyticR2RouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/kelembagaan/kelola/$id': {
       id: '/admin/kelembagaan/kelola/$id'
       path: '/kelembagaan/kelola/$id'
@@ -681,6 +700,7 @@ interface AdminRouteChildren {
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminStuntingRoute: typeof AdminStuntingRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminAnalyticR2Route: typeof AdminAnalyticR2Route
   AdminAnalyticTurnstileRoute: typeof AdminAnalyticTurnstileRoute
   AdminBeritaTambahRoute: typeof AdminBeritaTambahRoute
   AdminKelembagaanTambahRoute: typeof AdminKelembagaanTambahRoute
@@ -704,6 +724,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSettingsRoute: AdminSettingsRoute,
   AdminStuntingRoute: AdminStuntingRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminAnalyticR2Route: AdminAnalyticR2Route,
   AdminAnalyticTurnstileRoute: AdminAnalyticTurnstileRoute,
   AdminBeritaTambahRoute: AdminBeritaTambahRoute,
   AdminKelembagaanTambahRoute: AdminKelembagaanTambahRoute,

@@ -1,12 +1,12 @@
-import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
+import { query, mutation } from './_generated/server'
+import { v } from 'convex/values'
 
 export const getProfil = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("profil_desa").first();
+    return await ctx.db.query('profil_desa').first()
   },
-});
+})
 
 export const updateProfil = mutation({
   args: {
@@ -17,11 +17,11 @@ export const updateProfil = mutation({
     baganStrukturKey: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const existing = await ctx.db.query("profil_desa").first();
+    const existing = await ctx.db.query('profil_desa').first()
     if (existing) {
-      return await ctx.db.patch(existing._id, args);
+      return await ctx.db.patch(existing._id, args)
     } else {
-      return await ctx.db.insert("profil_desa", args);
+      return await ctx.db.insert('profil_desa', args)
     }
   },
-});
+})

@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { X } from "lucide-react";
+import { useState } from 'react'
+import { X } from 'lucide-react'
 
-export type LembagaAnggota = { nama: string; jabatan: string };
+export type LembagaAnggota = { nama: string; jabatan: string }
 
 interface LembagaCardProps {
-  icon: React.ReactNode;
-  colorBg: string;
-  colorText: string;
-  title: string;
-  subtitle: string;
-  anggota: LembagaAnggota[];
+  icon: React.ReactNode
+  colorBg: string
+  colorText: string
+  title: string
+  subtitle: string
+  anggota: LembagaAnggota[]
 }
 
 export function LembagaCard({
@@ -20,7 +20,7 @@ export function LembagaCard({
   subtitle,
   anggota,
 }: LembagaCardProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <>
@@ -30,10 +30,12 @@ export function LembagaCard({
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") setOpen(true);
+          if (e.key === 'Enter' || e.key === ' ') setOpen(true)
         }}
       >
-        <div className={`w-14 h-14 ${colorBg} ${colorText} rounded-full flex items-center justify-center mb-4`}>
+        <div
+          className={`w-14 h-14 ${colorBg} ${colorText} rounded-full flex items-center justify-center mb-4`}
+        >
           {icon}
         </div>
         <h4 className="font-bold text-[#333] mb-1">{title}</h4>
@@ -69,17 +71,27 @@ export function LembagaCard({
               <table className="w-full text-sm text-left">
                 <thead className="bg-[#F9F9F9] border-b border-[#E5E5E5] sticky top-0">
                   <tr>
-                    <th className="px-5 py-3 text-xs font-semibold text-[#333] uppercase tracking-wide">No</th>
-                    <th className="px-5 py-3 text-xs font-semibold text-[#333] uppercase tracking-wide">Nama</th>
-                    <th className="px-5 py-3 text-xs font-semibold text-[#333] uppercase tracking-wide">Jabatan</th>
+                    <th className="px-5 py-3 text-xs font-semibold text-[#333] uppercase tracking-wide">
+                      No
+                    </th>
+                    <th className="px-5 py-3 text-xs font-semibold text-[#333] uppercase tracking-wide">
+                      Nama
+                    </th>
+                    <th className="px-5 py-3 text-xs font-semibold text-[#333] uppercase tracking-wide">
+                      Jabatan
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#E5E5E5]">
                   {anggota.map((a, i) => (
                     <tr key={i} className="hover:bg-[#F5F5F5]">
                       <td className="px-5 py-3 text-[#999] text-xs">{i + 1}</td>
-                      <td className="px-5 py-3 font-medium text-[#333]">{a.nama}</td>
-                      <td className="px-5 py-3 text-[#666] text-xs">{a.jabatan}</td>
+                      <td className="px-5 py-3 font-medium text-[#333]">
+                        {a.nama}
+                      </td>
+                      <td className="px-5 py-3 text-[#666] text-xs">
+                        {a.jabatan}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -89,5 +101,5 @@ export function LembagaCard({
         </div>
       )}
     </>
-  );
+  )
 }

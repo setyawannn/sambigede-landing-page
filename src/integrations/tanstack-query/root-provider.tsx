@@ -6,9 +6,10 @@ export function getContext() {
     defaultOptions: {
       queries: {
         queryKeyHashFn: convexQueryClient.hashFn(),
-        queryFn: typeof document !== 'undefined' 
-          ? convexQueryClient.queryFn() 
-          : () => Promise.resolve(undefined),
+        queryFn:
+          typeof document !== 'undefined'
+            ? convexQueryClient.queryFn()
+            : () => Promise.resolve(undefined),
       },
     },
   })
