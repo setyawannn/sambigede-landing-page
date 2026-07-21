@@ -53,6 +53,15 @@ Output build menempatkan aset publik di `dist/client`, bundle SSR di `dist/serve
 
 Jika ingin deploy via CLI, jalankan `bun run deploy:pages` setelah environment variable yang diperlukan sudah disiapkan di Cloudflare Pages.
 
+### Agar Env Tidak Hilang Saat Build/Push
+
+- `.env.local` hanya untuk lokal dan tidak ikut ke build Cloudflare Pages.
+- Simpan semua variable di Cloudflare Pages project settings, lalu isi keduanya:
+   - `Production`
+   - `Preview`
+- Untuk deploy Worker via Wrangler, file `wrangler.jsonc` sudah diset `keep_vars: true` agar variable yang disimpan di dashboard tidak dihapus saat deploy.
+- Hindari menyimpan secret di repository. Gunakan dashboard Cloudflare atau secret manager CI/CD.
+
 ## Struktur Repositori Utama
 
 - `src/routes/`: Router TanStack (hanya definisi route & loaders).
