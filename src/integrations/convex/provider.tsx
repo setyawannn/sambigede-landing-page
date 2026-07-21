@@ -1,15 +1,17 @@
 import { ConvexProvider } from 'convex/react'
 import { ConvexQueryClient } from '@convex-dev/react-query'
 import { ConvexHttpClient } from 'convex/browser'
-import { getConvexUrl, getSafeConvexUrl } from '../../lib/convex-env'
+import {
+  getConvexUrl,
+  getSafeConvexUrl,
+  warnInvalidConvexUrlOnce,
+} from '../../lib/convex-env'
 
 const CONVEX_URL = getConvexUrl()
 const SAFE_CONVEX_URL = getSafeConvexUrl()
 
 if (!CONVEX_URL) {
-  console.error(
-    'VITE_CONVEX_URL tidak ditemukan. Pastikan env Cloudflare Pages tidak memakai quote/backtick.',
-  )
+  warnInvalidConvexUrlOnce('ConvexProvider')
 }
 
 export const convexQueryClient = new ConvexQueryClient(SAFE_CONVEX_URL)

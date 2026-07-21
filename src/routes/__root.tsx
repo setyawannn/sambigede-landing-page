@@ -9,9 +9,9 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import Footer from '../components/shared/Footer'
 import Header from '../components/shared/Header'
 import { Toaster } from '../components/ui/sonner'
+import { ConvexHttpClient } from 'convex/browser'
 
 import ConvexProvider, {
-  convexHttpClient,
 } from '../integrations/convex/provider'
 import { convexQuery } from '@convex-dev/react-query'
 import { api } from '../../convex/_generated/api'
@@ -25,7 +25,11 @@ import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
 
 import { AuthProvider } from '../lib/auth'
-import { hasValidConvexUrl } from '../lib/convex-env'
+import {
+  getServerConvexUrl,
+  hasValidServerConvexUrl,
+  warnInvalidConvexUrlOnce,
+} from '../lib/convex-env'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -45,14 +49,15 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   loader: async ({ context: { queryClient } }) => {
     try {
       if (typeof document === 'undefined') {
-        if (!hasValidConvexUrl()) {
-          console.error(
-            'SSR root loader dilewati karena VITE_CONVEX_URL belum valid.',
-          )
+        if (!(await hasValidServerConvexUrl())) {
+          warnInvalidConvexUrlOnce('SSR root loader dilewati')
           return
         }
 
-        const kontakData = await convexHttpClient.query(
+        const serverConvexUrl = await getServerConvexUrl()
+        const serverConvexClient = new ConvexHttpClient(serverConvexUrl!)
+
+        const kontakData = await serverConvexClient.query(
           api.kontak.getKontakConfig,
           {},
         )
