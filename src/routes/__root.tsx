@@ -90,6 +90,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               />
             </ConvexProvider>
           </AuthProvider>
+          <Toaster />
           <Scripts />
         </body>
       </html>

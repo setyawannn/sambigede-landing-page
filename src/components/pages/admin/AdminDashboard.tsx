@@ -7,6 +7,7 @@ import {
   Activity,
   Landmark,
   TrendingUp,
+  TrendingDown,
 } from 'lucide-react'
 import {
   Card,
@@ -22,7 +23,7 @@ export default function AdminDashboard() {
   const berita = useQuery(api.berita.getBerita, { category: undefined })
   const bansos = useQuery(api.bansos.getBansos)
   const stunting = useQuery(api.stunting.getStunting)
-  const apbdes = useQuery(api.apbdes.getApbdes)
+  const activeTahun = useQuery(api.apbdes.getApbdesTahunActive)
 
   const stats = [
     {
@@ -55,10 +56,13 @@ export default function AdminDashboard() {
     },
   ]
 
-  const totalPendapatan =
-    apbdes
-      ?.filter((a) => a.kategori === 'Pendapatan')
-      .reduce((acc, curr) => acc + curr.realisasi, 0) ?? 0
+  const totalPendapatan = activeTahun?.totalPendapatan ?? 0
+  const totalPendapatanSemula = activeTahun?.totalPendapatanSemula ?? 0
+  let growth = 0
+  if (totalPendapatanSemula > 0) {
+    growth = ((totalPendapatan - totalPendapatanSemula) / totalPendapatanSemula) * 100
+  }
+  const isPositiveGrowth = growth >= 0
 
   const formatRupiah = (angka: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -133,9 +137,9 @@ export default function AdminDashboard() {
               <h2 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tight">
                 {formatRupiah(totalPendapatan)}
               </h2>
-              <div className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold">
-                <TrendingUp className="w-3 h-3" />
-                +12.5% dari tahun lalu
+              <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${isPositiveGrowth ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`}>
+                {isPositiveGrowth ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                {isPositiveGrowth ? '+' : ''}{growth.toFixed(1)}% dari anggaran awal
               </div>
             </div>
           </CardContent>
