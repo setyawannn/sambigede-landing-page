@@ -25,6 +25,7 @@ import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
 
 import { AuthProvider } from '../lib/auth'
+import { hasValidConvexUrl } from '../lib/convex-env'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -42,19 +43,30 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     links: [{ rel: 'stylesheet', href: appCss }],
   }),
   loader: async ({ context: { queryClient } }) => {
-    if (typeof document === 'undefined') {
-      const kontakData = await convexHttpClient.query(
-        api.kontak.getKontakConfig,
-        {},
-      )
-      queryClient.setQueryData(
-        convexQuery(api.kontak.getKontakConfig, {}).queryKey,
-        kontakData ?? null,
-      )
-    } else {
-      await queryClient.ensureQueryData(
-        convexQuery(api.kontak.getKontakConfig, {}),
-      )
+    try {
+      if (typeof document === 'undefined') {
+        if (!hasValidConvexUrl()) {
+          console.error(
+            'SSR root loader dilewati karena VITE_CONVEX_URL belum valid.',
+          )
+          return
+        }
+
+        const kontakData = await convexHttpClient.query(
+          api.kontak.getKontakConfig,
+          {},
+        )
+        queryClient.setQueryData(
+          convexQuery(api.kontak.getKontakConfig, {}).queryKey,
+          kontakData ?? null,
+        )
+      } else {
+        await queryClient.ensureQueryData(
+          convexQuery(api.kontak.getKontakConfig, {}),
+        )
+      }
+    } catch (error) {
+      console.error('Gagal memuat konfigurasi kontak saat SSR:', error)
     }
   },
   shellComponent: RootDocument,
