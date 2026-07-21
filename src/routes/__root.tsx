@@ -26,6 +26,7 @@ import type { QueryClient } from '@tanstack/react-query'
 
 import { AuthProvider } from '../lib/auth'
 import {
+  getServerEnvValue,
   getServerConvexUrl,
   hasValidServerConvexUrl,
   warnInvalidConvexUrlOnce,
@@ -82,9 +83,20 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const pathname = routerState.location.pathname
   const runtimeConvexUrl =
     typeof document === 'undefined' ? getServerConvexUrl() : undefined
-  const APP_ENV_INIT_SCRIPT = runtimeConvexUrl
-    ? `window.__APP_ENV__=Object.assign(window.__APP_ENV__||{},{VITE_CONVEX_URL:${JSON.stringify(runtimeConvexUrl)}});`
-    : ''
+  const runtimeTurnstileSiteKey =
+    typeof document === 'undefined'
+      ? getServerEnvValue('VITE_CLOUDFLARE_TURNSTILE_SITE_KEY')
+      : undefined
+  const appEnvPayload = Object.fromEntries(
+    [
+      ['VITE_CONVEX_URL', runtimeConvexUrl],
+      ['VITE_CLOUDFLARE_TURNSTILE_SITE_KEY', runtimeTurnstileSiteKey],
+    ].filter((entry): entry is [string, string] => Boolean(entry[1])),
+  )
+  const APP_ENV_INIT_SCRIPT =
+    Object.keys(appEnvPayload).length > 0
+      ? `window.__APP_ENV__=Object.assign(window.__APP_ENV__||{},${JSON.stringify(appEnvPayload)});`
+      : ''
   const isAdminOrLogin =
     pathname.startsWith('/admin') || pathname.startsWith('/login')
 

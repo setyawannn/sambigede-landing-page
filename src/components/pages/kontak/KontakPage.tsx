@@ -17,6 +17,7 @@ import { api } from '../../../../convex/_generated/api'
 import type { Id } from '../../../../convex/_generated/dataModel'
 import { Turnstile } from '@marsidev/react-turnstile'
 import type { TurnstileInstance } from '@marsidev/react-turnstile'
+import { getTurnstileSiteKey } from '../../../lib/convex-env'
 
 export default function KontakPage() {
   const kontakData = useQuery(api.kontak.getKontakConfig)
@@ -37,6 +38,7 @@ export default function KontakPage() {
 
   const [turnstileToken, setTurnstileToken] = useState<string>('')
   const turnstileRef = useRef<TurnstileInstance>(null)
+  const turnstileSiteKey = getTurnstileSiteKey()
 
   const getVisitorId = () => {
     let vid = localStorage.getItem('visitor_id')
@@ -73,6 +75,11 @@ export default function KontakPage() {
     e.preventDefault()
     if (cooldown > 0) {
       setErrorMsg(`Harap tunggu ${cooldown} detik sebelum mengirim pesan lagi.`)
+      return
+    }
+
+    if (!turnstileSiteKey) {
+      setErrorMsg('Konfigurasi Turnstile belum tersedia. Hubungi administrator.')
       return
     }
 
@@ -377,31 +384,36 @@ export default function KontakPage() {
                 </div>
 
                 <div className="flex justify-center my-4">
-                  <Turnstile
-                    ref={turnstileRef}
-                    siteKey={
-                      import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY || ''
-                    }
-                    onSuccess={(token) => {
-                      setTurnstileToken(token)
-                      setErrorMsg('')
-                    }}
-                    onError={() =>
-                      setErrorMsg(
-                        'Verifikasi keamanan gagal. Silakan muat ulang halaman.',
-                      )
-                    }
-                    onExpire={() => {
-                      setTurnstileToken('')
-                      setErrorMsg(
-                        'Verifikasi keamanan kedaluwarsa. Silakan ulangi.',
-                      )
-                    }}
-                    options={{
-                      theme: 'light',
-                      size: 'normal',
-                    }}
-                  />
+                  {turnstileSiteKey ? (
+                    <Turnstile
+                      ref={turnstileRef}
+                      siteKey={turnstileSiteKey}
+                      onSuccess={(token) => {
+                        setTurnstileToken(token)
+                        setErrorMsg('')
+                      }}
+                      onError={() =>
+                        setErrorMsg(
+                          'Verifikasi keamanan gagal. Silakan muat ulang halaman.',
+                        )
+                      }
+                      onExpire={() => {
+                        setTurnstileToken('')
+                        setErrorMsg(
+                          'Verifikasi keamanan kedaluwarsa. Silakan ulangi.',
+                        )
+                      }}
+                      options={{
+                        theme: 'light',
+                        size: 'normal',
+                      }}
+                    />
+                  ) : (
+                    <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+                      Turnstile belum terkonfigurasi. Pastikan
+                      VITE_CLOUDFLARE_TURNSTILE_SITE_KEY tersedia di environment.
+                    </p>
+                  )}
                 </div>
 
                 <button
