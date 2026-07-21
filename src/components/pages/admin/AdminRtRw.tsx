@@ -268,63 +268,101 @@ export default function AdminRtRw() {
           </Table>
         </CardContent>
 
-        {/* Pagination Info & Controls */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100">
-          <div className="text-sm text-slate-500">
-            Menampilkan <span className="font-medium">{startItem}</span> sampai{' '}
-            <span className="font-medium">{endItem}</span> dari{' '}
-            <span className="font-medium">{totalItems}</span> data
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 mr-4">
-              <span className="text-sm text-slate-500">Baris per halaman:</span>
-              <Select
-                value={itemsPerPage.toString()}
-                onValueChange={(val) => {
-                  setItemsPerPage(Number(val))
-                  setCurrentPage(1)
-                }}
-              >
-                <SelectTrigger className="h-8 w-[70px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                </SelectContent>
-              </Select>
+        {/* Pagination Controls */}
+        {rtRwList !== undefined && rtRwList.length > 0 && (
+          <div className="p-4 border-t border-slate-100 bg-slate-50/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-sm text-slate-500">
+              Menampilkan{' '}
+              <span className="font-medium text-slate-700">{startItem}</span>{' '}
+              sampai{' '}
+              <span className="font-medium text-slate-700">{endItem}</span>{' '}
+              dari{' '}
+              <span className="font-medium text-slate-700">{totalItems}</span>{' '}
+              data
             </div>
-            
-            <div className="flex items-center gap-1">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <div className="flex items-center justify-center px-2 text-sm font-medium">
-                {currentPage} / {totalPages === 0 ? 1 : totalPages}
+
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+              <div className="flex items-center gap-2 text-sm text-slate-500">
+                <span>Baris per halaman:</span>
+                <Select
+                  value={String(itemsPerPage)}
+                  onValueChange={(val) => {
+                    setItemsPerPage(Number(val))
+                    setCurrentPage(1)
+                  }}
+                >
+                  <SelectTrigger className="w-16 h-8 bg-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                disabled={currentPage === totalPages || totalPages === 0}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-8 h-8"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  title="Sebelumnya"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+
+                {Array.from({ length: totalPages }).map((_, i) => {
+                  const page = i + 1
+                  if (
+                    totalPages > 5 &&
+                    page !== 1 &&
+                    page !== totalPages &&
+                    Math.abs(page - currentPage) > 1
+                  ) {
+                    if (page === 2 || page === totalPages - 1) {
+                      return (
+                        <span key={page} className="px-1 text-slate-400">
+                          ...
+                        </span>
+                      )
+                    }
+                    return null
+                  }
+
+                  return (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? 'default' : 'outline'}
+                      className={`w-8 h-8 p-0 ${currentPage === page ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''}`}
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </Button>
+                  )
+                })}
+
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-8 h-8"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  title="Selanjutnya"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </Card>
 
       {/* Form Modal */}

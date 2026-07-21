@@ -123,6 +123,20 @@ export const deleteUser = mutation({
     id: v.id('admin_users'),
   },
   handler: async (ctx, args) => {
+    const userToDelete = await ctx.db.get(args.id)
+    if (!userToDelete) {
+      throw new Error('User tidak ditemukan')
+    }
+
+    if (userToDelete.role === 'Superadmin') {
+      const allAdmins = await ctx.db.query('admin_users').collect()
+      const superadminCount = allAdmins.filter(u => u.role === 'Superadmin').length
+      
+      if (superadminCount <= 1) {
+        throw new Error('Tidak dapat menghapus satu-satunya akun Superadmin yang tersisa')
+      }
+    }
+
     await ctx.db.delete(args.id)
   },
 })
@@ -136,6 +150,28 @@ export const resetPassword = mutation({
     // Sesuai sistem auth yang ada, password disamakan langsung (plaintext disamakan di auth.ts loginInternal)
     await ctx.db.patch(args.id, {
       passwordHash: '12345678',
+    })
+  },
+})
+
+export const changePassword = mutation({
+  args: {
+    id: v.id('admin_users'),
+    currentPassword: v.string(),
+    newPassword: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db.get(args.id)
+    if (!user) {
+      throw new Error('User tidak ditemukan')
+    }
+
+    if (user.passwordHash !== args.currentPassword) {
+      throw new Error('Kata sandi saat ini salah')
+    }
+
+    await ctx.db.patch(args.id, {
+      passwordHash: args.newPassword,
     })
   },
 })

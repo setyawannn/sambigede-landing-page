@@ -1,6 +1,6 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Menu, X, ChevronDown, LayoutDashboard, LogOut } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../lib/auth'
 import {
   DropdownMenu,
@@ -15,6 +15,18 @@ import { Avatar, AvatarFallback } from '../ui/avatar'
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const { user, logout } = useAuth()
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen])
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -178,47 +190,78 @@ export default function Header() {
               Masuk
             </Link>
           )}
-          <button className="text-[#333] p-1" onClick={() => setIsOpen(true)}>
+          <button 
+            className="text-[#333] p-1 hover:bg-slate-100 rounded-md transition-colors" 
+            onClick={() => setIsOpen(true)}
+            aria-label="Buka menu"
+          >
             <Menu className="w-6 h-6" />
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
-      {isOpen && (
+      {/* Mobile Drawer (Persisted in DOM for Transitions) */}
+      <div
+        className={`fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm transition-all duration-300 ease-out ${
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setIsOpen(false)}
+      >
         <div
-          className="fixed inset-0 z-[60] bg-black/50"
-          onClick={() => setIsOpen(false)}
+          className={`absolute top-0 right-0 bottom-0 w-[300px] bg-white/95 backdrop-blur-md p-6 shadow-2xl border-l border-slate-100 flex flex-col transition-transform duration-300 ease-out ${
+            isOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+          onClick={(e) => e.stopPropagation()}
         >
-          <div
-            className="absolute top-0 right-0 bottom-0 w-[280px] bg-white p-6 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="font-bold text-[#333]">Menu</h2>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-[#333] p-2 -mr-2"
-              >
-                <X className="w-6 h-6" />
-              </button>
+          <div className="flex justify-between items-center mb-8">
+            <div className="flex items-center gap-3">
+              <img 
+                src="/images/logo-desa-sambigede.webp" 
+                alt="Logo Desa Sambigede" 
+                className="w-8 h-8 object-contain drop-shadow-sm" 
+              />
+              <h2 className="font-bold text-[#333] text-lg">Menu</h2>
             </div>
-            <nav className="flex flex-col gap-4">
-              {links.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  activeOptions={{ exact: link.to === '/' }}
-                  onClick={() => setIsOpen(false)}
-                  className="text-lg font-medium p-2 -mx-2 rounded-lg text-[#666] [&.active]:bg-[#F5F5F5] [&.active]:text-[#3F7D4A]"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 -mr-2 rounded-full transition-colors"
+              aria-label="Tutup menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <nav className="flex flex-col gap-2 flex-1">
+            {links.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                activeOptions={{ exact: link.to === '/' }}
+                onClick={() => setIsOpen(false)}
+                className="text-base font-medium px-4 py-3 rounded-xl text-slate-600 transition-all hover:bg-slate-50 [&.active]:bg-[#3F7D4A]/10 [&.active]:text-[#3F7D4A] [&.active]:font-semibold border-l-4 border-l-transparent [&.active]:border-l-[#3F7D4A]"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          
+          {/* Footer Info Area */}
+          <div className="mt-8 pt-6 border-t border-slate-100">
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Pusat Layanan</p>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-sm text-slate-600">
+                <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+                  <span className="text-[10px]">📍</span>
+                </div>
+                <div>
+                  <p className="font-medium text-slate-800 leading-none">Balai Desa</p>
+                  <p className="text-xs text-slate-500 mt-1">Kec. Binangun, Blitar</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </header>
   )
 }

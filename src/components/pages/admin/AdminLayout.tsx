@@ -54,7 +54,7 @@ import {
   BreadcrumbSeparator,
 } from '../../ui/breadcrumb'
 import { Avatar, AvatarFallback } from '../../ui/avatar'
-import { ScrollArea } from '../../ui/scroll-area'
+
 
 export default function AdminLayout() {
   const [mounted, setMounted] = useState(false)
@@ -178,7 +178,7 @@ export default function AdminLayout() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-slate-50 overflow-hidden">
+      <div className="flex h-screen w-full bg-slate-50 overflow-hidden">
         <Sidebar className="border-r border-slate-200">
           <SidebarHeader className="h-16 flex flex-row items-center px-6 border-b border-slate-100">
             <Link
@@ -520,7 +520,7 @@ export default function AdminLayout() {
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Header */}
-          <header className="h-16 flex items-center justify-between px-6 bg-white border-b border-slate-200 sticky top-0 z-10">
+          <header className="h-16 shrink-0 flex items-center justify-between px-6 bg-white border-b border-slate-200 sticky top-0 z-10">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="hover:bg-slate-100 p-2 rounded-md transition-colors" />
               <div className="hidden md:flex">
@@ -616,13 +616,13 @@ export default function AdminLayout() {
           </header>
 
           {/* Main Content */}
-          <ScrollArea className="flex-1">
+          <div className="flex-1 overflow-y-auto">
             <main className="p-6 md:p-8 flex flex-col min-h-full">
               <div className="w-full mx-auto max-w-full flex-1">
                 <Outlet />
               </div>
             </main>
-          </ScrollArea>
+          </div>
         </div>
       </div>
     </SidebarProvider>
