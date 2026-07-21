@@ -1,9 +1,9 @@
 import { useState, useRef } from 'react'
-import { Lock, Eye, EyeOff, AlertTriangle } from 'lucide-react'
+import { Eye, EyeOff, AlertTriangle } from 'lucide-react'
 import { useAction } from 'convex/react'
 import { api } from '../../../../convex/_generated/api'
 import { useAuth } from '../../../lib/auth'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, Link } from '@tanstack/react-router'
 import { Turnstile } from '@marsidev/react-turnstile'
 import type { TurnstileInstance } from '@marsidev/react-turnstile'
 import { getTurnstileSiteKey } from '../../../lib/convex-env'
@@ -86,11 +86,14 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex bg-[#F8FAFC]">
-      <div className="hidden lg:flex w-1/2 bg-[#3F7D4A] flex-col items-center justify-center p-12 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
+      <div 
+        className="hidden lg:flex w-1/2 flex-col items-center justify-center p-12 text-center relative overflow-hidden bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/login-hero.webp')" }}
+      >
+        <div className="absolute inset-0 bg-[#3F7D4A]/60 backdrop-blur-[2px]"></div>
         <div className="relative z-10 space-y-6">
-          <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl border border-white/30">
-            <Lock className="w-10 h-10 text-white" />
+          <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl border border-white/30 p-3">
+            <img src="/images/logo-desa-sambigede.webp" alt="Logo Desa" className="w-full h-full object-contain drop-shadow-md" />
           </div>
           <h1 className="text-4xl font-extrabold text-white tracking-tight leading-tight">
             Sistem Informasi
@@ -107,8 +110,8 @@ export default function LoginPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center lg:text-left">
-            <div className="lg:hidden w-16 h-16 bg-[#3F7D4A]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Lock className="w-8 h-8 text-[#3F7D4A]" />
+            <div className="lg:hidden w-16 h-16 bg-[#3F7D4A]/10 rounded-full flex items-center justify-center mx-auto mb-6 p-2">
+              <img src="/images/logo-desa-sambigede.webp" alt="Logo Desa" className="w-full h-full object-contain drop-shadow-sm" />
             </div>
             <h2 className="text-3xl font-black text-gray-900 tracking-tight">
               Selamat Datang
@@ -251,6 +254,12 @@ export default function LoginPage() {
               )}
             </button>
           </form>
+
+          <div className="text-center mt-6">
+            <Link to="/" className="text-sm font-semibold text-[#3F7D4A] hover:text-[#1F3D2B] hover:underline transition-colors">
+              Kembali ke Website
+            </Link>
+          </div>
 
           <div className="text-center text-sm text-gray-500 mt-8">
             &copy; {new Date().getFullYear()} Pemerintah Desa Sambigede.

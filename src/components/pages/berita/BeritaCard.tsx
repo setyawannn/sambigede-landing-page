@@ -5,6 +5,7 @@ import R2Image from '../../ui/R2Image'
 
 interface BeritaCardProps {
   id: Id<'berita'>
+  slug: string
   title: string
   excerpt: string
   category: string
@@ -15,6 +16,7 @@ interface BeritaCardProps {
 
 export function BeritaCard({
   id,
+  slug,
   title,
   excerpt,
   category,
@@ -63,8 +65,8 @@ export function BeritaCard({
         </p>
 
         <Link
-          to="/berita/$id"
-          params={{ id }}
+          to="/berita/$slug"
+          params={{ slug }}
           className="inline-flex items-center text-sm font-bold text-[#3F7D4A] hover:text-[#1F3D2B] transition-colors mt-auto"
         >
           Baca Selengkapnya

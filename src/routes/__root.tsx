@@ -43,9 +43,14 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'Desa Sambigede' },
     ],
-    links: [{ rel: 'stylesheet', href: appCss }],
+    links: [
+      { rel: 'stylesheet', href: appCss },
+      { rel: 'icon', href: '/favicon.ico' },
+      { rel: 'icon', type: 'image/x-icon', sizes: '16x16', href: '/logo-sambigede-16.ico' },
+      { rel: 'icon', type: 'image/x-icon', sizes: '32x32', href: '/logo-sambigede-32.ico' },
+      { rel: 'icon', type: 'image/x-icon', sizes: '64x64', href: '/logo-sambigede-64.ico' },
+    ],
   }),
   loader: async ({ context: { queryClient } }) => {
     try {
@@ -78,9 +83,27 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   shellComponent: RootDocument,
 })
 
+function getPageTitle(pathname: string): string {
+  if (pathname === '/') return 'Beranda'
+  if (pathname.startsWith('/profil')) return 'Profil Desa'
+  if (pathname.startsWith('/berita')) return 'Berita & Pengumuman'
+  if (pathname.startsWith('/potensi')) return 'Potensi Desa'
+  if (pathname.startsWith('/kelembagaan')) return 'Kelembagaan Desa'
+  if (pathname.startsWith('/perangkat')) return 'Perangkat Desa'
+  if (pathname.startsWith('/transparansi')) return 'Transparansi'
+  if (pathname.startsWith('/layanan')) return 'Layanan Publik'
+  if (pathname.startsWith('/kontak')) return 'Kontak'
+  if (pathname.startsWith('/infografis')) return 'Infografis'
+  if (pathname.startsWith('/admin')) return 'Dashboard Admin'
+  if (pathname.startsWith('/login')) return 'Login Admin'
+  return ''
+}
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   const routerState = useRouterState()
   const pathname = routerState.location.pathname
+  const pageTitle = getPageTitle(pathname)
+  const titleText = pageTitle ? `Desa Sambigede | ${pageTitle}` : 'Desa Sambigede'
   const runtimeConvexUrl =
     typeof document === 'undefined' ? getServerConvexUrl() : undefined
   const runtimeTurnstileSiteKey =
@@ -104,6 +127,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     return (
       <html lang="id" suppressHydrationWarning>
         <head>
+          <title>{titleText}</title>
           <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
           {APP_ENV_INIT_SCRIPT ? (
             <script dangerouslySetInnerHTML={{ __html: APP_ENV_INIT_SCRIPT }} />
@@ -137,6 +161,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
+        <title>{titleText}</title>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         {APP_ENV_INIT_SCRIPT ? (
           <script dangerouslySetInnerHTML={{ __html: APP_ENV_INIT_SCRIPT }} />

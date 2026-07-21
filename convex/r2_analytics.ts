@@ -352,3 +352,143 @@ export const getCircuitBreakerStatus = query({
     )
   },
 })
+
+function extractKeyFromUrl(url?: string | null): string | undefined {
+  if (!url) return undefined
+  const trimmed = url.trim()
+  if (!trimmed || trimmed.startsWith('data:')) return trimmed
+
+  const isR2Url =
+    /r2\.dev/i.test(trimmed) ||
+    /r2\.cloudflarestorage\.com/i.test(trimmed)
+
+  if (isR2Url) {
+    let fullUrl = trimmed
+    if (!/^https?:\/\//i.test(fullUrl)) {
+      fullUrl = `https://${fullUrl}`
+    }
+    try {
+      const parsed = new URL(fullUrl)
+      const key = parsed.pathname.replace(/^\//, '')
+      return key || trimmed
+    } catch {
+      const match = trimmed.match(/(?:r2\.dev|r2\.cloudflarestorage\.com)\/(.+)$/i)
+      if (match && match[1]) {
+        return match[1]
+      }
+      return trimmed
+    }
+  }
+
+  // Jika berupa URL http/https eksternal non-R2 yang punya path
+  if (/^https?:\/\//i.test(trimmed)) {
+    try {
+      const parsed = new URL(trimmed)
+      const key = parsed.pathname.replace(/^\//, '')
+      return key || trimmed
+    } catch {
+      return trimmed
+    }
+  }
+
+  return trimmed
+}
+
+export const normalizeDatabaseImageKeys = mutation({
+  args: {},
+  handler: async (ctx) => {
+    let updatedCount = 0
+
+    // 1. Berita (imageUrl & imageKey)
+    const beritas = await ctx.db.query('berita').collect()
+    for (const b of beritas) {
+      const needFix =
+        b.imageUrl &&
+        (/r2\.dev/i.test(b.imageUrl) ||
+          /r2\.cloudflarestorage\.com/i.test(b.imageUrl) ||
+          /^https?:\/\//i.test(b.imageUrl))
+      if (needFix) {
+        const key = extractKeyFromUrl(b.imageUrl)
+        if (key && key !== b.imageUrl) {
+          await ctx.db.patch(b._id, { imageUrl: key, imageKey: key })
+          updatedCount++
+        }
+      }
+    }
+
+    // 2. Kelembagaan (logoUrl & logoKey)
+    const kelembagaans = await ctx.db.query('kelembagaan').collect()
+    for (const k of kelembagaans) {
+      const needFix =
+        k.logoUrl &&
+        (/r2\.dev/i.test(k.logoUrl) ||
+          /r2\.cloudflarestorage\.com/i.test(k.logoUrl) ||
+          /^https?:\/\//i.test(k.logoUrl))
+      if (needFix) {
+        const key = extractKeyFromUrl(k.logoUrl)
+        if (key && key !== k.logoUrl) {
+          await ctx.db.patch(k._id, { logoUrl: key, logoKey: key })
+          updatedCount++
+        }
+      }
+    }
+
+    // 3. Perangkat Desa (imageUrl & imageKey)
+    const perangkat = await ctx.db.query('perangkat_desa').collect()
+    for (const p of perangkat) {
+      const needFix =
+        p.imageUrl &&
+        (/r2\.dev/i.test(p.imageUrl) ||
+          /r2\.cloudflarestorage\.com/i.test(p.imageUrl) ||
+          /^https?:\/\//i.test(p.imageUrl))
+      if (needFix) {
+        const key = extractKeyFromUrl(p.imageUrl)
+        if (key && key !== p.imageUrl) {
+          await ctx.db.patch(p._id, { imageUrl: key, imageKey: key })
+          updatedCount++
+        }
+      }
+    }
+
+    // 4. Profil Desa (baganStrukturUrl & baganStrukturKey)
+    const profil = await ctx.db.query('profil_desa').first()
+    if (profil && profil.baganStrukturUrl) {
+      const needFix =
+        /r2\.dev/i.test(profil.baganStrukturUrl) ||
+        /r2\.cloudflarestorage\.com/i.test(profil.baganStrukturUrl) ||
+        /^https?:\/\//i.test(profil.baganStrukturUrl)
+      if (needFix) {
+        const key = extractKeyFromUrl(profil.baganStrukturUrl)
+        if (key && key !== profil.baganStrukturUrl) {
+          await ctx.db.patch(profil._id, {
+            baganStrukturUrl: key,
+            baganStrukturKey: key,
+          })
+          updatedCount++
+        }
+      }
+    }
+
+    // 5. Beranda Config (heroImageUrl & heroImageKey)
+    const beranda = await ctx.db.query('beranda_config').first()
+    if (beranda && beranda.heroImageUrl) {
+      const needFix =
+        /r2\.dev/i.test(beranda.heroImageUrl) ||
+        /r2\.cloudflarestorage\.com/i.test(beranda.heroImageUrl) ||
+        (/^https?:\/\//i.test(beranda.heroImageUrl) &&
+          !beranda.heroImageUrl.includes('images.unsplash.com'))
+      if (needFix) {
+        const key = extractKeyFromUrl(beranda.heroImageUrl)
+        if (key && key !== beranda.heroImageUrl) {
+          await ctx.db.patch(beranda._id, {
+            heroImageUrl: key,
+            heroImageKey: key,
+          })
+          updatedCount++
+        }
+      }
+    }
+
+    return { success: true, updatedRecords: updatedCount }
+  },
+})

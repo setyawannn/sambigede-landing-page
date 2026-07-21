@@ -17,13 +17,13 @@ import {
 } from 'lucide-react'
 
 import { LembagaCard } from './ProfilLembaga'
-
+import R2Image from '../../ui/R2Image'
 
 const LembagaIcon = ({ url, name }: { url?: string; name: string }) => {
   const [error, setError] = useState(false)
   if (!url || error) return <Handshake className="w-7 h-7" />
   return (
-    <img
+    <R2Image
       src={url}
       alt={name}
       className="w-7 h-7 object-contain"
@@ -229,15 +229,11 @@ export default function ProfilPage() {
 
           <div className="w-full bg-[#F9F9F9] border border-[#E5E5E5] rounded-xl p-4 mb-10 overflow-x-auto">
             <div className="min-w-[800px]">
-              <img
+              <R2Image
                 src={imgBagan}
                 alt="Bagan SOTK Desa Sambigede"
+                fallbackSrc="/images/SUSUNAN_ORGANISASI___tATA_KERJA_PEMERINTAH_DESA_SAMBIGEDE_KECAMATAN_BINANGUN_KABUPATEN_BLITAR.png"
                 className="w-full h-auto object-contain rounded-lg"
-                onError={(e) => {
-                  e.currentTarget.onerror = null
-                  e.currentTarget.src =
-                    '/images/SUSUNAN_ORGANISASI___tATA_KERJA_PEMERINTAH_DESA_SAMBIGEDE_KECAMATAN_BINANGUN_KABUPATEN_BLITAR.png'
-                }}
               />
             </div>
           </div>
@@ -274,13 +270,10 @@ export default function ProfilPage() {
                         <td className="px-5 py-3 font-medium text-[#333]">
                           <div className="flex items-center gap-3">
                             {p.imageUrl ? (
-                              <img
+                              <R2Image
                                 src={p.imageUrl}
                                 alt={p.nama}
-                                className="w-8 h-8 rounded-full object-cover border border-slate-200"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none'
-                                }}
+                                className="w-8 h-8 rounded-full object-cover object-top border border-slate-200"
                               />
                             ) : null}
                             {p.nama}

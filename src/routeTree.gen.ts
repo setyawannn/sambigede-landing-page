@@ -22,7 +22,7 @@ import { Route as InfografisStuntingRouteImport } from './routes/infografis/stun
 import { Route as InfografisPendudukRouteImport } from './routes/infografis/penduduk'
 import { Route as InfografisBansosRouteImport } from './routes/infografis/bansos'
 import { Route as InfografisApbdesRouteImport } from './routes/infografis/apbdes'
-import { Route as BeritaIdRouteImport } from './routes/berita/$id'
+import { Route as BeritaSlugRouteImport } from './routes/berita/$slug'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminPengaduanRouteImport } from './routes/admin/pengaduan'
 import { Route as AdminBeritaIndexRouteImport } from './routes/admin/berita.index'
@@ -112,9 +112,9 @@ const InfografisApbdesRoute = InfografisApbdesRouteImport.update({
   path: '/apbdes',
   getParentRoute: () => InfografisRoute,
 } as any)
-const BeritaIdRoute = BeritaIdRouteImport.update({
-  id: '/berita/$id',
-  path: '/berita/$id',
+const BeritaSlugRoute = BeritaSlugRouteImport.update({
+  id: '/berita/$slug',
+  path: '/berita/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
@@ -247,7 +247,7 @@ export interface FileRoutesByFullPath {
   '/profil': typeof ProfilRoute
   '/admin/pengaduan': typeof AdminPengaduanRoute
   '/admin/settings': typeof AdminSettingsRoute
-  '/berita/$id': typeof BeritaIdRoute
+  '/berita/$slug': typeof BeritaSlugRoute
   '/infografis/apbdes': typeof InfografisApbdesRoute
   '/infografis/bansos': typeof InfografisBansosRoute
   '/infografis/penduduk': typeof InfografisPendudukRoute
@@ -284,7 +284,7 @@ export interface FileRoutesByTo {
   '/profil': typeof ProfilRoute
   '/admin/pengaduan': typeof AdminPengaduanRoute
   '/admin/settings': typeof AdminSettingsRoute
-  '/berita/$id': typeof BeritaIdRoute
+  '/berita/$slug': typeof BeritaSlugRoute
   '/infografis/apbdes': typeof InfografisApbdesRoute
   '/infografis/bansos': typeof InfografisBansosRoute
   '/infografis/penduduk': typeof InfografisPendudukRoute
@@ -324,7 +324,7 @@ export interface FileRoutesById {
   '/profil': typeof ProfilRoute
   '/admin/pengaduan': typeof AdminPengaduanRoute
   '/admin/settings': typeof AdminSettingsRoute
-  '/berita/$id': typeof BeritaIdRoute
+  '/berita/$slug': typeof BeritaSlugRoute
   '/infografis/apbdes': typeof InfografisApbdesRoute
   '/infografis/bansos': typeof InfografisBansosRoute
   '/infografis/penduduk': typeof InfografisPendudukRoute
@@ -365,7 +365,7 @@ export interface FileRouteTypes {
     | '/profil'
     | '/admin/pengaduan'
     | '/admin/settings'
-    | '/berita/$id'
+    | '/berita/$slug'
     | '/infografis/apbdes'
     | '/infografis/bansos'
     | '/infografis/penduduk'
@@ -402,7 +402,7 @@ export interface FileRouteTypes {
     | '/profil'
     | '/admin/pengaduan'
     | '/admin/settings'
-    | '/berita/$id'
+    | '/berita/$slug'
     | '/infografis/apbdes'
     | '/infografis/bansos'
     | '/infografis/penduduk'
@@ -441,7 +441,7 @@ export interface FileRouteTypes {
     | '/profil'
     | '/admin/pengaduan'
     | '/admin/settings'
-    | '/berita/$id'
+    | '/berita/$slug'
     | '/infografis/apbdes'
     | '/infografis/bansos'
     | '/infografis/penduduk'
@@ -479,7 +479,7 @@ export interface RootRouteChildren {
   KontakRoute: typeof KontakRoute
   LoginRoute: typeof LoginRoute
   ProfilRoute: typeof ProfilRoute
-  BeritaIdRoute: typeof BeritaIdRoute
+  BeritaSlugRoute: typeof BeritaSlugRoute
   BeritaIndexRoute: typeof BeritaIndexRoute
 }
 
@@ -576,11 +576,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InfografisApbdesRouteImport
       parentRoute: typeof InfografisRoute
     }
-    '/berita/$id': {
-      id: '/berita/$id'
-      path: '/berita/$id'
-      fullPath: '/berita/$id'
-      preLoaderRoute: typeof BeritaIdRouteImport
+    '/berita/$slug': {
+      id: '/berita/$slug'
+      path: '/berita/$slug'
+      fullPath: '/berita/$slug'
+      preLoaderRoute: typeof BeritaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/settings': {
@@ -830,7 +830,7 @@ const rootRouteChildren: RootRouteChildren = {
   KontakRoute: KontakRoute,
   LoginRoute: LoginRoute,
   ProfilRoute: ProfilRoute,
-  BeritaIdRoute: BeritaIdRoute,
+  BeritaSlugRoute: BeritaSlugRoute,
   BeritaIndexRoute: BeritaIndexRoute,
 }
 export const routeTree = rootRouteImport

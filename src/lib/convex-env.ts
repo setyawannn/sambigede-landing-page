@@ -40,6 +40,9 @@ const readBuildConvexUrl = () =>
 const readBuildTurnstileSiteKey = () =>
   stripWrappingQuotes(import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY)
 
+const readBuildR2PublicUrl = () =>
+  stripWrappingQuotes(import.meta.env.VITE_R2_PUBLIC_URL)
+
 export const getServerEnvValue = (name: string) => {
   return (
     stripWrappingQuotes(globalThis.__CF_RUNTIME_ENV__?.[name]) ||
@@ -59,6 +62,13 @@ export const getPublicEnvValue = (name: string) => {
     case 'VITE_CLOUDFLARE_TURNSTILE_SITE_KEY':
       return (
         readBuildTurnstileSiteKey() ||
+        readBrowserEnv(name) ||
+        readWorkerEnv(name) ||
+        readRuntimeEnv(name)
+      )
+    case 'VITE_R2_PUBLIC_URL':
+      return (
+        readBuildR2PublicUrl() ||
         readBrowserEnv(name) ||
         readWorkerEnv(name) ||
         readRuntimeEnv(name)
@@ -107,6 +117,51 @@ export const hasValidServerConvexUrl = () => isValidUrl(getServerConvexUrl())
 
 export const getTurnstileSiteKey = () => {
   return getPublicEnvValue('VITE_CLOUDFLARE_TURNSTILE_SITE_KEY') || ''
+}
+
+export const extractR2FileKey = (value?: string | null): string => {
+  const normalized = stripWrappingQuotes(value)
+  if (!normalized) return ''
+
+  if (normalized.startsWith('data:')) return normalized
+
+  if (/^https?:\/\//i.test(normalized)) {
+    try {
+      const url = new URL(normalized)
+      return url.pathname.replace(/^\//, '')
+    } catch {
+      return normalized
+    }
+  }
+
+  return normalized.replace(/^\//, '')
+}
+
+export const resolvePublicR2AssetUrl = (value?: string | null) => {
+  const normalizedValue = stripWrappingQuotes(value)
+  if (!normalizedValue) return undefined
+
+  if (normalizedValue.startsWith('data:')) {
+    return normalizedValue
+  }
+
+  // Jika data berupa URL eksternal non-R2 (seperti unsplash placeholder)
+  if (
+    /^https?:\/\//i.test(normalizedValue) &&
+    !normalizedValue.includes('.r2.dev') &&
+    !normalizedValue.includes('r2.cloudflarestorage.com')
+  ) {
+    return normalizedValue
+  }
+
+  const fileKey = extractR2FileKey(normalizedValue)
+  if (!fileKey) return undefined
+
+  const publicUrl =
+    getPublicEnvValue('VITE_R2_PUBLIC_URL') ||
+    'https://pub-9290bb356c9a4e4d8ef8013e2fe9d0c2.r2.dev'
+
+  return `${publicUrl.replace(/\/$/, '')}/${fileKey}`
 }
 
 let hasWarnedInvalidConvexUrl = false

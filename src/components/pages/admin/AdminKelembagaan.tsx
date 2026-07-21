@@ -15,6 +15,7 @@ import {
 import type { Doc } from '../../../../convex/_generated/dataModel'
 import { toast } from 'sonner'
 import { deleteFileFromR2 } from '../../../lib/r2'
+import R2Image from '../../ui/R2Image'
 
 import { Card, CardContent } from '../../ui/card'
 import { Button } from '../../ui/button'
@@ -142,10 +143,11 @@ export default function AdminKelembagaan() {
                     </TableCell>
                     <TableCell>
                       {item.logoUrl ? (
-                        <img
+                        <R2Image
                           src={item.logoUrl}
                           alt={item.singkatan}
                           className="w-10 h-10 object-contain bg-slate-100 rounded p-1"
+                          fallbackSrc="/images/placeholder.jpg"
                         />
                       ) : (
                         <div className="w-10 h-10 bg-slate-100 rounded flex items-center justify-center text-slate-400 text-xs">

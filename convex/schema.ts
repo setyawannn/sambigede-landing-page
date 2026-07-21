@@ -15,7 +15,9 @@ export default defineSchema({
     imageUrl: v.string(),
     imageKey: v.optional(v.string()),
     author: v.string(),
+    slug: v.string(),
   })
+    .index('by_slug', ['slug'])
     .index('by_category', ['category'])
     .index('by_author', ['author'])
     .searchIndex('search_title', {

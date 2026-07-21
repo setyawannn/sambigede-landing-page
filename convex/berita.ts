@@ -2,6 +2,36 @@ import { query, mutation } from './_generated/server'
 import { v } from 'convex/values'
 import { paginationOptsValidator } from 'convex/server'
 
+function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '')
+}
+
+async function getUniqueSlug(db: any, title: string, excludeId?: string): Promise<string> {
+  const baseSlug = slugify(title) || 'berita'
+  let slug = baseSlug
+  let count = 1
+  while (true) {
+    const existing = await db
+      .query('berita')
+      .withIndex('by_slug', (q: any) => q.eq('slug', slug))
+      .first()
+    if (!existing || existing._id === excludeId) {
+      break
+    }
+    slug = `${baseSlug}-${count}`
+    count++
+  }
+  return slug
+}
+
 export const getBeritaListFiltered = query({
   args: {
     title: v.optional(v.string()),
@@ -150,6 +180,16 @@ export const getBeritaById = query({
   },
 })
 
+export const getBeritaBySlug = query({
+  args: { slug: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query('berita')
+      .withIndex('by_slug', (q) => q.eq('slug', args.slug))
+      .first()
+  },
+})
+
 export const createBerita = mutation({
   args: {
     title: v.string(),
@@ -159,9 +199,14 @@ export const createBerita = mutation({
     imageUrl: v.string(),
     imageKey: v.optional(v.string()),
     author: v.string(),
+    slug: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert('berita', args)
+    const slug = args.slug || (await getUniqueSlug(ctx.db, args.title))
+    return await ctx.db.insert('berita', {
+      ...args,
+      slug,
+    })
   },
 })
 
@@ -175,9 +220,16 @@ export const updateBerita = mutation({
     imageUrl: v.optional(v.string()),
     imageKey: v.optional(v.string()),
     author: v.optional(v.string()),
+    slug: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args
+    if (updates.title) {
+      const current = await ctx.db.get(id)
+      if (current && current.title !== updates.title) {
+        updates.slug = updates.slug || (await getUniqueSlug(ctx.db, updates.title, id))
+      }
+    }
     return await ctx.db.patch(id, updates)
   },
 })
@@ -186,5 +238,21 @@ export const deleteBerita = mutation({
   args: { id: v.id('berita') },
   handler: async (ctx, args) => {
     await ctx.db.delete(args.id)
+  },
+})
+
+export const migrateBeritaSlugs = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const allBerita = await ctx.db.query('berita').collect()
+    let count = 0
+    for (const b of allBerita) {
+      if (!b.slug) {
+        const slug = await getUniqueSlug(ctx.db, b.title, b._id)
+        await ctx.db.patch(b._id, { slug })
+        count++
+      }
+    }
+    return { success: true, migrated: count }
   },
 })

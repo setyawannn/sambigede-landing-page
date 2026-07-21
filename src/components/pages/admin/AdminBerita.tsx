@@ -15,6 +15,7 @@ import type { Id, Doc } from '../../../../convex/_generated/dataModel'
 import { deleteFileFromR2 } from '../../../lib/r2'
 import { toast } from 'sonner'
 import { useNavigate } from '@tanstack/react-router'
+import R2Image from '../../ui/R2Image'
 
 import { Card, CardContent, CardHeader } from '../../ui/card'
 import { Button } from '../../ui/button'
@@ -238,10 +239,11 @@ export default function AdminBerita() {
                     <TableCell className="py-4">
                       <div className="flex items-center gap-4">
                         {item.imageUrl ? (
-                          <img
+                          <R2Image
                             src={item.imageUrl}
                             alt={item.title}
                             className="w-12 h-12 rounded-lg object-cover shadow-sm"
+                            fallbackSrc="/images/placeholder.jpg"
                           />
                         ) : (
                           <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center shadow-sm">

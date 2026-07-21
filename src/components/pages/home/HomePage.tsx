@@ -61,7 +61,7 @@ export default function HomePage() {
         <div
           className="absolute inset-0 bg-cover bg-center scale-105 transition-all duration-700"
           style={{
-            backgroundImage: `url('${berandaData?.heroImageUrl || 'https://images.unsplash.com/photo-1662083555510-1187b2aba1e2?auto=format&fit=crop&w=1920&q=80'}')`,
+            backgroundImage: `url('${berandaData?.heroImageUrl || '/public/images/hero-fallback.webp'}')`,
           }}
         ></div>
         {/* Backdrop hitam agar teks kontras dan mudah dibaca */}
@@ -199,8 +199,7 @@ export default function HomePage() {
                   <R2Image
                     src={kades.imageUrl}
                     alt={`Kepala Desa Sambigede - ${kadesNama}`}
-                    className="w-full h-full object-cover"
-                    style={{ objectPosition: 'center 30%' }}
+                    className="w-full h-full object-cover object-top"
                   />
                 ) : (
                   <User className="w-32 h-32 text-slate-300" />
@@ -324,7 +323,7 @@ export default function HomePage() {
                     <R2Image
                       src={person.imageUrl}
                       alt={person.nama}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
                       fallbackSrc="/images/placeholder.jpg"
                     />
                   ) : (
@@ -385,8 +384,8 @@ export default function HomePage() {
 
               return (
                 <Link
-                  to="/berita/$id"
-                  params={{ id: news._id }}
+                  to="/berita/$slug"
+                  params={{ slug: news.slug }}
                   key={news._id}
                   className="bg-white rounded-xl shadow-sm border border-[#E5E5E5] overflow-hidden hover:shadow-md transition-shadow group flex flex-col"
                 >

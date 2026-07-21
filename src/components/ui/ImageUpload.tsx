@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react'
 import { UploadCloud, Image as ImageIcon, X, Loader2 } from 'lucide-react'
 import { uploadFileHelper } from '../../lib/upload-helper'
+import R2Image from './R2Image'
 
 export interface ImageUploadProps {
   value?: string
@@ -30,8 +31,10 @@ export function ImageUpload({
     setIsUploading(true)
     try {
       const result = await uploadFileHelper(file)
-      if (result.success && result.fileUrl) {
-        onChange(result.fileUrl, result.fileKey)
+      if (result.success && (result.fileKey || result.fileUrl)) {
+        // Simpan fileKey (relative filename) ke state form
+        const keyToSave = result.fileKey || result.fileUrl || ''
+        onChange(keyToSave, result.fileKey)
       } else {
         const err = result.error || 'Terjadi kesalahan saat mengunggah.'
         onError?.(err)
@@ -78,7 +81,7 @@ export function ImageUpload({
       {value ? (
         <div className="relative w-full h-full rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex justify-center items-center group">
           {/* Preview Image */}
-          <img
+          <R2Image
             src={value}
             alt="Uploaded preview"
             className="w-full h-full object-contain"

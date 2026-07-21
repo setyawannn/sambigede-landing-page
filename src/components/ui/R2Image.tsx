@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
-import { getPublicEnvValue } from '../../lib/convex-env'
+import {
+  getPublicEnvValue,
+  resolvePublicR2AssetUrl,
+} from '../../lib/convex-env'
 
 interface R2ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackSrc?: string
@@ -19,6 +22,7 @@ export default function R2Image({
   ...props
 }: R2ImageProps) {
   const r2PublicUrl = getPublicEnvValue('VITE_R2_PUBLIC_URL') || ''
+  const resolvedSrc = resolvePublicR2AssetUrl(src) || src
 
   // Use a very lightweight query to check circuit breaker status
   const isCircuitBreakerActive = useQuery(
@@ -31,32 +35,32 @@ export default function R2Image({
 
   // Handle circuit breaker
   useEffect(() => {
-    const isR2 = src
-      ? src.startsWith(r2PublicUrl) ||
-        src.includes('r2.dev') ||
-        src.includes('r2.cloudflarestorage.com')
+    const isR2 = resolvedSrc
+      ? resolvedSrc.startsWith(r2PublicUrl) ||
+        resolvedSrc.includes('r2.dev') ||
+        resolvedSrc.includes('r2.cloudflarestorage.com')
       : false
 
     if (isR2 && isCircuitBreakerActive === true) {
       // Circuit breaker tripped! Swap to fallback
       setImgSrc(fallbackSrc)
     } else {
-      setImgSrc(src)
+      setImgSrc(resolvedSrc)
     }
-  }, [isCircuitBreakerActive, src, fallbackSrc])
+  }, [isCircuitBreakerActive, resolvedSrc, fallbackSrc, r2PublicUrl])
 
   // Track Class B operation when image loads successfully (and only once per component mount)
   useEffect(() => {
-    const isR2 = src
-      ? src.startsWith(r2PublicUrl) ||
-        src.includes('r2.dev') ||
-        src.includes('r2.cloudflarestorage.com')
+    const isR2 = resolvedSrc
+      ? resolvedSrc.startsWith(r2PublicUrl) ||
+        resolvedSrc.includes('r2.dev') ||
+        resolvedSrc.includes('r2.cloudflarestorage.com')
       : false
 
     if (
       !reportedRef.current &&
-      imgSrc === src &&
-      src &&
+      imgSrc === resolvedSrc &&
+      resolvedSrc &&
       isR2 &&
       isCircuitBreakerActive === false
     ) {
@@ -75,7 +79,7 @@ export default function R2Image({
         }, 5000) // Flush every 5 seconds
       }
     }
-  }, [imgSrc, src, isCircuitBreakerActive, incrementClassB])
+  }, [imgSrc, resolvedSrc, isCircuitBreakerActive, incrementClassB, r2PublicUrl])
 
   const handleError = () => {
     if (imgSrc !== fallbackSrc) {

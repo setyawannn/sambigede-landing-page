@@ -9,15 +9,8 @@ export default function BeritaPage() {
   const [activeCategory, setActiveCategory] = useState('Semua')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const categories = [
-    'Semua',
-    'Pembangunan',
-    'Pemberdayaan',
-    'Kesehatan',
-    'Pendidikan',
-    'Sosial',
-    'Umum',
-  ]
+  const kategoriData = useQuery(api.kategori.getKategori) || []
+  const categories = ['Semua', ...kategoriData.map((k) => k.nama)]
 
   // Fetch berita using Convex query
   const beritaList = useQuery(api.berita.getBerita, {

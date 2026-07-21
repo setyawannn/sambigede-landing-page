@@ -7,12 +7,11 @@ import type { Id } from '../../../../convex/_generated/dataModel'
 import R2Image from '../../ui/R2Image'
 
 interface BeritaDetailPageProps {
-  id: string
+  slug: string
 }
 
-export default function BeritaDetailPage({ id }: BeritaDetailPageProps) {
-  // We assert the id string as Id<"berita"> for Convex typing
-  const berita = useQuery(api.berita.getBeritaById, { id: id as Id<'berita'> })
+export default function BeritaDetailPage({ slug }: BeritaDetailPageProps) {
+  const berita = useQuery(api.berita.getBeritaBySlug, { slug })
 
   if (berita === undefined) {
     return (
@@ -61,16 +60,18 @@ export default function BeritaDetailPage({ id }: BeritaDetailPageProps) {
       {/* Header Section */}
       <div className="bg-[#F9F9F9] pt-12 pb-16 border-b border-[#E5E5E5]">
         <div className="max-w-[800px] mx-auto px-6">
-          <Link
-            to="/berita"
-            className="inline-flex items-center gap-2 text-[#666] hover:text-[#3F7D4A] font-medium transition-colors mb-8"
-          >
-            <ChevronLeft className="w-5 h-5" />
-            Kembali ke Berita
-          </Link>
-
-          <div className="inline-block bg-[#3F7D4A]/10 text-[#3F7D4A] px-3 py-1 rounded-full text-sm font-semibold mb-6">
-            {berita.category}
+          <div className="flex flex-wrap items-center gap-4 mb-6">
+            <Link
+              to="/berita"
+              className="inline-flex items-center gap-2 text-[#666] hover:text-[#3F7D4A] font-medium transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5" />
+              Kembali ke Berita
+            </Link>
+            <span className="text-[#E5E5E5]">|</span>
+            <div className="inline-flex bg-[#3F7D4A]/10 text-[#3F7D4A] px-3 py-1 rounded-full text-sm font-semibold">
+              {berita.category}
+            </div>
           </div>
 
           <h1 className="text-3xl md:text-5xl font-bold text-[#333] leading-tight mb-6">
@@ -107,23 +108,6 @@ export default function BeritaDetailPage({ id }: BeritaDetailPageProps) {
               {paragraph}
             </p>
           ))}
-        </div>
-
-        <hr className="my-12 border-[#E5E5E5]" />
-
-        <div className="flex items-center justify-between">
-          <p className="text-[#666] text-sm">Bagikan artikel ini:</p>
-          <div className="flex gap-2">
-            <button className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors">
-              f
-            </button>
-            <button className="w-10 h-10 rounded-full bg-sky-50 text-sky-500 flex items-center justify-center hover:bg-sky-500 hover:text-white transition-colors">
-              t
-            </button>
-            <button className="w-10 h-10 rounded-full bg-green-50 text-green-500 flex items-center justify-center hover:bg-green-500 hover:text-white transition-colors">
-              w
-            </button>
-          </div>
         </div>
       </div>
     </div>

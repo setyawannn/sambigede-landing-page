@@ -10,6 +10,7 @@ import {
   User,
 } from 'lucide-react'
 import { ImageUpload } from '../../ui/ImageUpload'
+import R2Image from '../../ui/R2Image'
 import { toast } from 'sonner'
 import { deleteFileFromR2 } from '../../../lib/r2'
 
@@ -192,10 +193,10 @@ export default function AdminBeranda() {
               {kades ? (
                 <div className="flex items-center gap-4 p-4 border border-[#E5E5E5] rounded-xl bg-slate-50 mb-4">
                   {kades.imageUrl ? (
-                    <img
+                    <R2Image
                       src={kades.imageUrl}
                       alt={kades.nama}
-                      className="w-16 h-16 rounded-full object-cover border border-slate-200 shadow-sm"
+                      className="w-16 h-16 rounded-full object-cover object-top border border-slate-200 shadow-sm"
                     />
                   ) : (
                     <div className="w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center">

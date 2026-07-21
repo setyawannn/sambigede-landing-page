@@ -346,7 +346,7 @@ export const seedDatabase = mutation({
         heroSubtitle:
           'Website Resmi Desa Sambigede. Sumber informasi terbaru tentang pemerintahan yang berorientasi pada keterbukaan informasi publik.',
         heroImageUrl:
-          'https://images.unsplash.com/photo-1662083555510-1187b2aba1e2?auto=format&fit=crop&w=1920&q=80',
+          '/public/images/hero-fallback.webp',
         kadesPeriode: 'Periode 2024 - 2029',
         kadesSambutan:
           "Assalamu'alaikum Warahmatullahi Wabarakatuh. Selamat datang di website resmi Desa Sambigede, Kecamatan Binangun, Kabupaten Blitar. Melalui portal website ini, kami berharap dapat memberikan transparansi informasi pemerintahan, mempermudah pelayanan administrasi, dan memperkenalkan seluruh potensi unggulan Desa Sambigede kepada masyarakat luas.",

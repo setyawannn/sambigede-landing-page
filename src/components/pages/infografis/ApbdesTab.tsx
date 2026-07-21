@@ -1,6 +1,6 @@
 import { useQuery } from 'convex/react'
 import { api } from '../../../../convex/_generated/api'
-import { Landmark, ArrowUpRight, ArrowDownRight, Activity, Search, Filter } from 'lucide-react'
+import { Landmark, ArrowUpRight, ArrowDownRight, Activity, Search, Filter, ChevronDown, ChevronUp } from 'lucide-react'
 import { Skeleton } from '../../ui/skeleton'
 import { useState, useMemo } from 'react'
 
@@ -10,6 +10,7 @@ export default function ApbdesTab() {
 
   const [searchTerm, setSearchTerm] = useState('')
   const [filterBidang, setFilterBidang] = useState<string>('Semua')
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const formatRupiah = (angka: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -219,7 +220,7 @@ export default function ApbdesTab() {
                   </td>
                 </tr>
               ) : (
-                filteredItems.map((item) => {
+                (isExpanded ? filteredItems : filteredItems.slice(0, 10)).map((item) => {
                   const selisih = (item.anggaranMenjadi || 0) - (item.anggaranSemula || 0)
                   return (
                     <tr key={item._id} className="hover:bg-slate-50/80 transition-colors group">
@@ -270,6 +271,25 @@ export default function ApbdesTab() {
             </tbody>
           </table>
         </div>
+        
+        {filteredItems.length > 10 && (
+          <div className="px-6 py-4 border-t border-[#E5E5E5] bg-[#F9F9F9] flex justify-center">
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-200 text-slate-700 hover:text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50 rounded-full text-sm font-semibold transition-all shadow-sm active:scale-95"
+            >
+              {isExpanded ? (
+                <>
+                  Tampilkan Lebih Sedikit <ChevronUp className="w-4 h-4" />
+                </>
+              ) : (
+                <>
+                  Lihat Selengkapnya ({filteredItems.length - 10} Lainnya) <ChevronDown className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

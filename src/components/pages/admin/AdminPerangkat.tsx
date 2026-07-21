@@ -15,6 +15,7 @@ import type { Id, Doc } from '../../../../convex/_generated/dataModel'
 import { ImageUpload } from '../../ui/ImageUpload'
 import { toast } from 'sonner'
 import { deleteFileFromR2 } from '../../../lib/r2'
+import R2Image from '../../ui/R2Image'
 
 import { Card, CardContent, CardHeader } from '../../ui/card'
 import { Button } from '../../ui/button'
@@ -223,10 +224,11 @@ export default function AdminPerangkat() {
                     <TableCell>
                       {item.imageUrl ? (
                         <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200">
-                          <img
+                          <R2Image
                             src={item.imageUrl}
                             alt={item.nama}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover object-top"
+                            fallbackSrc="/images/placeholder.jpg"
                           />
                         </div>
                       ) : (
