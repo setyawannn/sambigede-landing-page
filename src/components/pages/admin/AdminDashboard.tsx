@@ -22,7 +22,7 @@ export default function AdminDashboard() {
   const penduduk = useQuery(api.penduduk.getPenduduk)
   const berita = useQuery(api.berita.getBerita, { category: undefined })
   const bansos = useQuery(api.bansos.getBansos)
-  const stunting = useQuery(api.stunting.getStunting)
+  const stunting = useQuery(api.stunting.getStunting, {})
   const activeTahun = useQuery(api.apbdes.getApbdesTahunActive)
 
   const stats = [

@@ -40,6 +40,19 @@ Aturan tambahan asisten AI tersimpan di `.agents/AGENTS.md`.
 - `bun run format` - Menjalankan Prettier.
 - `bun run check` - Memeriksa format kode.
 
+## Cloudflare Pages
+
+Untuk deploy ke Cloudflare Pages, gunakan konfigurasi berikut:
+
+- Build command: `bun run build`
+- Build output directory: `dist`
+- Install command: `bun install`
+- Root directory: folder repo ini
+
+Output build menempatkan aset publik di `dist/client`, bundle SSR di `dist/server`, dan entry worker di `dist/_worker.js`, jadi direktori deploy yang benar adalah `dist`.
+
+Jika ingin deploy via CLI, jalankan `bun run deploy:pages` setelah environment variable yang diperlukan sudah disiapkan di Cloudflare Pages.
+
 ## Struktur Repositori Utama
 
 - `src/routes/`: Router TanStack (hanya definisi route & loaders).

@@ -53,18 +53,18 @@ export default defineSchema({
 
   stunting: defineTable({
     nama: v.string(),
-    dusun: v.string(),
-    usia: v.string(),
-    bb: v.string(),
-    tb: v.string(),
-    status: v.union(
-      v.literal('Normal'),
-      v.literal('Risiko'),
-      v.literal('Stunting'),
-    ),
+    nik: v.optional(v.string()),
+    tanggalLahir: v.number(),
+    jk: v.union(v.literal('L'), v.literal('P')),
+    namaOrtu: v.string(),
+    alamat: v.string(),
+    pos: v.string(),
+    bulan: v.number(),
+    tahun: v.number(),
   })
-    .index('by_dusun', ['dusun'])
-    .index('by_status', ['status']),
+    .index('by_alamat', ['alamat'])
+    .index('by_pos', ['pos'])
+    .index('by_periode', ['bulan', 'tahun']),
 
   apbdes_tahun: defineTable({
     tahun: v.number(),
