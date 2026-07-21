@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
+import { getPublicEnvValue } from '../../lib/convex-env'
 
 interface R2ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackSrc?: string
@@ -17,6 +18,8 @@ export default function R2Image({
   className,
   ...props
 }: R2ImageProps) {
+  const r2PublicUrl = getPublicEnvValue('VITE_R2_PUBLIC_URL') || ''
+
   // Use a very lightweight query to check circuit breaker status
   const isCircuitBreakerActive = useQuery(
     api.r2_analytics.getCircuitBreakerStatus,
@@ -29,7 +32,7 @@ export default function R2Image({
   // Handle circuit breaker
   useEffect(() => {
     const isR2 = src
-      ? src.startsWith(import.meta.env.VITE_R2_PUBLIC_URL || '') ||
+      ? src.startsWith(r2PublicUrl) ||
         src.includes('r2.dev') ||
         src.includes('r2.cloudflarestorage.com')
       : false
@@ -45,7 +48,7 @@ export default function R2Image({
   // Track Class B operation when image loads successfully (and only once per component mount)
   useEffect(() => {
     const isR2 = src
-      ? src.startsWith(import.meta.env.VITE_R2_PUBLIC_URL || '') ||
+      ? src.startsWith(r2PublicUrl) ||
         src.includes('r2.dev') ||
         src.includes('r2.cloudflarestorage.com')
       : false
