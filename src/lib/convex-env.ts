@@ -34,10 +34,11 @@ const readRuntimeEnv = (name: string) => {
   return stripWrappingQuotes(process.env?.[name])
 }
 
-const readBuildEnv = (name: string) => {
-  const buildEnv = import.meta.env as Record<string, string | undefined>
-  return stripWrappingQuotes(buildEnv[name])
-}
+const readBuildConvexUrl = () =>
+  stripWrappingQuotes(import.meta.env.VITE_CONVEX_URL)
+
+const readBuildTurnstileSiteKey = () =>
+  stripWrappingQuotes(import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY)
 
 export const getServerEnvValue = (name: string) => {
   return (
@@ -47,12 +48,24 @@ export const getServerEnvValue = (name: string) => {
 }
 
 export const getPublicEnvValue = (name: string) => {
-  return (
-    readBuildEnv(name) ||
-    readBrowserEnv(name) ||
-    readWorkerEnv(name) ||
-    readRuntimeEnv(name)
-  )
+  switch (name) {
+    case 'VITE_CONVEX_URL':
+      return (
+        readBuildConvexUrl() ||
+        readBrowserEnv(name) ||
+        readWorkerEnv(name) ||
+        readRuntimeEnv(name)
+      )
+    case 'VITE_CLOUDFLARE_TURNSTILE_SITE_KEY':
+      return (
+        readBuildTurnstileSiteKey() ||
+        readBrowserEnv(name) ||
+        readWorkerEnv(name) ||
+        readRuntimeEnv(name)
+      )
+    default:
+      return readBrowserEnv(name) || readWorkerEnv(name) || readRuntimeEnv(name)
+  }
 }
 
 const isValidUrl = (value?: string) => {
@@ -83,7 +96,7 @@ export const getSafeConvexUrl = () => {
 export const hasValidConvexUrl = () => isValidUrl(getConvexUrl())
 
 export const getServerConvexUrl = () => {
-  const buildValue = stripWrappingQuotes(import.meta.env.VITE_CONVEX_URL)
+  const buildValue = readBuildConvexUrl()
   const workerValue = readWorkerEnv('VITE_CONVEX_URL')
   const runtimeValue = readRuntimeEnv('VITE_CONVEX_URL')
 
