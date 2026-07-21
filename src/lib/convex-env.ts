@@ -159,7 +159,7 @@ export const resolvePublicR2AssetUrl = (value?: string | null) => {
 
   const publicUrl =
     getPublicEnvValue('VITE_R2_PUBLIC_URL') ||
-    'https://pub-9290bb356c9a4e4d8ef8013e2fe9d0c2.r2.dev'
+    'https://cdn.sambigede.setyawannn.site'
 
   return `${publicUrl.replace(/\/$/, '')}/${fileKey}`
 }

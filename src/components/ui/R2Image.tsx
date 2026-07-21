@@ -17,11 +17,11 @@ let flushTimeout: ReturnType<typeof setTimeout> | null = null
 export default function R2Image({
   src,
   alt = 'Image',
-  fallbackSrc = '/placeholder-image.webp', // Default local placeholder
+  fallbackSrc = '/images/logo-desa-sambigede.webp', // Default local placeholder
   className,
   ...props
 }: R2ImageProps) {
-  const r2PublicUrl = getPublicEnvValue('VITE_R2_PUBLIC_URL') || ''
+  const r2PublicUrl = getPublicEnvValue('VITE_R2_PUBLIC_URL') || 'https://cdn.sambigede.setyawannn.site'
   const resolvedSrc = resolvePublicR2AssetUrl(src) || src
 
   // Use a very lightweight query to check circuit breaker status
@@ -30,7 +30,7 @@ export default function R2Image({
   )
   const incrementClassB = useMutation(api.r2_analytics.incrementClassB)
 
-  const [imgSrc, setImgSrc] = useState<string | undefined>(src)
+  const [imgSrc, setImgSrc] = useState<string | undefined>(resolvedSrc)
   const reportedRef = useRef(false)
 
   // Handle circuit breaker

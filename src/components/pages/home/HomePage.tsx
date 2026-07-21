@@ -61,7 +61,7 @@ export default function HomePage() {
         <div
           className="absolute inset-0 bg-cover bg-center scale-105 transition-all duration-700"
           style={{
-            backgroundImage: `url('${berandaData?.heroImageUrl || '/public/images/hero-fallback.webp'}')`,
+            backgroundImage: `url('${berandaData?.heroImageUrl || '/images/hero-fallback.webp'}')`,
           }}
         ></div>
         {/* Backdrop hitam agar teks kontras dan mudah dibaca */}
