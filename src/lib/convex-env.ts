@@ -7,10 +7,38 @@ const stripWrappingQuotes = (value?: string | null) => {
   return unwrappedValue || undefined
 }
 
+declare global {
+  var __CF_RUNTIME_ENV__:
+    | Record<string, string | undefined>
+    | undefined
+    | null
+
+  interface Window {
+    __APP_ENV__?: Record<string, string | undefined>
+  }
+}
+
+const readBrowserEnv = (name: string) => {
+  if (typeof window === 'undefined') return undefined
+
+  return stripWrappingQuotes(window.__APP_ENV__?.[name])
+}
+
+const readWorkerEnv = (name: string) => {
+  return stripWrappingQuotes(globalThis.__CF_RUNTIME_ENV__?.[name])
+}
+
 const readRuntimeEnv = (name: string) => {
   if (typeof process === 'undefined') return undefined
 
   return stripWrappingQuotes(process.env?.[name])
+}
+
+export const getServerEnvValue = (name: string) => {
+  return (
+    stripWrappingQuotes(globalThis.__CF_RUNTIME_ENV__?.[name]) ||
+    readRuntimeEnv(name)
+  )
 }
 
 const isValidUrl = (value?: string) => {
@@ -26,9 +54,11 @@ const isValidUrl = (value?: string) => {
 
 export const getConvexUrl = () => {
   const buildValue = stripWrappingQuotes(import.meta.env.VITE_CONVEX_URL)
+  const browserValue = readBrowserEnv('VITE_CONVEX_URL')
+  const workerValue = readWorkerEnv('VITE_CONVEX_URL')
   const runtimeValue = readRuntimeEnv('VITE_CONVEX_URL')
 
-  return buildValue || runtimeValue
+  return buildValue || browserValue || workerValue || runtimeValue
 }
 
 export const getSafeConvexUrl = () => {
@@ -43,31 +73,15 @@ export const getSafeConvexUrl = () => {
 
 export const hasValidConvexUrl = () => isValidUrl(getConvexUrl())
 
-export const getCloudflareBindingValue = async (name: string) => {
-  if (!import.meta.env.SSR) return undefined
-
-  try {
-    const loadCloudflareModule = new Function(
-      'return import("cloudflare:workers")',
-    ) as () => Promise<{ env?: Record<string, string | undefined> }>
-    const { env } = await loadCloudflareModule()
-
-    return stripWrappingQuotes(env?.[name])
-  } catch {
-    return undefined
-  }
-}
-
-export const getServerConvexUrl = async () => {
+export const getServerConvexUrl = () => {
   const buildValue = stripWrappingQuotes(import.meta.env.VITE_CONVEX_URL)
-  const cloudflareValue = await getCloudflareBindingValue('VITE_CONVEX_URL')
+  const workerValue = readWorkerEnv('VITE_CONVEX_URL')
   const runtimeValue = readRuntimeEnv('VITE_CONVEX_URL')
 
-  return buildValue || cloudflareValue || runtimeValue
+  return buildValue || workerValue || runtimeValue
 }
 
-export const hasValidServerConvexUrl = async () =>
-  isValidUrl(await getServerConvexUrl())
+export const hasValidServerConvexUrl = () => isValidUrl(getServerConvexUrl())
 
 let hasWarnedInvalidConvexUrl = false
 

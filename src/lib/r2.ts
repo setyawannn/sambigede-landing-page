@@ -2,18 +2,19 @@ import { createServerFn } from '@tanstack/react-start'
 import { AwsClient } from 'aws4fetch'
 import { ConvexHttpClient } from 'convex/browser'
 import { api } from '../../convex/_generated/api'
+import { getServerEnvValue } from './convex-env'
 
 const getConvexClient = () => {
-  const url = process.env.VITE_CONVEX_URL
+  const url = getServerEnvValue('VITE_CONVEX_URL')
   if (!url) throw new Error('VITE_CONVEX_URL is missing')
   return new ConvexHttpClient(url)
 }
 
 // Inisialisasi AWS Client (kompatibel penuh dengan Vite SSR dan Edge/Cloudflare)
 const getAwsClient = () => {
-  const accountId = process.env.R2_ACCOUNT_ID
-  const accessKeyId = process.env.R2_ACCESS_KEY_ID
-  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY
+  const accountId = getServerEnvValue('R2_ACCOUNT_ID')
+  const accessKeyId = getServerEnvValue('R2_ACCESS_KEY_ID')
+  const secretAccessKey = getServerEnvValue('R2_SECRET_ACCESS_KEY')
 
   if (!accountId || !accessKeyId || !secretAccessKey) {
     throw new Error(
@@ -38,9 +39,9 @@ export const uploadFileToServer = createServerFn({ method: 'POST' })
     (d: { filename: string; contentType: string; base64Data: string }) => d,
   )
   .handler(async ({ data }) => {
-    const bucketName = process.env.R2_BUCKET_NAME
-    const publicUrl = process.env.VITE_R2_PUBLIC_URL
-    const accountId = process.env.R2_ACCOUNT_ID
+    const bucketName = getServerEnvValue('R2_BUCKET_NAME')
+    const publicUrl = getServerEnvValue('VITE_R2_PUBLIC_URL')
+    const accountId = getServerEnvValue('R2_ACCOUNT_ID')
 
     if (!bucketName || !publicUrl || !accountId) {
       throw new Error(
@@ -119,8 +120,8 @@ export const uploadFileToServer = createServerFn({ method: 'POST' })
 export const deleteFileFromR2 = createServerFn({ method: 'POST' })
   .validator((d: { fileKey: string }) => d)
   .handler(async ({ data }) => {
-    const bucketName = process.env.R2_BUCKET_NAME
-    const accountId = process.env.R2_ACCOUNT_ID
+    const bucketName = getServerEnvValue('R2_BUCKET_NAME')
+    const accountId = getServerEnvValue('R2_ACCOUNT_ID')
 
     if (!bucketName || !accountId) {
       throw new Error('Konfigurasi R2 Bucket Name belum diatur.')

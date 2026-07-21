@@ -49,12 +49,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   loader: async ({ context: { queryClient } }) => {
     try {
       if (typeof document === 'undefined') {
-        if (!(await hasValidServerConvexUrl())) {
+        if (!hasValidServerConvexUrl()) {
           warnInvalidConvexUrlOnce('SSR root loader dilewati')
           return
         }
 
-        const serverConvexUrl = await getServerConvexUrl()
+        const serverConvexUrl = getServerConvexUrl()
         const serverConvexClient = new ConvexHttpClient(serverConvexUrl!)
 
         const kontakData = await serverConvexClient.query(
@@ -80,6 +80,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 function RootDocument({ children }: { children: React.ReactNode }) {
   const routerState = useRouterState()
   const pathname = routerState.location.pathname
+  const runtimeConvexUrl =
+    typeof document === 'undefined' ? getServerConvexUrl() : undefined
+  const APP_ENV_INIT_SCRIPT = runtimeConvexUrl
+    ? `window.__APP_ENV__=Object.assign(window.__APP_ENV__||{},{VITE_CONVEX_URL:${JSON.stringify(runtimeConvexUrl)}});`
+    : ''
   const isAdminOrLogin =
     pathname.startsWith('/admin') || pathname.startsWith('/login')
 
@@ -88,6 +93,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <html lang="id" suppressHydrationWarning>
         <head>
           <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+          {APP_ENV_INIT_SCRIPT ? (
+            <script dangerouslySetInnerHTML={{ __html: APP_ENV_INIT_SCRIPT }} />
+          ) : null}
           <HeadContent />
         </head>
         <body className="font-sans antialiased text-[#333] bg-[#F8FAFC]">
@@ -118,6 +126,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     <html lang="id" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {APP_ENV_INIT_SCRIPT ? (
+          <script dangerouslySetInnerHTML={{ __html: APP_ENV_INIT_SCRIPT }} />
+        ) : null}
         <HeadContent />
       </head>
       <body className="font-sans antialiased text-[#333] bg-white selection:bg-[#3F7D4A]/20">
