@@ -484,6 +484,83 @@ export const seedDatabase = mutation({
       }
     }
 
+    const SEED_BUMDES = [
+      {
+        nama: 'BUMDes Maju Bersama',
+        kategori: 'Perdagangan Umum',
+        deskripsi: 'BUMDes Maju Bersama fokus pada perdagangan kebutuhan pokok warga dan penyediaan pupuk bersubsidi.',
+        statusHukum: 'AHU-0012345.AH.01.02.TAHUN 2023',
+        kontak: '081234567890',
+        lokasi: 'Jl. Raya Sambigede No. 1, Kantor Desa Sambigede',
+        struktur: [
+          { jabatan: 'Direktur', nama: 'Budi Santoso' },
+          { jabatan: 'Sekretaris', nama: 'Siti Aminah' },
+          { jabatan: 'Bendahara', nama: 'Joko Widodo' }
+        ],
+        jumlahTenagaKerja: 5,
+        urutan: 1,
+      },
+      {
+        nama: 'BUMDes Tirta Makmur',
+        kategori: 'Jasa Kemasyarakatan',
+        deskripsi: 'Mengelola air bersih dan penyewaan alat-alat hajatan untuk kebutuhan warga desa Sambigede.',
+        statusHukum: 'AHU-0098765.AH.01.02.TAHUN 2024',
+        kontak: '085678901234',
+        lokasi: 'Dusun Sambigede RT 02 RW 01',
+        struktur: [
+          { jabatan: 'Direktur', nama: 'Agus Riyanto' },
+          { jabatan: 'Manajer Operasional', nama: 'Iwan Fals' }
+        ],
+        jumlahTenagaKerja: 3,
+        urutan: 2,
+      }
+    ]
+
+    const existingBumdes = await ctx.db.query('bumdes').collect()
+    if (existingBumdes.length === 0) {
+      for (const item of SEED_BUMDES) {
+        await ctx.db.insert('bumdes', item)
+      }
+    }
+
+    const SEED_KOPERASI = [
+      {
+        nama: 'Koperasi Unit Desa (KUD) Sambigede',
+        jenis: 'Simpan Pinjam',
+        deskripsi: 'Melayani simpan pinjam anggota untuk modal usaha tani dan kebutuhan sehari-hari warga desa.',
+        statusHukum: '1234/BH/KWK.15/2019',
+        kontak: '081112223334',
+        lokasi: 'Kompleks Balai Desa Sambigede',
+        struktur: [
+          { jabatan: 'Ketua', nama: 'Soeharto' },
+          { jabatan: 'Sekretaris', nama: 'Sukarno' }
+        ],
+        jumlahAnggota: 150,
+        urutan: 1,
+      },
+      {
+        nama: 'Koperasi Desa Merah Putih',
+        jenis: 'Konsumen & Produsen',
+        deskripsi: 'Menyediakan kebutuhan pokok anggota (sembako) serta membantu memasarkan hasil bumi (pertanian) warga.',
+        statusHukum: '5678/BH/KWK.15/2021',
+        kontak: '082233334444',
+        lokasi: 'Jl. Merdeka No. 45, Sambigede',
+        struktur: [
+          { jabatan: 'Ketua', nama: 'Siti Maimunah' },
+          { jabatan: 'Bendahara', nama: 'Samsul Arif' }
+        ],
+        jumlahAnggota: 85,
+        urutan: 2,
+      }
+    ]
+
+    const existingKoperasi = await ctx.db.query('koperasi').collect()
+    if (existingKoperasi.length === 0) {
+      for (const item of SEED_KOPERASI) {
+        await ctx.db.insert('koperasi', item)
+      }
+    }
+
     return {
       success: true,
       message: 'Database seeded successfully with Profil & Kelembagaan!',

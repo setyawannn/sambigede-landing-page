@@ -1,5 +1,11 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogClose,
+} from '../../ui/dialog'
 
 export type LembagaAnggota = { nama: string; jabatan: string }
 
@@ -45,61 +51,37 @@ export function LembagaCard({
         </span>
       </div>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setOpen(false)}
-        >
-          <div
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden max-h-[80vh] flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="bg-[#3F7D4A] px-6 py-5 flex items-center justify-between shrink-0">
-              <div>
-                <h3 className="text-white font-bold text-base">{title}</h3>
-                <p className="text-white/80 text-xs mt-0.5">{subtitle}</p>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-2xl p-0 overflow-hidden bg-white rounded-2xl max-h-[90vh] flex flex-col">
+          <div className="sticky top-0 bg-white border-b z-10 px-6 py-4 flex items-center justify-between">
+            <DialogTitle className="flex items-center gap-3">
+              <div className={`w-10 h-10 ${colorBg} ${colorText} rounded-full flex items-center justify-center shrink-0`}>
+                {icon}
               </div>
-              <button
-                onClick={() => setOpen(false)}
-                className="text-white/70 hover:text-white p-1"
-                aria-label="Tutup"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="overflow-y-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-[#F9F9F9] border-b border-[#E5E5E5] sticky top-0">
-                  <tr>
-                    <th className="px-5 py-3 text-xs font-semibold text-[#333] uppercase tracking-wide">
-                      No
-                    </th>
-                    <th className="px-5 py-3 text-xs font-semibold text-[#333] uppercase tracking-wide">
-                      Nama
-                    </th>
-                    <th className="px-5 py-3 text-xs font-semibold text-[#333] uppercase tracking-wide">
-                      Jabatan
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#E5E5E5]">
-                  {anggota.map((a, i) => (
-                    <tr key={i} className="hover:bg-[#F5F5F5]">
-                      <td className="px-5 py-3 text-[#999] text-xs">{i + 1}</td>
-                      <td className="px-5 py-3 font-medium text-[#333]">
-                        {a.nama}
-                      </td>
-                      <td className="px-5 py-3 text-[#666] text-xs">
-                        {a.jabatan}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div>
+                <div className="text-xl font-bold text-slate-800">{title}</div>
+                <div className="text-sm font-medium text-slate-500">{subtitle}</div>
+              </div>
+            </DialogTitle>
+            <DialogClose className="rounded-full p-2 hover:bg-slate-100 transition-colors">
+              <X className="w-5 h-5 text-slate-500" />
+            </DialogClose>
+          </div>
+          <div className="overflow-y-auto p-6 text-left">
+            <div>
+              <h4 className="font-bold text-slate-800 border-b pb-2 mb-4">Susunan Pengurus</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {anggota.map((a, i) => (
+                  <div key={i} className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                    <p className="text-xs text-slate-500 uppercase tracking-wide mb-0.5">{a.jabatan}</p>
+                    <p className="text-sm font-medium text-slate-800">{a.nama}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

@@ -133,6 +133,59 @@ export default defineSchema({
     urutan: v.number(),
   }).index('by_urutan', ['urutan']),
 
+  mitra_desa: defineTable({
+    nama: v.string(),
+    singkatan: v.string(),
+    penanggungJawab: v.array(v.string()),
+    logoUrl: v.string(),
+    logoKey: v.optional(v.string()),
+    urutan: v.number(),
+  }).index('by_urutan', ['urutan']),
+
+  bumdes: defineTable({
+    nama: v.string(),
+    kategori: v.string(),
+    logoUrl: v.optional(v.string()),
+    logoKey: v.optional(v.string()),
+    deskripsi: v.string(),
+    fotoProduk: v.optional(v.array(v.string())),
+    fotoProdukKeys: v.optional(v.array(v.string())),
+    statusHukum: v.string(),
+    kontak: v.string(),
+    lokasi: v.string(),
+    mapsUrl: v.optional(v.string()),
+    struktur: v.array(
+      v.object({
+        jabatan: v.string(),
+        nama: v.string(),
+      })
+    ),
+    jumlahTenagaKerja: v.number(),
+    urutan: v.number(),
+  }).index('by_urutan', ['urutan']),
+
+  koperasi: defineTable({
+    nama: v.string(),
+    jenis: v.string(),
+    logoUrl: v.optional(v.string()),
+    logoKey: v.optional(v.string()),
+    deskripsi: v.string(),
+    fotoKegiatan: v.optional(v.array(v.string())),
+    fotoKegiatanKeys: v.optional(v.array(v.string())),
+    statusHukum: v.string(),
+    kontak: v.string(),
+    lokasi: v.string(),
+    mapsUrl: v.optional(v.string()),
+    struktur: v.array(
+      v.object({
+        jabatan: v.string(),
+        nama: v.string(),
+      })
+    ),
+    jumlahAnggota: v.number(),
+    urutan: v.number(),
+  }).index('by_urutan', ['urutan']),
+
   pengurus_kelembagaan: defineTable({
     kelembagaanId: v.id('kelembagaan'),
     nama: v.string(),
